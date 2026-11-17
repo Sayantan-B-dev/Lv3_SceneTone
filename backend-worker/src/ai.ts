@@ -52,6 +52,10 @@ const RETRYABLE_CODES = new Set([
   'AI_INVALID_OUTPUT',
 ]);
 
+export function isAiConfigured(env: Env): boolean {
+  return providerTargets(env).length > 0;
+}
+
 function providerTargets(env: Env): ProviderTarget[] {
   const targets: ProviderTarget[] = [];
 

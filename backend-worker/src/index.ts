@@ -2,7 +2,7 @@ import { Hono, type Context } from 'hono';
 import { cors } from 'hono/cors';
 import { secureHeaders } from 'hono/secure-headers';
 import type { ZodTypeAny, infer as ZodInfer } from 'zod';
-import { requestStructured, requestText, WorkerError } from './ai.js';
+import { isAiConfigured, requestStructured, requestText, WorkerError } from './ai.js';
 import { buildBlueprintPrompt, buildGuidePrompt, buildMixReportPrompt } from './prompts.js';
 import {
   blueprintRequestSchema,
@@ -34,6 +34,7 @@ app.get('/api/v1/health', (c) =>
   c.json({
     status: 'ok',
     runtime: 'cloudflare-worker',
+    aiConfigured: isAiConfigured(c.env),
     time: new Date().toISOString(),
   }),
 );
