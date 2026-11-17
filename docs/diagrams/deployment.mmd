@@ -1,0 +1,7 @@
+flowchart TB
+  Client[Browser] -->|HTTPS| Vercel[Vercel Hobby frontend]
+  Client -->|HTTPS 443| Nginx[Nginx reverse proxy]
+  Nginx -->|localhost| Express[Express systemd service]
+  Express --> Atlas[(MongoDB Atlas M0)]
+  Express -->|server-side key| Adaption[Adaption API]
+  LetsEncrypt[Let's Encrypt] -. TLS renewal .-> Nginx

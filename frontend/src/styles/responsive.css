@@ -1,0 +1,17 @@
+@media (max-width: 40rem) {
+  .app-header__inner {
+    gap: var(--space-3);
+  }
+
+  .app-main {
+    padding-block: var(--space-8) var(--space-12);
+  }
+
+  .page--landing {
+    padding-block: var(--space-6);
+  }
+
+  .theme-toggle__select {
+    padding: var(--space-2) var(--space-3);
+  }
+}

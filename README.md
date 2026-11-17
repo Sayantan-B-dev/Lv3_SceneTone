@@ -1,0 +1,207 @@
+# SceneTone
+
+From a creative scene to a production-ready sound.
+
+SceneTone is a browser-based AI soundscape composition and audio-production co-pilot. It turns a
+scene brief into a structured soundscape blueprint and helps a producer interpret objective audio
+measurements. It is not a DAW.
+
+**Current status:** repository scaffold only. The application shell, API skeleton, models, schemas
+and design tokens exist. Feature endpoints deliberately return `501 NOT_IMPLEMENTED`; no mock AI
+output is presented as real inference.
+
+## Repository layout
+
+The frontend and backend are **two independent applications** in one repository. They have separate
+`package.json`, locks, `node_modules`, `.env` files and deployables. The root `package.json` only
+orchestrates scripts and has no dependencies of its own.
+
+```text
+frontend/            Vite + React + TypeScript SPA (separate server, default :5173)
+  package.json       frontend dependencies and lockfile owner
+  .env / .env.example
+  src/styles/        centralized token-driven CSS (single global entry)
+  src/components/    reusable layout and UI primitives
+  src/pages/         route-level scaffold pages
+  src/lib/           API client, query client, audio analysis types
+backend/             Express 5 + TypeScript API (separate server, default :5000)
+  package.json       backend dependencies and lockfile owner
+  .env / .env.example
+  src/config/        validated environment configuration
+  src/models/        Mongoose User and Project models
+  src/routes/        /api/v1 route wiring
+  src/controllers/   feature stubs
+  src/services/      Google verification and Adaption adapter boundary
+  src/schemas/       Zod request/response schemas
+  src/middleware/    sessions, auth, security, validation, errors
+scripts/dev.mjs      dependency-free root dev orchestrator
+docs/                SRS, architecture, API, schema, security, design, deployment
+docs/agent-state/    durable cross-agent handoff state
+docs/diagrams/       Mermaid diagrams
+```
+
+## How local development runs
+
+```text
+Browser :5173  ->  Vite frontend server
+       |                 |
+       | fetch with credentials
+       v                 v
+   Backend API :5000  ->  Local MongoDB 127.0.0.1:27017/scenetone
+```
+
+- The frontend calls the backend directly using `VITE_API_BASE_URL`.
+- The backend accepts only the exact `FRONTEND_ORIGIN` and enables credentials for the session
+  cookie.
+- The backend connects to `MONGODB_URI` before it starts listening. If MongoDB is unavailable, the
+  API exits instead of pretending to be healthy.
+- Audio files stay in the browser. Only numeric metrics will be sent to the API in later phases.
+- The dashboard shows an **API connected / API unavailable** indicator by calling
+  `GET /api/v1/health`.
+
+## Prerequisites
+
+- Node.js >= 22 (see `.nvmrc`).
+- MongoDB running locally on `127.0.0.1:27017`.
+
+Check the local database:
+
+```bash
+mongosh --quiet --eval "db.runCommand({ ping: 1 })" mongodb://127.0.0.1:27017/scenetone
+```
+
+Google OAuth and Adaption credentials are only needed when those features are implemented.
+
+## Local setup
+
+Install each application separately:
+
+```bash
+npm run install:all
+```
+
+This runs `npm install` inside `backend/` and `frontend/`, creating separate lockfiles and separate
+`node_modules` directories. There is intentionally no root `node_modules`.
+
+Create local environment files if they do not exist:
+
+```bash
+cp backend/.env.example backend/.env
+cp frontend/.env.example frontend/.env
+```
+
+Current local defaults:
+
+### `backend/.env`
+
+```dotenv
+NODE_ENV=development
+PORT=5000
+FRONTEND_ORIGIN=http://localhost:5173
+MONGODB_URI=mongodb://127.0.0.1:27017/scenetone
+SESSION_SECRET=<at least 32 random characters>
+GOOGLE_CLIENT_ID=<Google OAuth client id>
+GOOGLE_CLIENT_SECRET=<optional, backend-only>
+ADAPTION_API_KEY=<backend-only>
+ADAPTION_BASE_URL=<Adaption base URL>
+ADAPTION_MODEL=<current model id>
+AI_REQUEST_TIMEOUT_MS=30000
+```
+
+Generate a session secret with:
+
+```bash
+node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+```
+
+### `frontend/.env`
+
+```dotenv
+VITE_API_BASE_URL=http://localhost:5000/api/v1
+VITE_GOOGLE_CLIENT_ID=<same public Google client id>
+```
+
+Only public values belong in `VITE_*` variables. Never commit `.env` files or put backend secrets in
+the frontend environment. Local `.env` files in this working copy are gitignored placeholders.
+
+## Run locally
+
+Start both servers with one command:
+
+```bash
+npm run dev
+```
+
+Or run them in separate terminals, which matches the separate-server deployment model:
+
+```bash
+npm run dev:backend    # Express API on http://localhost:5000
+npm run dev:frontend   # Vite app on http://localhost:5173
+```
+
+You can also run each app directly:
+
+```bash
+npm run dev --prefix backend
+npm run dev --prefix frontend
+```
+
+Verify:
+
+- API health: <http://localhost:5000/api/v1/health>
+- Web app: <http://localhost:5173>
+- Dashboard indicator: **API connected**
+- Backend log: `MongoDB connected` followed by `SceneTone API listening`
+
+### Port and connection rules
+
+- `VITE_API_BASE_URL` must point at the backend API root, including `/api/v1`.
+- `FRONTEND_ORIGIN` must exactly match the browser origin (scheme, host and port). Default:
+  `http://localhost:5173`.
+- Vite runs with `strictPort`, so it fails instead of silently moving to another port. If you change
+  the frontend port, update `FRONTEND_ORIGIN` in `backend/.env` and restart the API.
+- The API session cookie requires credentials; the frontend `apiRequest` helper sends them.
+- In production, cookies are `Secure` and the API trusts one proxy hop. Local HTTP development
+  intentionally uses a non-secure cookie.
+
+## Checks
+
+Run from the repository root (scripts forward to each app):
+
+```bash
+npm run typecheck
+npm run lint
+npm test
+npm run build
+npm run format:check
+```
+
+Unit tests use a test environment and do not require live MongoDB, Google or Adaption credentials.
+
+## Documentation
+
+- [SRS](docs/SRS.md)
+- [Architecture](docs/ARCHITECTURE.md)
+- [API reference](docs/API_REFERENCE.md)
+- [Database schema](docs/DATABASE_SCHEMA.md)
+- [Design system](docs/DESIGN_SYSTEM.md)
+- [Security and privacy](docs/SECURITY_AND_PRIVACY.md)
+- [Testing](docs/TESTING.md)
+- [Roadmap](docs/ROADMAP.md)
+- [Deployment](docs/DEPLOYMENT.md)
+- [Agent handoff](docs/agent-state/HANDOFF.md)
+
+## V1 scope guardrails
+
+- Google identity is verified server-side; sessions are application-owned.
+- MongoDB stores users, projects and sessions.
+- Adaption is called from the backend only.
+- Audio analysis is browser-local; only numeric metrics are sent to the API.
+- RMS is not LUFS; sample peak is not true peak.
+- The model must never claim to have listened to audio.
+- Exports are local and contain no secrets.
+- No DAW, `.flp` generation, stem separation, automatic mastering or raw-audio cloud storage.
+
+## Commit policy
+
+Do not commit automatically. Each phase ends with a summary and an explicit approval request.

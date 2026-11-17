@@ -1,0 +1,8 @@
+flowchart LR
+  U[User browser] --> SPA[React SPA]
+  SPA -->|HTTPS JSON + session cookie| API[Express API]
+  API -->|Mongoose| DB[(MongoDB Atlas)]
+  API -->|server-side key| AI[Adaption API]
+  SPA -->|Web Audio API| AUDIO[Local audio file]
+  SPA -. numeric metrics only .-> API
+  AUDIO -. raw audio stays local .-> SPA

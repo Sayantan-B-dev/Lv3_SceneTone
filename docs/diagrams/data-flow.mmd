@@ -1,0 +1,22 @@
+sequenceDiagram
+  participant B as Browser
+  participant A as Express API
+  participant D as MongoDB
+  participant P as Adaption
+
+  B->>A: POST /api/v1/auth/google (credential)
+  A->>A: Verify signature, issuer, audience, expiry
+  A->>D: Find or create user by verified sub
+  A-->>B: Application session cookie
+  B->>A: Project requests with session cookie
+  A->>D: Owner-scoped read/write
+  B->>A: POST /api/v1/ai/blueprint (scene brief)
+  A->>P: Server-side provider request
+  P-->>A: Structured output
+  A->>A: Schema validation
+  A-->>B: Validated blueprint
+  B->>B: Local Web Audio analysis
+  B->>A: Numeric metrics only
+  A->>P: Metrics + objective
+  P-->>A: Qualified mix report
+  A-->>B: Report with facts, hypotheses, limits
