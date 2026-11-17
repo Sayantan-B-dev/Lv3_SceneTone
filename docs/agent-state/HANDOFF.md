@@ -2,10 +2,10 @@
 
 ## Resume point
 
-- Phase/state: Phase 4 complete and verified; Phase 5 next
-- Branch/last commit: `main`, `b92faa9` (Phase 3); Phase 4 pending commit
-- Next phase: Phase 5 integration and deployment readiness
-- Current task: commit Phase 4, then verify end-to-end paths and deployment configuration
+- Phase/state: Phase 5 implemented and verified; Worker deploy pending
+- Branch/last commit: `main`, newest commit adds the page guide and Worker scaffold
+- Next phase: Cloudflare deployment and live provider verification
+- Current task: push the repo, set Worker secrets, deploy `scenetone-api`, update `FRONTEND_ORIGIN`
 
 ## Completed and verified
 

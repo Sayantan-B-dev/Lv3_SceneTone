@@ -184,6 +184,27 @@ Verify:
 - In production, cookies are `Secure` and the API trusts one proxy hop. Local HTTP development
   intentionally uses a non-secure cookie.
 
+## Cloudflare Worker deployment
+
+The Worker is a separate app and does not change the Express backend.
+
+| Cloudflare field | Value |
+| --- | --- |
+| GitHub repository | `Sayantan-B-dev/Lv3_SceneTone` |
+| Project name | `scenetone-api` |
+| Root directory | `backend-worker` |
+| Build command | leave blank |
+| Deploy command | `npx wrangler deploy` |
+| Preview command | `npx wrangler dev` |
+| Enable Preview builds | off |
+| Protect with Cloudflare Access | off |
+
+Set `ADAPTION_API_KEY`, `ADAPTION_BASE_URL`, `ADAPTION_MODEL` and
+`OPENROUTER_API_KEY_1/2/3` with `npx wrangler secret put <NAME>` from `backend-worker/`.
+Set `FRONTEND_ORIGIN` in `backend-worker/wrangler.jsonc` to the deployed frontend origin.
+Sign-in and MongoDB projects stay on Express; the Worker returns `501` for `/auth` and `/projects`.
+See `backend-worker/README.md` for the endpoint list and local `.dev.vars` flow.
+
 ## Checks
 
 Run from the repository root (scripts forward to each app):

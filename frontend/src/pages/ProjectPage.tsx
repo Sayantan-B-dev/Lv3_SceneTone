@@ -9,6 +9,7 @@ import { Window } from '@/components/ui/Window';
 import { useCurrentUser } from '@/hooks/useAuth';
 import { useDeleteProject, useProject, useUpdateProject } from '@/hooks/useProjects';
 import { ApiError } from '@/lib/api';
+import { describeError } from '@/lib/errors';
 import type { Project } from '@/types';
 
 function formatDate(value: string): string {
@@ -69,7 +70,7 @@ function ProjectSettings({ project }: { project: Project }) {
       </form>
       {update.isError ? (
         <Alert variant="danger" title="Rename failed">
-          {update.error.message}
+          {describeError(update.error)}
         </Alert>
       ) : null}
       {update.isSuccess ? <Alert variant="success">Project name saved.</Alert> : null}
@@ -81,7 +82,7 @@ function ProjectSettings({ project }: { project: Project }) {
       </div>
       {remove.isError ? (
         <Alert variant="danger" title="Delete failed">
-          {remove.error.message}
+          {describeError(remove.error)}
         </Alert>
       ) : null}
     </Window>
@@ -118,7 +119,7 @@ export function ProjectPage() {
           <Alert variant="danger" title="Project unavailable">
             {project.error instanceof ApiError && project.error.status === 404
               ? 'This project does not exist or belongs to another account.'
-              : project.error.message}
+              : describeError(project.error)}
           </Alert>
           <Link className="button button--secondary" to="/dashboard">
             Back to projects

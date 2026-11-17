@@ -98,6 +98,27 @@ a:hover {
   color: var(--color-accent-contrast);
 }
 
+a,
+button,
+summary,
+select,
+label[for],
+[role='button'],
+.button,
+.drop,
+.chain__node,
+.faq__question {
+  cursor: var(--cursor-hand);
+}
+
+.scene-console__canvas {
+  cursor: var(--cursor-grab);
+}
+
+.scene-console__canvas:active {
+  cursor: var(--cursor-grabbing);
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -111,4 +132,14 @@ a:hover {
   body::before {
     animation: none;
   }
+
+  /* The ticker keeps drifting, just slowly, so it never looks frozen. */
+  .marquee__track {
+    animation-duration: 140s !important;
+    animation-iteration-count: infinite !important;
+  }
+}
+
+.marquee__track {
+  animation-play-state: running;
 }

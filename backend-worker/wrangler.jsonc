@@ -1,0 +1,20 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "scenetone-api",
+  "main": "src/index.ts",
+  "compatibility_date": "2025-01-15",
+  "compatibility_flags": ["nodejs_compat"],
+  "observability": {
+    "enabled": true
+  },
+  "vars": {
+    // Must match the deployed frontend origin exactly. No trailing slash.
+    "FRONTEND_ORIGIN": "http://localhost:5173",
+    "OPENROUTER_BASE_URL": "https://openrouter.ai/api/v1",
+    "OPENROUTER_MODEL": "openrouter/auto",
+    "AI_REQUEST_TIMEOUT_MS": "30000"
+  }
+  // Secrets (set with `npx wrangler secret put <NAME>`):
+  // ADAPTION_API_KEY, ADAPTION_BASE_URL, ADAPTION_MODEL,
+  // OPENROUTER_API_KEY_1, OPENROUTER_API_KEY_2, OPENROUTER_API_KEY_3
+}

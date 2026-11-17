@@ -90,3 +90,12 @@
 - Moved the supplied logos into `frontend/public`, fixed the filename typo and derived square marks
   for the header, footer and favicon.
 - Unified display/body/code type on Iosevka Charon Mono and retuned the type scale.
+
+## 2026-11-17 - page guide, error clarity and Worker
+
+- Added the wandering, cursor-following guide bot with drag/throw, double-click chat and a local
+  DOM fallback; added `POST /api/v1/ai/guide` with a text provider chain.
+- Fixed mix-report validation for decoded peaks above 0 dBFS and made validation messages name the
+  failing field; UI errors now include those details.
+- Added retro hand cursors, fixed the marquee motion, and scaffolded `backend-worker/` (Hono +
+  Wrangler) without touching the Express backend.

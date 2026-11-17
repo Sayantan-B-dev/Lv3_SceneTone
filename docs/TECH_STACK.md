@@ -21,6 +21,16 @@
 - Config: `dotenv` for local development only; deployment environment variables in production.
 - HTTP: Node built-in `fetch` for Adaption.
 
+## Cloudflare Worker (edge AI backend)
+- Separate app in `backend-worker/`, deployed as `scenetone-api`.
+- Runtime: Cloudflare Workers with `nodejs_compat`.
+- Framework: Hono, Zod validation, Web `fetch`.
+- Provider chain: Adaption then OpenRouter keys 1-3, server-side secrets only.
+- Endpoints: `/api/v1/health`, `/api/v1/ai/blueprint`, `/api/v1/ai/mix-report`, `/api/v1/ai/guide`.
+- No MongoDB, OAuth or sessions in the Worker in V1; those stay on Express (`/auth`, `/projects`
+  return `501` on the Worker).
+- Deploy: `npx wrangler deploy` from `backend-worker/` (`npx wrangler dev` for preview).
+
 ## Testing and operations
 - Vitest, Supertest; Playwright optional for E2E.
 - GitHub Actions for CI.

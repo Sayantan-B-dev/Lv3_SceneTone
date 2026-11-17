@@ -45,6 +45,24 @@
   design-system phase.
 - Headless Chrome checks at 1440px in light/dark and at 390px/320px; no horizontal overflow.
 
+## Unreleased - page guide, Worker backend, error clarity
+
+### Added
+
+- Wandering page guide: follows the cursor with a delay, keeps 50 px away, flees when approached,
+  can be dragged and thrown with wall bounces, opens a chat on double click or Enter, and builds a
+  local fallback answer from the visible DOM when the AI provider is unavailable.
+- `POST /api/v1/ai/guide` (public, rate limited) with an OpenRouter-backed hedging persona and a
+  local DOM snapshot; no RAG and no audio access.
+- `backend-worker/`: Cloudflare Worker (Hono) with health, blueprint, mix-report and guide routes.
+- Retro white hand cursors for pointer, grab and grabbing states.
+
+### Fixed
+
+- Mix reports no longer fail validation when a decoded lossy file peaks slightly above 0 dBFS.
+- Validation errors now name the failing field and the UI prints those details.
+- Marquee ticker stays in motion, including under reduced-motion preferences (slower).
+
 ## Unreleased - logo and monospace type
 
 ### Added

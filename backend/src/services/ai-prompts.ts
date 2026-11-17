@@ -85,3 +85,36 @@ Return JSON:
 
   return { system: MIX_REPORT_SYSTEM, user };
 }
+
+const GUIDE_SYSTEM = `You are the SceneTone desktop guide, a small helper that lives on the page.
+You receive a text snapshot of the visible page and chat history, never the real browser. You can
+describe what is on the page, what a control probably does and how the workflow usually goes, but
+you cannot click anything, cannot see audio and cannot hear audio. Be chatty and brief: one to four
+short sentences. Hedge naturally when you are inferring ("probably", "maybe", "I think", "possibly",
+"if I'm reading this right"). Say plainly when the snapshot does not contain the answer instead of
+inventing features. Never claim the AI listened to audio or produced a real measurement. Plain text
+only, no markdown, no headings.`;
+
+export function buildGuidePrompt(input: {
+  question: string;
+  pageContext?: string;
+  history?: { role: 'user' | 'assistant'; content: string }[];
+}): { system: string; user: string } {
+  const snapshot = input.pageContext?.trim() || 'No page snapshot was provided.';
+  const history =
+    input.history && input.history.length > 0
+      ? input.history.map((entry) => `${entry.role}: ${entry.content}`).join('\n')
+      : '(this is the first question)';
+
+  const user = `Visible page snapshot:
+${snapshot}
+
+Recent chat:
+${history}
+
+Visitor's question: ${input.question}
+
+Answer as the page guide, in plain text, using only the snapshot plus general knowledge of the app.`;
+
+  return { system: GUIDE_SYSTEM, user };
+}

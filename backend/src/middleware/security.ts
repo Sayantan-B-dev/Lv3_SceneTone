@@ -30,6 +30,14 @@ export const authRateLimiter = rateLimit({
   skip: () => isTest,
 });
 
+export const guideRateLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  limit: 40,
+  standardHeaders: 'draft-7',
+  legacyHeaders: false,
+  skip: () => isTest,
+});
+
 export const aiRateLimiter = rateLimit({
   windowMs: 60 * 60 * 1000,
   limit: 60,

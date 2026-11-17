@@ -1,13 +1,18 @@
 import type { RequestHandler } from 'express';
 import { requireSessionUserId } from '../middleware/auth.js';
-import type { BlueprintRequest, MixReportRequest, SoundscapeBlueprint } from '../schemas/ai.schema.js';
+import type {
+  BlueprintRequest,
+  GuideRequest,
+  MixReportRequest,
+  SoundscapeBlueprint,
+} from '../schemas/ai.schema.js';
 import {
   mixReportSchema,
   soundscapeBlueprintSchema,
   type MixReport,
 } from '../schemas/ai.schema.js';
-import { requestStructuredOutput } from '../services/adaption.service.js';
-import { buildBlueprintPrompt, buildMixReportPrompt } from '../services/ai-prompts.js';
+import { requestStructuredOutput, requestText } from '../services/adaption.service.js';
+import { buildBlueprintPrompt, buildGuidePrompt, buildMixReportPrompt } from '../services/ai-prompts.js';
 import {
   saveBlueprint,
   saveMixReport,
@@ -57,5 +62,20 @@ export const generateMixReport: RequestHandler = async (req, res) => {
     provider: result.provider,
     project: savedProject(project),
     persisted: Boolean(project),
+  });
+};
+
+export const guideChat: RequestHandler = async (req, res) => {
+  const input = req.body as GuideRequest;
+  const result = await requestText({
+    ...buildGuidePrompt(input),
+    temperature: 0.75,
+    maxTokens: 350,
+  });
+
+  res.json({
+    answer: result.text,
+    model: result.model,
+    provider: result.provider,
   });
 };

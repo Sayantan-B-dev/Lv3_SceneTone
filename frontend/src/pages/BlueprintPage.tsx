@@ -9,6 +9,7 @@ import { Tag } from '@/components/ui/Tag';
 import { Textarea } from '@/components/ui/Textarea';
 import { Window } from '@/components/ui/Window';
 import { useGenerateBlueprint } from '@/hooks/useAi';
+import { describeError } from '@/lib/errors';
 import { blueprintToMarkdown, downloadJson, downloadMarkdown, exportBaseName } from '@/lib/export';
 import type { SoundscapeBlueprint } from '@/types';
 
@@ -266,7 +267,7 @@ export function BlueprintPage() {
 
           {generate.isError ? (
             <Alert variant="danger" title="Blueprint not generated">
-              {generate.error.message}
+              {describeError(generate.error)}
             </Alert>
           ) : null}
         </Window>

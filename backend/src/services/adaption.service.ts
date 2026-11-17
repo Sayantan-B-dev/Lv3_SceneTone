@@ -16,6 +16,19 @@ export interface StructuredResult<T> {
   provider: string;
 }
 
+export interface TextRequest {
+  system: string;
+  user: string;
+  temperature?: number;
+  maxTokens?: number;
+}
+
+export interface TextResult {
+  text: string;
+  model: string;
+  provider: string;
+}
+
 interface ProviderTarget {
   id: string;
   baseUrl: string;
@@ -116,10 +129,10 @@ function providerError(status: number): AppError {
   );
 }
 
-async function requestFromProvider<T>(
+async function requestCompletion(
   target: ProviderTarget,
-  { system, user, schema, temperature = 0.6 }: StructuredRequest,
-): Promise<StructuredResult<T>> {
+  { system, user, temperature = 0.6, maxTokens }: TextRequest,
+): Promise<string> {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), env.AI_REQUEST_TIMEOUT_MS);
 
@@ -139,6 +152,7 @@ async function requestFromProvider<T>(
           { role: 'user', content: user },
         ],
         temperature,
+        ...(maxTokens ? { max_tokens: maxTokens } : {}),
       }),
       signal: controller.signal,
     });
@@ -177,8 +191,49 @@ async function requestFromProvider<T>(
     throw new AppError(502, 'AI_INVALID_RESPONSE', 'The AI provider returned an empty response.');
   }
 
+  return content.trim();
+}
+
+async function withProviderFallback<T>(
+  attempt: (target: ProviderTarget) => Promise<T>,
+): Promise<T> {
+  const targets = providerTargets();
+
+  if (targets.length === 0) {
+    throw new AppError(503, 'AI_NOT_CONFIGURED', 'AI generation is not configured on this server.');
+  }
+
+  let lastError: AppError | null = null;
+
+  for (const target of targets) {
+    try {
+      return await attempt(target);
+    } catch (error) {
+      if (!(error instanceof AppError) || !RETRYABLE_CODES.has(error.code)) {
+        throw error;
+      }
+
+      lastError = error;
+      logger.warn(
+        { provider: target.id, code: error.code },
+        'AI provider attempt failed, trying the next configured provider',
+      );
+    }
+  }
+
+  throw (
+    lastError ??
+    new AppError(502, 'AI_UNAVAILABLE', 'The AI provider could not complete the request.')
+  );
+}
+
+async function requestStructuredFromProvider<T>(
+  target: ProviderTarget,
+  options: StructuredRequest,
+): Promise<StructuredResult<T>> {
+  const content = await requestCompletion(target, options);
   const parsed = extractJsonObject(content);
-  const result = schema.safeParse(parsed);
+  const result = options.schema.safeParse(parsed);
 
   if (!result.success) {
     logger.warn(
@@ -198,32 +253,13 @@ async function requestFromProvider<T>(
 export async function requestStructuredOutput<T>(
   options: StructuredRequest,
 ): Promise<StructuredResult<T>> {
-  const targets = providerTargets();
+  return withProviderFallback((target) => requestStructuredFromProvider<T>(target, options));
+}
 
-  if (targets.length === 0) {
-    throw new AppError(503, 'AI_NOT_CONFIGURED', 'AI generation is not configured on this server.');
-  }
-
-  let lastError: AppError | null = null;
-
-  for (const target of targets) {
-    try {
-      return await requestFromProvider<T>(target, options);
-    } catch (error) {
-      if (!(error instanceof AppError) || !RETRYABLE_CODES.has(error.code)) {
-        throw error;
-      }
-
-      lastError = error;
-      logger.warn(
-        { provider: target.id, code: error.code },
-        'AI provider attempt failed, trying the next configured provider',
-      );
-    }
-  }
-
-  throw (
-    lastError ??
-    new AppError(502, 'AI_UNAVAILABLE', 'The AI provider could not complete the request.')
-  );
+export async function requestText(options: TextRequest): Promise<TextResult> {
+  return withProviderFallback(async (target) => ({
+    text: await requestCompletion(target, options),
+    model: target.model,
+    provider: target.id,
+  }));
 }

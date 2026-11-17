@@ -2,6 +2,10 @@
 
 ## P0 - Next
 
+- [ ] Deploy `backend-worker/` to Cloudflare as `scenetone-api` - acceptance: health and AI routes
+  respond on the deployed URL with secrets set
+- [ ] Set `FRONTEND_ORIGIN` to the deployed frontend origin and verify CORS
+
 - [ ] Commit Phase 4 core product - acceptance: one conventional commit
 - [ ] Phase 5 integration and deployment readiness - acceptance: production build, end-to-end
   auth/ownership/report/export checks and deployment docs matching configuration

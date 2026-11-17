@@ -207,6 +207,43 @@ describe('AI endpoints', () => {
     expect(response.body.error.code).toBe('VALIDATION_ERROR');
   });
 
+  it('names the failing field in the validation message', async () => {
+    const agent = await signedInAgent();
+    const response = await agent.post('/api/v1/ai/mix-report').send({
+      objective: 'Streaming master',
+      metrics: { channels: 2, durationSeconds: 4 },
+    });
+
+    expect(response.status).toBe(400);
+    expect(response.body.error.message).toContain('metrics.');
+    expect(response.body.error.details.issues.length).toBeGreaterThan(0);
+  });
+
+  it('accepts decoded sample peaks above full scale', async () => {
+    mocks.requestStructuredOutput.mockResolvedValue({
+      data: report,
+      model: 'test-model',
+      provider: 'adaption',
+    });
+
+    const agent = await signedInAgent();
+    const response = await agent.post('/api/v1/ai/mix-report').send({
+      objective: 'Streaming master',
+      metrics: {
+        channels: 2,
+        durationSeconds: 12.5,
+        samplePeakDbfs: 0.4,
+        rmsDbfs: -14.2,
+        crestFactorDb: 14.6,
+        bandEnergy: { low: 0.4, mid: 0.35, high: 0.25 },
+        stereoCorrelation: 0.82,
+      },
+    });
+
+    expect(response.status).toBe(200);
+    expect(response.body.report).toMatchObject({ measuredFacts: report.measuredFacts });
+  });
+
   it('surfaces provider errors without fabricating output', async () => {
     mocks.requestStructuredOutput.mockRejectedValue(
       new AppError(502, 'AI_UNAVAILABLE', 'The AI provider could not complete the request.'),

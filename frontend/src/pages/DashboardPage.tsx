@@ -10,6 +10,7 @@ import { Tag } from '@/components/ui/Tag';
 import { Window } from '@/components/ui/Window';
 import { useCurrentUser } from '@/hooks/useAuth';
 import { useCreateProject, useProjects } from '@/hooks/useProjects';
+import { describeError } from '@/lib/errors';
 
 function formatDate(value: string): string {
   return new Intl.DateTimeFormat(undefined, {
@@ -108,7 +109,7 @@ export function DashboardPage() {
           </form>
           {createProject.isError ? (
             <Alert variant="danger" title="Could not create project">
-              {createProject.error.message}
+              {describeError(createProject.error)}
             </Alert>
           ) : null}
 
@@ -120,7 +121,7 @@ export function DashboardPage() {
           {projects.isPending ? <p role="status">Loading projects...</p> : null}
           {projects.isError ? (
             <Alert variant="danger" title="Could not load projects">
-              {projects.error.message}
+              {describeError(projects.error)}
             </Alert>
           ) : null}
           {projects.data && projects.data.projects.length === 0 ? (

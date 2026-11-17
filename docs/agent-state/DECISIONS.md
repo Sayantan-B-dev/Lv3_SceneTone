@@ -152,3 +152,23 @@
   redirect-mode OAuth.
 - Related files: `frontend/vite.config.ts`, `frontend/.env.example`, `backend/.env.example`,
   `backend/src/config/env.ts`
+
+## D-014 - Keep the Worker AI-only
+
+- Date: 2026-11-17
+- Status: accepted
+- Decision: `backend-worker/` (Hono on Cloudflare Workers) serves health and the AI endpoints only;
+  Google sign-in, sessions and MongoDB projects stay on Express and return 501 on the Worker.
+- Reason: Workers cannot run the existing Mongoose/Mongo driver and server-side session store, and
+  V1 should not duplicate auth. The AI routes only need `fetch` and Zod.
+- Consequences: One deployment target for edge AI, unchanged Express backend, documented 501s.
+
+## D-015 - Page guide is DOM-grounded, not RAG
+
+- Date: 2026-11-17
+- Status: accepted
+- Decision: The floating guide sends a compact text snapshot of visible DOM elements plus recent
+  chat to `/api/v1/ai/guide`, and falls back to a local keyword answer when the provider fails.
+- Reason: Useful page help without a vector store, embeddings or audio access, while staying honest
+  about uncertainty.
+- Consequences: Hedged language, no claim of listening, graceful behaviour offline.

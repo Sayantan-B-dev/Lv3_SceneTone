@@ -8,12 +8,13 @@ export const bandEnergySchema = z.object({
   high: z.number().min(0).max(1),
 });
 
+// Decoded lossy files can overshoot full scale, so peaks slightly above 0 dBFS are valid.
 export const audioMetricsSchema = z.object({
   channels: z.union([z.literal(1), z.literal(2)]),
-  durationSeconds: z.number().positive(),
-  samplePeakDbfs: z.number().max(0).nullable(),
-  rmsDbfs: z.number().max(0).nullable(),
-  crestFactorDb: z.number().nonnegative().nullable(),
+  durationSeconds: z.number().positive().max(86_400),
+  samplePeakDbfs: z.number().min(-200).max(24).nullable(),
+  rmsDbfs: z.number().min(-200).max(24).nullable(),
+  crestFactorDb: z.number().nonnegative().max(200).nullable(),
   bandEnergy: bandEnergySchema,
   stereoCorrelation: z.number().min(-1).max(1).nullable(),
 });
@@ -96,7 +97,22 @@ export const mixReportSchema = z.object({
   limitations: z.array(z.string()),
 });
 
+export const guideRequestSchema = z.object({
+  question: z.string().trim().min(1).max(500),
+  pageContext: z.string().trim().max(6000).optional(),
+  history: z
+    .array(
+      z.object({
+        role: z.enum(['user', 'assistant']),
+        content: z.string().trim().min(1).max(1000),
+      }),
+    )
+    .max(6)
+    .optional(),
+});
+
 export type AudioMetrics = z.infer<typeof audioMetricsSchema>;
+export type GuideRequest = z.infer<typeof guideRequestSchema>;
 export type BlueprintRequest = z.infer<typeof blueprintRequestSchema>;
 export type MixReportRequest = z.infer<typeof mixReportRequestSchema>;
 export type SoundscapeBlueprint = z.infer<typeof soundscapeBlueprintSchema>;

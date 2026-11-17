@@ -14,11 +14,15 @@ export const notFoundHandler: RequestHandler = (_req, res) => {
 
 export const errorHandler: ErrorRequestHandler = (err, _req, res, _next) => {
   if (err instanceof ZodError) {
+    const issues = err.issues.map(
+      (issue) => `${issue.path.join('.') || 'body'}: ${issue.message}`,
+    );
+
     res.status(400).json({
       error: {
         code: 'VALIDATION_ERROR',
-        message: 'Request validation failed.',
-        details: err.flatten(),
+        message: `Request validation failed. ${issues.slice(0, 3).join('; ')}`,
+        details: { ...err.flatten(), issues },
       },
     });
     return;

@@ -7,6 +7,7 @@ import { Select } from '@/components/ui/Select';
 import { Window } from '@/components/ui/Window';
 import { useGenerateMixReport } from '@/hooks/useAi';
 import { analyzeAudioFile, type AudioAnalysis } from '@/lib/audio-analysis';
+import { describeError } from '@/lib/errors';
 import { downloadJson, downloadMarkdown, exportBaseName, reportToMarkdown } from '@/lib/export';
 import type { MixReport } from '@/types';
 
@@ -208,7 +209,7 @@ export function AnalyzePage() {
           </div>
           {report.isError ? (
             <Alert variant="danger" title="Report not generated">
-              {report.error.message}
+              {describeError(report.error)}
             </Alert>
           ) : null}
           <Alert variant="info" title="Metrics only">

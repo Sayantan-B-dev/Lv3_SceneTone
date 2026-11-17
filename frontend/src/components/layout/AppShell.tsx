@@ -1,4 +1,5 @@
 import { Link, Outlet } from 'react-router-dom';
+import { PageGuide } from '@/components/guide/PageGuide';
 import { BrandMark } from './BrandMark';
 import { Header } from './Header';
 
@@ -20,6 +21,7 @@ export function AppShell() {
           </p>
         </footer>
       </div>
+      <PageGuide />
     </>
   );
 }

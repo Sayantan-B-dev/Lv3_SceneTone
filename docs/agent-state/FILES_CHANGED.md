@@ -1,5 +1,23 @@
 # Files Changed
 
+## 2026-11-17 - page guide, validation clarity, Worker backend
+
+- Backend: `src/schemas/ai.schema.ts` (relaxed decoded peak, guide schema), `src/middleware/error-handler.ts`
+  (field-level message + issues), `src/services/adaption.service.ts` (text completions + shared
+  fallback chain), `src/services/ai-prompts.ts` (`buildGuidePrompt`), `src/controllers/ai.controller.ts`,
+  `src/routes/ai.routes.ts`, `src/middleware/security.ts`, `test/guide.test.ts`, `test/ai.test.ts`
+- Worker: `backend-worker/{package.json,tsconfig.json,wrangler.jsonc,README.md,.dev.vars.example}` and
+  `src/{index,ai,prompts,schemas,types}.ts`
+- Frontend: `src/components/guide/PageGuide.tsx`, `src/hooks/useGuide.ts`, `src/lib/errors.ts`,
+  `src/lib/page-context.ts`, `src/styles/guide.css`, cursor tokens in `styles/tokens.css` and rules in
+  `styles/base.css`, marquee fix in `styles/components.css`, guide mounted in `layout/AppShell.tsx`,
+  detailed errors in `AnalyzePage`, `BlueprintPage`, `DashboardPage`, `ProjectPage`, Material Symbols
+  link in `index.html`
+- Tests: frontend `src/lib/page-context.test.ts`
+
+Checks: backend typecheck and 39 tests pass; frontend typecheck, 18 tests and build pass; Worker
+typecheck passes and `wrangler deploy --dry-run` bundles successfully.
+
 ## 2026-11-17 - logo assets and Iosevka Charon Mono
 
 - `frontend/public/logo-dark.webp`, `logo-light.webp` - supplied logos moved into the Vite public dir
