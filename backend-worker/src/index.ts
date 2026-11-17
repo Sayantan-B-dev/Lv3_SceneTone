@@ -22,13 +22,35 @@ app.use('*', secureHeaders());
 app.use(
   '/api/*',
   cors({
-    origin: (origin, c) => (origin === c.env.FRONTEND_ORIGIN ? origin : null),
+    origin: (origin, c) => (isAllowedOrigin(c.env, origin) ? origin : null),
     allowMethods: ['GET', 'POST', 'OPTIONS'],
     allowHeaders: ['Content-Type'],
     credentials: true,
     maxAge: 86_400,
   }),
 );
+
+/**
+ * `FRONTEND_ORIGIN` accepts a comma-separated list, e.g. local dev plus production.
+ * Any localhost/127.0.0.1 port is also allowed so the Vite dev server works without edits.
+ */
+function isAllowedOrigin(env: Bindings, origin: string | undefined): boolean {
+  if (!origin) {
+    return false;
+  }
+
+  const normalized = origin.replace(/\/$/, '');
+
+  if (/^http:\/\/(localhost|127\.0\.0\.1):\d+$/.test(normalized)) {
+    return true;
+  }
+
+  return (env.FRONTEND_ORIGIN ?? '')
+    .split(',')
+    .map((value) => value.trim().replace(/\/$/, ''))
+    .filter(Boolean)
+    .includes(normalized);
+}
 
 app.get('/api/v1/health', (c) =>
   c.json({

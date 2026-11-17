@@ -8,8 +8,9 @@
     "enabled": true
   },
   "vars": {
-    // Must match the deployed frontend origin exactly. No trailing slash.
-    "FRONTEND_ORIGIN": "http://localhost:5173",
+    // Comma-separated list of exact browser origins. No trailing slashes.
+    // Replace the second entry with the deployed frontend origin.
+    "FRONTEND_ORIGIN": "http://localhost:5173,http://127.0.0.1:5173,https://YOUR-FRONTEND-DOMAIN",
     "OPENROUTER_BASE_URL": "https://openrouter.ai/api/v1",
     "OPENROUTER_MODEL": "openrouter/auto",
     "AI_REQUEST_TIMEOUT_MS": "30000"

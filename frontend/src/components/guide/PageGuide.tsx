@@ -10,9 +10,8 @@ interface Message {
 
 const BOT_SIZE = 62;
 const EDGE = 8;
-const CURSOR_GAP = 50;
-const WANDER_INTERVAL_MS = 3800;
 const THROW_MS = 700;
+const DRIFT_SPEED = 1.6;
 
 const GREETING =
   "Possibly I'm the page guide. I think I can read what's on this screen, so ask me what something does, maybe which button to press, or what is going on.";
@@ -36,14 +35,8 @@ interface BotState {
   y: number;
   vx: number;
   vy: number;
-  px: number;
-  py: number;
-  pointerSeen: boolean;
-  lastPointerMove: number;
-  angle: number;
-  radius: number;
-  idleTarget: { x: number; y: number };
-  lastIdlePick: number;
+  target: { x: number; y: number };
+  nextTargetAt: number;
   dragging: boolean;
   releasedAt: number;
   dragVelocityX: number;
@@ -66,14 +59,8 @@ export function PageGuide() {
     y: Math.max(EDGE, window.innerHeight - 170),
     vx: 0,
     vy: 0,
-    px: window.innerWidth / 2,
-    py: window.innerHeight / 2,
-    pointerSeen: false,
-    lastPointerMove: 0,
-    angle: Math.random() * Math.PI * 2,
-    radius: 96,
-    idleTarget: { x: window.innerWidth / 2, y: window.innerHeight / 2 },
-    lastIdlePick: 0,
+    target: { x: window.innerWidth / 2, y: window.innerHeight / 2 },
+    nextTargetAt: 0,
     dragging: false,
     releasedAt: 0,
     dragVelocityX: 0,
@@ -88,13 +75,6 @@ export function PageGuide() {
     let frame = 0;
     let previous = performance.now();
 
-    function onPointerMove(event: PointerEvent) {
-      state.px = event.clientX;
-      state.py = event.clientY;
-      state.pointerSeen = true;
-      state.lastPointerMove = performance.now();
-    }
-
     function tick(now: number) {
       const dt = Math.min(48, now - previous);
       previous = now;
@@ -103,88 +83,44 @@ export function PageGuide() {
       const maxY = Math.max(EDGE, window.innerHeight - BOT_SIZE - EDGE);
 
       if (!state.dragging) {
-        let targetX: number;
-        let targetY: number;
-        const activePointer = state.pointerSeen && now - state.lastPointerMove < 4000;
-
-        let spring = 0.0055;
-
-        if (activePointer) {
-          state.angle += (Math.random() - 0.5) * 0.05 * step;
-          state.radius += (Math.random() - 0.5) * 1.4 * step;
-          state.radius = clamp(state.radius, 70, 130);
-
-          const centerX = state.x + BOT_SIZE / 2;
-          const centerY = state.y + BOT_SIZE / 2;
-          const awayX = centerX - state.px;
-          const awayY = centerY - state.py;
-          const distance = Math.hypot(awayX, awayY);
-
-          if (distance < 140) {
-            // Run away when the cursor gets close, then settle back into orbit.
-            const escapeAngle =
-              distance < 1 ? state.angle + Math.PI : Math.atan2(awayY, awayX);
-            targetX = state.px + Math.cos(escapeAngle) * 180;
-            targetY = state.py + Math.sin(escapeAngle) * 180;
-            spring = 0.03;
-          } else {
-            targetX = state.px + Math.cos(state.angle) * state.radius;
-            targetY = state.py + Math.sin(state.angle) * state.radius;
-          }
-        } else {
-          if (now - state.lastIdlePick > WANDER_INTERVAL_MS) {
-            state.idleTarget = randomSpot();
-            state.lastIdlePick = now;
-          }
-          targetX = state.idleTarget.x;
-          targetY = state.idleTarget.y;
+        // Drift slowly toward a random spot, then pick another after a while.
+        if (now > state.nextTargetAt) {
+          state.target = randomSpot();
+          state.nextTargetAt = now + 6000 + Math.random() * 5000;
         }
 
         const flying = now - state.releasedAt < THROW_MS;
 
         if (!flying) {
-          state.vx += (targetX - state.x) * spring * step;
-          state.vy += (targetY - state.y) * spring * step;
-          state.vx *= Math.pow(0.94, step);
-          state.vy *= Math.pow(0.94, step);
-          state.vx = clamp(state.vx, -26, 26);
-          state.vy = clamp(state.vy, -26, 26);
+          state.vx += (state.target.x - state.x) * 0.0008 * step;
+          state.vy += (state.target.y - state.y) * 0.0008 * step;
+          state.vx *= Math.pow(0.98, step);
+          state.vy *= Math.pow(0.98, step);
+          state.vx = clamp(state.vx, -DRIFT_SPEED, DRIFT_SPEED);
+          state.vy = clamp(state.vy, -DRIFT_SPEED, DRIFT_SPEED);
         } else {
-          state.vx *= Math.pow(0.986, step);
-          state.vy *= Math.pow(0.986, step);
+          state.vx *= Math.pow(0.97, step);
+          state.vy *= Math.pow(0.97, step);
         }
 
         state.x += state.vx * step;
         state.y += state.vy * step;
 
+        // Bounce off the edges instead of leaving the screen.
         if (state.x < EDGE) {
           state.x = EDGE;
-          state.vx = Math.abs(state.vx) * 0.6 + 1.5;
+          state.vx = Math.abs(state.vx) * 0.45;
         } else if (state.x > maxX) {
           state.x = maxX;
-          state.vx = -Math.abs(state.vx) * 0.6 - 1.5;
+          state.vx = -Math.abs(state.vx) * 0.45;
         }
 
         if (state.y < EDGE) {
           state.y = EDGE;
-          state.vy = Math.abs(state.vy) * 0.6 + 1.5;
+          state.vy = Math.abs(state.vy) * 0.45;
         } else if (state.y > maxY) {
           state.y = maxY;
-          state.vy = -Math.abs(state.vy) * 0.6 - 1.5;
-        }
-
-        if (state.pointerSeen) {
-          const centerX = state.x + BOT_SIZE / 2;
-          const centerY = state.y + BOT_SIZE / 2;
-          const dx = centerX - state.px;
-          const dy = centerY - state.py;
-          const distance = Math.hypot(dx, dy);
-
-          if (distance < CURSOR_GAP) {
-            const angle = distance < 1 ? state.angle + Math.PI : Math.atan2(dy, dx);
-            state.x = clamp(state.px + Math.cos(angle) * CURSOR_GAP - BOT_SIZE / 2, EDGE, maxX);
-            state.y = clamp(state.py + Math.sin(angle) * CURSOR_GAP - BOT_SIZE / 2, EDGE, maxY);
-          }
+          state.vy = -Math.abs(state.vy) * 0.45;
         }
       } else {
         state.x = clamp(state.x, EDGE, maxX);
@@ -198,13 +134,9 @@ export function PageGuide() {
       frame = window.requestAnimationFrame(tick);
     }
 
-    window.addEventListener('pointermove', onPointerMove, { passive: true });
     frame = window.requestAnimationFrame(tick);
 
-    return () => {
-      window.cancelAnimationFrame(frame);
-      window.removeEventListener('pointermove', onPointerMove);
-    };
+    return () => window.cancelAnimationFrame(frame);
   }, []);
 
   useEffect(() => {
@@ -277,8 +209,11 @@ export function PageGuide() {
 
     state.dragging = false;
     state.releasedAt = performance.now();
-    state.vx = clamp(state.dragVelocityX, -34, 34);
-    state.vy = clamp(state.dragVelocityY, -34, 34);
+    state.vx = clamp(state.dragVelocityX, -16, 16);
+    state.vy = clamp(state.dragVelocityY, -16, 16);
+    // Settle where it lands instead of flying back to an old target.
+    state.target = { x: state.x, y: state.y };
+    state.nextTargetAt = state.releasedAt + 2500;
     event.currentTarget.classList.remove('is-dragging');
 
     if (event.currentTarget.hasPointerCapture(event.pointerId)) {

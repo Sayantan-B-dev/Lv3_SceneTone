@@ -58,6 +58,13 @@ export function describeError(error: unknown): string {
     return error.message;
   }
 
+  if (error instanceof TypeError && /fetch/i.test(error.message)) {
+    return (
+      'Could not reach the API. Check that the service URL in the frontend environment is correct, ' +
+      'the service is running, and its allowed origin list includes this site.'
+    );
+  }
+
   if (error instanceof Error && error.message.trim()) {
     return error.message;
   }
