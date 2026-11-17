@@ -87,3 +87,39 @@
 - Reason: Local development should not depend on cloud credentials.
 - Consequences: The API awaits the Mongo connection before listening and exits if it is unavailable.
 - Related files: `backend/.env`, `backend/.env.example`, `backend/src/db/connect.ts`
+
+## D-009 - Use a render-prop Field for accessible form controls
+
+- Date: 2026-11-17
+- Status: accepted
+- Decision: `Field` owns the label, generated id, hint/error ids and invalid/required wiring, and
+  exposes them through a render prop consumed by `Input`, `Textarea` or `Select`.
+- Reason: Keeps label/description/error association correct in one place while preserving native
+  control attributes.
+- Consequences: Form features should compose this primitive instead of hand-writing labels and
+  `aria-describedby`.
+- Related files: `frontend/src/components/ui/Field.tsx`, `Field.test.tsx`
+
+## D-010 - Translate the Win95/vaporwave reference without porting gimmicks
+
+- Date: 2026-11-17
+- Status: accepted
+- Decision: Keep the reference's taskbar, window chrome, palette, type and composition, but omit
+  window dragging, minimize controls and the runaway button; keep the aesthetic with standard
+  routed pages and accessible controls.
+- Reason: The gimmicks add pointer complexity, keyboard traps and little product value.
+- Consequences: Visual parity is intentional at the pattern level, not pixel-for-pixel behavior.
+- Related files: `frontend/src/components/layout/Header.tsx`,
+  `frontend/src/components/ui/Window.tsx`, `docs/DESIGN_REFERENCE.md`
+
+## D-011 - Label local previews and keep unbuilt actions inactive
+
+- Date: 2026-11-17
+- Status: accepted
+- Decision: The Blueprint page generates a deterministic local sample and labels it "not AI output";
+  Analyze displays inactive states and placeholders; exports are disabled until implemented.
+- Reason: The design reference is interactive, but mock generation must never be presented as real
+  inference or measurement.
+- Consequences: Phase 3 replaces the sample template and activates Analyze only when real flows and
+  tests exist.
+- Related files: `frontend/src/pages/BlueprintPage.tsx`, `frontend/src/pages/AnalyzePage.tsx`

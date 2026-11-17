@@ -1,22 +1,35 @@
+import { Link } from 'react-router-dom';
+import { Alert } from '@/components/ui/Alert';
 import { ApiStatus } from '@/components/ui/ApiStatus';
-import { Card } from '@/components/ui/Card';
+import { Window } from '@/components/ui/Window';
 
 export function DashboardPage() {
   return (
-    <section className="page">
-      <p className="eyebrow">Workspace</p>
-      <h1>Projects</h1>
-      <p className="page__lede">
-        Project CRUD, scene blueprints, audio analysis and mix reports are planned for later phases.
-        No project data is stored yet.
+    <section className="page page--narrow">
+      <h1 className="page__title">PROJECTS</h1>
+      <p className="page__jp" lang="ja">
+        計画 ワークスペース
       </p>
-      <ApiStatus />
-      <Card>
-        <h2>No projects yet</h2>
+
+      <Window title="projects.exe">
+        <ApiStatus />
         <p className="text-muted">
-          The project list and creation flow will connect to the authenticated API in a later phase.
+          Project CRUD, saved scene blueprints, audio analysis and mix reports arrive in later
+          phases. No project data is stored yet.
         </p>
-      </Card>
+        <Alert variant="info" title="Workspace preview">
+          This is the authenticated workspace shell. Google sign-in and MongoDB-backed projects are
+          not connected in this build.
+        </Alert>
+        <div className="workspace-actions">
+          <Link className="button button--secondary" to="/blueprint">
+            Open a sample blueprint
+          </Link>
+          <Link className="button button--ghost" to="/">
+            Back home
+          </Link>
+        </div>
+      </Window>
     </section>
   );
 }

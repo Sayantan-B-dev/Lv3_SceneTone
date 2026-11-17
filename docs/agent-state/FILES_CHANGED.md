@@ -1,77 +1,71 @@
 # Files Changed
 
-## 2026-11-17 - Phase 1 audit and repository scaffold
+## 2026-11-17 - Phase 2 design system (uncommitted)
 
-### Root
+### Reference and theme layer
 
-- `.gitignore`, `.editorconfig`, `.nvmrc` - repository tooling and ignore rules
-- `.github/workflows/ci.yml` - per-app install, lint, typecheck, test and build matrix
-- `package.json` - dependency-free orchestration scripts (`install:all`, `dev`, checks)
-- `scripts/dev.mjs` - dependency-free local launcher for both servers
-- `README.md` - architecture, separate-server local setup, env, run and verification steps
-- `SCENETONE_OPENCODE_PROMPTS.md` - completion checklist added
+- `reference/reference.html` - supplied design source, now tracked as untracked content
+- `frontend/index.html` - Google Fonts links; pre-paint theme unchanged
+- `frontend/src/styles/fonts.css` - display/body/mono font tokens
+- `frontend/src/styles/tokens.css` - light vaporwave palette, chrome/window/inset, focus, labels,
+  scene tokens, type/space/shape scales
+- `frontend/src/styles/themes.css` - dark reference palette and high-contrast focus
+- `frontend/src/styles/base.css` - gradient floor, display type, focus rules, reduced motion
+- `frontend/src/styles/layout.css` - taskbar shell, grid-column overflow fix, footer
+- `frontend/src/styles/components.css` - buttons, windows, fields, tags, notes, marquee, scene,
+  metrics, bands, spectrum, drop zone, chips, chain, plugin, FAQ, tables
+- `frontend/src/styles/pages.css` - hero, grids, blueprint boxes, plugin and about grids
+- `frontend/src/styles/responsive.css` - 53.75rem nav wrap, 40rem mobile, 24rem metric/energy
 
-### Frontend (`frontend/`)
+### Components and routes
 
-- `package.json`, `package-lock.json`, `tsconfig.json`, `vite.config.ts` - independent app scaffold;
-  strict port 5173
-- `eslint.config.js`, `.prettierrc.json`, `.prettierignore` - app-local lint/format tooling
-- `.env`, `.env.example` - local API link and public Google client id names
-- `index.html` - no-flash theme bootstrap
-- `src/main.tsx`, `App.tsx`, `vite-env.d.ts` - bootstrap and routes
-- `src/components/layout/` - `AppShell`, `Header`, `ThemeToggle`
-- `src/components/ui/` - `ApiStatus`, `Button`, `Card`, Button test
-- `src/pages/` - landing, dashboard, project and 404 scaffold pages
-- `src/hooks/useTheme.ts` - persisted light/dark/system theme handling
-- `src/lib/` - API client, query client, audio result types
-- `src/styles/` - reset, fonts, tokens, themes, base, layout, utilities, components, pages,
-  responsive layers
-- `src/test/setup.ts` - jsdom matchers and `matchMedia` fallback
-- `src/types/` - user, project, metrics, blueprint and mix-report types
-
-### Backend (`backend/`)
-
-- `package.json`, `package-lock.json`, `tsconfig.json`, `vitest.config.ts` - independent app scaffold
-- `eslint.config.js`, `.prettierrc.json`, `.prettierignore` - app-local lint/format tooling
-- `.env`, `.env.example` - local MongoDB and backend-only credential names
-- `src/config/env.ts` - validated environment; blank optional values accepted
-- `src/app.ts`, `server.ts` - middleware pipeline, Mongo-first startup and shutdown
-- `src/db/connect.ts` - Mongoose connection helpers
-- `src/lib/` - safe errors and redacted Pino logging
-- `src/middleware/` - auth, errors, security, sessions, validation
-- `src/models/` - `User`, `Project`
-- `src/routes/` - health, auth, projects, AI and API router
-- `src/controllers/` - honest `501` feature stubs
-- `src/services/` - Google token verification and Adaption provider boundary
-- `src/schemas/` - Zod auth, project, audio, blueprint and report contracts
-- `src/types/express-session.d.ts` - session `userId` augmentation
-- `test/` - test environment setup and health route test
+- `frontend/src/App.tsx` - Home, Blueprint, Analyze, FL Studio, About routes
+- `frontend/src/components/layout/AppShell.tsx` - footer workspace link
+- `frontend/src/components/layout/Header.tsx` - reference taskbar navigation
+- `frontend/src/components/layout/Clock.tsx` - accessible local clock
+- `frontend/src/components/layout/ThemeToggle.tsx` - taskbar select (unchanged behavior)
+- `frontend/src/components/ui/Window.tsx` - heading-labelled window chrome
+- `frontend/src/components/ui/Tag.tsx` - tag variants
+- `frontend/src/components/ui/Marquee.tsx` - decorative marquee
+- `frontend/src/components/ui/SceneVisualizer.tsx` - canvas scene, sliders, mood presets
+- `frontend/src/components/ui/FaqList.tsx` - accessible accordion
+- `frontend/src/components/ui/Button.tsx` - added `cyan` variant
+- `frontend/src/pages/LandingPage.tsx` - hero, visualizer, marquee, home windows
+- `frontend/src/pages/BlueprintPage.tsx` - sample brief form and labeled local blueprint
+- `frontend/src/pages/AnalyzePage.tsx` - inactive analyzer, placeholders, report preview
+- `frontend/src/pages/FlStudioPage.tsx` - filters, chain and plugin cards
+- `frontend/src/pages/AboutPage.tsx` - FAQ and definitions table
+- `frontend/src/pages/DashboardPage.tsx`, `ProjectPage.tsx`, `NotFoundPage.tsx` - restyled
+- `frontend/src/components/ui/Window.test.tsx` - window heading test
+- `frontend/src/components/ui/FaqList.test.tsx` - accordion state test
+- `frontend/src/components/ui/Field.test.tsx` - selector adjusted for required label
 
 ### Documentation
 
-- `docs/SRS.md`, `docs/TECH_STACK.md` - moved supplied baselines
-- `docs/reference/SRS_v1.3_source.docx` - archived supplied source
-- `docs/ARCHITECTURE.md`, `API_REFERENCE.md`, `DATABASE_SCHEMA.md`, `DESIGN_SYSTEM.md`,
-  `STYLE_GUIDE.md`, `DESIGN_REFERENCE.md`, `DEPLOYMENT.md`, `SECURITY_AND_PRIVACY.md`,
-  `TESTING.md`, `ROADMAP.md`, `CHANGELOG.md` - documentation set
-- `docs/diagrams/` - architecture, data-flow and deployment Mermaid diagrams
-- `docs/agent-state/` - status, TODO, decisions, changed files, handoff, session log, context index
+- `docs/DESIGN_REFERENCE.md` - reference inventory, mapping, honesty and verification
+- `docs/DESIGN_SYSTEM.md` - implemented tokens, primitives, routes and accessibility
+- `docs/ROADMAP.md` - design phase complete; backend/auth next
+- `docs/TESTING.md` - new tests and manual verification
+- `docs/CHANGELOG.md` - phase additions and verification
+- `SCENETONE_OPENCODE_PROMPTS.md` - Phase 2 complete, reference available
+- `README.md` - UI routes and design reference link
+- `docs/agent-state/` - status, TODO, decisions, files, handoff, session log, context index
 
 ### Checks
 
-- `npm run install:all` - passed; separate backend/frontend lockfiles and installs
 - `npm run typecheck` - passed (backend and frontend)
 - `npm run lint` - passed (backend and frontend)
-- `npm test` - passed (backend 1 test, frontend 1 test)
-- `npm run build` - passed (backend `tsc`; frontend Vite production build)
-- `npm run format:check` - passed (backend and frontend)
-- Local MongoDB ping - passed (`{ ok: 1 }`)
-- Backend startup - passed; logged `MongoDB connected` and `SceneTone API listening`
-- `GET /api/v1/health` with `Origin: http://localhost:5173` - passed; `200`, exact CORS origin,
-  `Access-Control-Allow-Credentials: true`
-- Frontend Vite dev server - passed; served `200` on port 5173
-- Temporary verification servers were stopped after the check
+- `npm test` - passed (backend 1, frontend 5 files / 6 tests)
+- `npm run build` - passed
+- `npm run format:check` - passed
+- Headless Chrome screenshots: 1440px light/dark, 390px and 320px
+- Headless route check: `/`, `/blueprint`, `/analyze`, `/fl-studio`, `/about` at 1440, 390 and
+  320px; `scrollWidth === innerWidth` on all 15 combinations, fonts loaded
 
 ### Commit
 
 - Not committed; awaiting explicit approval.
+
+## 2026-11-17 - Phase 1 scaffold
+
+- Committed as `0ca1702` (`chore: scaffold SceneTone frontend and backend`).

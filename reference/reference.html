@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SceneTone</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+<style>
+:root{--pk:#ff71ce;--cy:#01cdfe;--gr:#05ffa1;--pu:#b967ff;--yl:#fffb96;--ink:#1a0b3b;--sil:#c9c9d6;color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{font-family:"VT323",monospace;font-size:21px;line-height:1.25;color:#fff;background:linear-gradient(180deg,#2b0a5c 0%,#7a2fb8 45%,#ff71ce 100%) fixed;min-height:100vh;overflow-x:hidden;cursor:default}
+body::before{content:"";position:fixed;left:-50%;right:-50%;bottom:0;height:42vh;z-index:-1;background:linear-gradient(transparent,rgba(26,11,59,.9)),linear-gradient(var(--cy) 2px,transparent 2px) 0 0/100% 48px,linear-gradient(90deg,var(--cy) 2px,transparent 2px) 0 0/64px 100%;transform:perspective(260px) rotateX(58deg);transform-origin:bottom;animation:flr 1.2s linear infinite;opacity:.55}
+@keyframes flr{to{background-position:0 48px,0 0}}
+a{color:inherit;text-decoration:none}button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+:focus-visible{outline:2px dashed var(--yl);outline-offset:2px}
+.px{font-family:"Press Start 2P",monospace;line-height:1.5}
+.wrap{max-width:1180px;margin:0 auto;padding:22px 16px 90px}
+
+/* taskbar */
+.bar{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:6px;padding:6px 8px;background:var(--sil);border-bottom:3px solid #fff;box-shadow:0 3px 0 #555;color:#000;flex-wrap:wrap}
+.start{display:flex;align-items:center;gap:8px;padding:3px 12px;font-family:"Press Start 2P";font-size:11px;background:var(--sil);border:3px outset #fff}
+.start i{width:14px;height:14px;background:linear-gradient(135deg,var(--pk),var(--cy))}
+.tabs{display:flex;gap:4px;flex:1;flex-wrap:wrap}
+.tabs a{padding:3px 12px;background:var(--sil);border:3px outset #fff;font-size:20px}
+.tabs a.on{border-style:inset;background:#e6e6f5;font-weight:bold}
+#clock{border:2px inset #fff;padding:1px 10px;font-size:20px;background:var(--sil)}
+
+/* windows */
+.win{background:var(--sil);color:#000;border:3px outset #fff;box-shadow:6px 6px 0 rgba(26,11,59,.7);position:relative;touch-action:pan-y}
+.tb{display:flex;align-items:center;gap:8px;padding:3px 5px 3px 8px;background:linear-gradient(90deg,var(--pu),var(--pk) 55%,var(--cy));color:#fff;font-family:"Press Start 2P";font-size:10px;cursor:grab;user-select:none;text-shadow:1px 1px 0 #1a0b3b}
+.tb:active{cursor:grabbing}
+.tb span{flex:1;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.tb button{width:20px;height:18px;background:var(--sil);border:2px outset #fff;color:#000;font-size:12px;line-height:1;display:grid;place-items:center}
+.tb button:active{border-style:inset}
+.wb{padding:14px}
+.win.min .wb{display:none}
+.dark{background:#0d0222;color:#e9d8ff;border:3px inset #fff;padding:12px}
+.g{display:grid;gap:22px}.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:repeat(3,1fr)}.g12{grid-template-columns:5fr 7fr}
+.pg{display:none}.pg.show{display:block;animation:pop .35s steps(6)}
+@keyframes pop{from{opacity:0;transform:translateY(14px)}}
+
+/* type */
+h1,h2,h3{font-family:"Press Start 2P";font-weight:400;line-height:1.4}
+.ttl{font-size:clamp(30px,8vw,92px);color:#fff;text-shadow:3px 0 var(--cy),-3px 0 var(--pk),0 6px 0 var(--pu);letter-spacing:-2px;animation:gl 3.5s infinite}
+@keyframes gl{0%,92%,100%{transform:none}94%{transform:translate(4px,-2px) skewX(6deg)}96%{transform:translate(-5px,2px)}98%{transform:translate(3px,0) skewX(-5deg)}}
+.jp{font-size:30px;color:var(--yl);text-shadow:2px 2px 0 var(--pu);margin:6px 0 16px}
+.hero{display:grid;grid-template-columns:1fr 1fr;gap:26px;align-items:center;padding:30px 0}
+.lead{font-size:26px;color:#fff;text-shadow:2px 2px 0 #1a0b3b;max-width:520px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:6px 16px;background:var(--sil);color:#000;border:3px outset #fff;font-size:22px;transition:transform .1s}
+.btn:active{border-style:inset;transform:translate(2px,2px)}
+.btn.hot{background:var(--pk);box-shadow:3px 3px 0 var(--ink)}
+.btn.cy{background:var(--cy)}
+.btn[disabled]{opacity:.5}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-top:14px}
+.mq{margin:30px -16px 0;overflow:hidden;border-block:3px solid var(--cy);background:#0d0222;padding:8px 0}
+.mq div{display:flex;gap:40px;width:max-content;animation:mq 26s linear infinite;color:var(--gr);font-size:26px;white-space:nowrap}
+@keyframes mq{to{transform:translateX(-50%)}}
+canvas{display:block;width:100%;background:#0d0222}
+
+/* forms */
+label{display:block;font-size:19px;margin:10px 0 3px;color:#3a1c6e}
+input,select,textarea{width:100%;font:inherit;padding:5px 8px;background:#fff;color:#000;border:3px inset #fff;border-radius:0}
+textarea{min-height:92px;resize:vertical}
+input[type=range]{padding:0;height:22px;-webkit-appearance:none;background:transparent;border:0}
+input[type=range]::-webkit-slider-runnable-track{height:8px;background:linear-gradient(90deg,var(--cy),var(--pk));border:2px inset #fff}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:22px;margin-top:-9px;background:var(--sil);border:3px outset #fff}
+input[type=range]::-moz-range-track{height:8px;background:linear-gradient(90deg,var(--cy),var(--pk))}
+input[type=range]::-moz-range-thumb{width:16px;height:20px;background:var(--sil);border:3px outset #fff;border-radius:0}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tag{display:inline-block;padding:0 10px;margin:0 6px 6px 0;background:var(--pk);color:#000;border:2px outset #fff;font-size:19px}
+.tag.c{background:var(--cy)}.tag.g{background:var(--gr)}
+.note{padding:8px 10px;border:2px dashed var(--pk);background:#fff3fb;color:#3a1c6e;font-size:19px;margin-top:12px}
+.err{background:#ffe0e0;border-color:#c00;color:#900}
+.hid{display:none!important}
+
+/* output bits */
+.srow{display:grid;grid-template-columns:130px 1fr 50px;gap:10px;align-items:center;margin:6px 0;font-size:20px}
+.bar2{height:16px;border:2px inset #fff;background:#0d0222}
+.bar2 i{display:block;height:100%;width:0;background:repeating-linear-gradient(90deg,var(--pk) 0 8px,var(--cy) 8px 16px);transition:width .8s steps(14)}
+.bx{border:2px inset #fff;padding:8px 12px;background:#fff;color:#1a0b3b;font-size:19px}
+.bx b{font-family:"Press Start 2P";font-size:9px;color:var(--pu);display:block;margin-bottom:4px}
+.bx li{margin-left:16px}
+.mets{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}
+.met{background:#0d0222;border:2px inset #fff;padding:8px;color:var(--gr)}
+.met small{display:block;color:#b9a7e6;font-size:17px}.met b{font-size:30px;font-weight:400;text-shadow:0 0 8px var(--gr)}
+.drop{border:3px dashed var(--pu);padding:34px 12px;text-align:center;background:#fff;color:#3a1c6e;cursor:pointer;display:block;transition:background .15s}
+.drop.over,.drop:hover{background:#ffe9f7;border-color:var(--pk)}
+.drop b{font-family:"Press Start 2P";font-size:12px;display:block;margin:8px 0}
+.bands{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;height:150px;align-items:end;margin-top:10px}
+.bn{display:flex;flex-direction:column;justify-content:flex-end;height:100%;align-items:center;font-size:16px;color:#b9a7e6}
+.bn i{display:block;width:100%;background:linear-gradient(0deg,var(--cy),var(--pk));border:2px outset #fff;height:4%;transition:height .6s steps(10)}
+pre{background:#0d0222;color:var(--gr);padding:10px;font-size:19px;overflow:auto;border:3px inset #fff}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+.chips .btn.on{background:var(--yl);border-style:inset}
+.chain{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:20px}
+.nd{padding:3px 10px;background:#0d0222;color:var(--cy);border:2px solid var(--cy);cursor:pointer;font-size:19px}
+.nd:hover,.nd.on{background:var(--cy);color:#000}
+.kv b{font-family:"Press Start 2P";font-size:8px;color:var(--pu)}
+.kv p{margin:2px 0 8px}
+.q button{width:100%;text-align:left;padding:6px 10px;background:var(--sil);border:3px outset #fff;display:flex;justify-content:space-between;color:#000}
+.q .a{display:none;padding:8px 12px;background:#fff;color:#1a0b3b;border:2px inset #fff}.q.open .a{display:block}
+.q{margin-bottom:8px}
+table{width:100%;border-collapse:collapse;background:#fff;color:#1a0b3b}th,td{border:2px solid #b9a7e6;padding:4px 8px;text-align:left}th{background:#e8d8ff;font-family:"Press Start 2P";font-size:9px}
+#toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:99;display:none;max-width:92vw}
+#toast.show{display:block;animation:pop .25s steps(4)}
+footer{text-align:center;color:var(--yl);padding:20px;font-size:22px;text-shadow:2px 2px 0 var(--ink)}
+@media(max-width:860px){.hero,.g2,.g3,.g12{grid-template-columns:1fr}.mets{grid-template-columns:1fr 1fr}.srow{grid-template-columns:100px 1fr 44px}.win{transform:none!important}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+</head>
+<body>
+<div class="bar">
+  <a class="start" href="#/"><i></i>SceneTone</a>
+  <nav class="tabs" id="tabs"><a href="#/blueprint" data-r="blueprint">Blueprint</a><a href="#/analyze" data-r="analyze">Analyze</a><a href="#/fl-studio" data-r="fl-studio">FL Studio</a><a href="#/about" data-r="about">About</a></nav>
+  <div id="clock">0:00</div>
+</div>
+
+<main class="wrap">
+
+<!-- HOME -->
+<section class="pg" data-page="home">
+  <div class="hero">
+    <div>
+      <h1 class="ttl">SCENE<br>TONE</h1>
+      <div class="jp">シーントーン 蒸気波</div>
+      <p class="lead">Describe a scene. Get a blueprint. Drop in a mix and see the real numbers, measured right in your browser.</p>
+      <div class="row"><a class="btn hot" href="#/blueprint">Start a blueprint</a><a class="btn cy" href="#/analyze">Analyze a file</a></div>
+    </div>
+    <div class="win" data-drag><div class="tb"><span>scene_arc.exe</span><button data-min aria-label="Minimize">_</button></div>
+      <div class="wb"><canvas id="scene" width="640" height="320" aria-label="Live scene visualizer"></canvas>
+        <label for="en">Energy</label><input type="range" id="en" min="0" max="100" value="60">
+        <label for="te">Tension</label><input type="range" id="te" min="0" max="100" value="45">
+        <div class="row"><span class="tag c" id="sbpm">72 BPM</span><span class="tag" id="skey">D minor</span><button class="btn" id="mood">Next mood</button></div>
+      </div></div>
+  </div>
+  <div class="mq"><div id="mqt"></div></div>
+  <div class="g g3" style="margin-top:34px">
+    <div class="win" data-drag><div class="tb"><span>welcome.txt</span><button data-min>_</button></div><div class="wb"><p>Blueprints list the BPM, key, energy curve, sections, layers and automation for a scene.</p><div class="row"><a class="btn" href="#/blueprint">Open</a></div></div></div>
+    <div class="win" data-drag><div class="tb"><span>local_only.txt</span><button data-min>_</button></div><div class="wb"><p>Audio is decoded in your browser. Nothing is uploaded. Peak, RMS, crest factor, stereo correlation and 7 bands are measured on the spot.</p><div class="row"><a class="btn" href="#/analyze">Open</a></div></div></div>
+    <div class="win" data-drag><div class="tb"><span>are_you_ready.exe</span><button data-min>_</button></div><div class="wb"><p>Are you ready to enter the aesthetic?</p><div class="row"><a class="btn hot" href="#/blueprint">Enter</a><button class="btn" id="leave">Leave</button></div></div></div>
+  </div>
+</section>
+
+<!-- BLUEPRINT -->
+<section class="pg" data-page="blueprint">
+  <h2 class="ttl" style="font-size:clamp(22px,5vw,46px)">BLUEPRINT</h2><div class="jp">計画</div>
+  <div class="g g12">
+    <div class="win" data-drag><div class="tb"><span>brief.exe</span><button data-min>_</button></div><div class="wb">
+      <form id="bpForm">
+        <label for="bpScene">Scene</label><textarea id="bpScene">A lone lighthouse keeper in a storm, rain on glass, distant thunder, a fragile hope building toward dawn.</textarea>
+        <div class="two"><div><label for="bpDur">Length</label><select id="bpDur"><option value="1">1 min</option><option value="2" selected>2 min</option><option value="3">3 min</option><option value="5">5 min</option></select></div>
+        <div><label for="bpStyle">Style</label><select id="bpStyle"><option>Cinematic tension</option><option>Ambient drone</option><option>Lo-fi dusk</option><option>Sound-design heavy</option></select></div></div>
+        <div class="two"><div><label for="bpPlat">Platform</label><select id="bpPlat"><option>Film / video</option><option>Game</option><option>Podcast</option><option>Streaming release</option></select></div>
+        <div><label for="bpCon">Constraint</label><input id="bpCon" value="No percussion in the first 30 seconds"></div></div>
+        <div class="row"><button class="btn hot" type="submit">Generate blueprint</button></div>
+      </form>
+      <div class="note">Sample mode: this builds a template in your browser. It is not AI output.</div>
+    </div></div>
+    <div class="g">
+      <div class="win" data-drag><div class="tb"><span id="bpTitle">blueprint.exe</span><button data-min>_</button></div><div class="wb">
+        <div id="bpMeta"></div><div id="bpSecs"></div>
+        <div class="g g2" id="bpBoxes" style="gap:10px;margin-top:12px"></div>
+        <div class="row"><button class="btn" id="bpJson">Save JSON</button><button class="btn" id="bpMd">Save Markdown</button></div>
+      </div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ANALYZE -->
+<section class="pg" data-page="analyze">
+  <h2 class="ttl" style="font-size:clamp(22px,5vw,46px)">ANALYZE</h2><div class="jp">分析 ローカル</div>
+  <div class="g g12">
+    <div class="win" data-drag><div class="tb"><span>open_file.exe</span><button data-min>_</button></div><div class="wb">
+      <label class="drop" id="drop" for="file" tabindex="0"><span class="px" style="font-size:26px">♪</span><b>Drop WAV or MP3</b>or click to browse. Up to 60 MB. Nothing is uploaded.<input id="file" type="file" accept=".wav,.mp3,audio/wav,audio/mpeg,audio/x-wav" class="hid"></label>
+      <div class="row"><button class="btn cy" id="demo">Use demo signal</button><button class="btn" id="play" disabled>Play</button><span id="fname">No file loaded</span></div>
+      <div class="note err hid" id="err"></div>
+    </div></div>
+    <div class="win" data-drag><div class="tb"><span>spectrum.exe</span><button data-min>_</button></div><div class="wb">
+      <canvas id="spec" width="700" height="220" aria-label="Spectrum"></canvas>
+      <div class="mets">
+        <div class="met"><small>Length</small><b id="mDur">-</b></div><div class="met"><small>Sample peak</small><b id="mPeak">-</b></div><div class="met"><small>RMS</small><b id="mRms">-</b></div>
+        <div class="met"><small>Crest</small><b id="mCrest">-</b></div><div class="met"><small>Stereo corr.</small><b id="mCorr">-</b></div><div class="met"><small>Channels</small><b id="mCh">-</b></div>
+      </div></div></div>
+  </div>
+  <div class="g g2" style="margin-top:22px">
+    <div class="win" data-drag><div class="tb"><span>band_energy.exe</span><button data-min>_</button></div><div class="wb"><div class="dark"><div class="bands" id="bands"></div></div></div></div>
+    <div class="win" data-drag><div class="tb"><span>mix_report.exe</span><button data-min>_</button></div><div class="wb">
+      <label for="obj">Goal</label><select id="obj"><option>Streaming master</option><option>Film / video cue</option><option>Game ambience loop</option><option>Rough demo</option></select>
+      <div class="row"><button class="btn hot" id="mkRep">Build report</button></div>
+      <div id="rep" class="hid" style="margin-top:12px"></div>
+      <div class="row hid" id="repBtns"><button class="btn" id="rJson">Save JSON</button><button class="btn" id="rMd">Save Markdown</button></div>
+    </div></div>
+  </div>
+  <div class="note" style="margin-top:20px">RMS is not LUFS. Sample peak is not true peak. Band energy is approximate. Trust your ears first.</div>
+</section>
+
+<!-- FL -->
+<section class="pg" data-page="fl-studio">
+  <h2 class="ttl" style="font-size:clamp(22px,5vw,46px)">FL STUDIO</h2><div class="jp">プラグイン</div>
+  <p class="lead" style="margin-bottom:18px">Stock plugin ideas with purpose and placement. Treat every setting as a starting point.</p>
+  <div class="chips" id="chips"></div><div class="chain" id="chain"></div><div class="g g3" id="plugs"></div>
+</section>
+
+<!-- ABOUT -->
+<section class="pg" data-page="about">
+  <h2 class="ttl" style="font-size:clamp(22px,5vw,46px)">ABOUT</h2><div class="jp">情報</div>
+  <div class="g g2">
+    <div class="win" data-drag><div class="tb"><span>faq.exe</span><button data-min>_</button></div><div class="wb" id="faq"></div></div>
+    <div class="win" data-drag><div class="tb"><span>definitions.exe</span><button data-min>_</button></div><div class="wb">
+      <table><tr><th>Metric</th><th>Means</th><th>Not</th></tr>
+      <tr><td>Sample peak</td><td>Largest sample in dBFS</td><td>True peak</td></tr>
+      <tr><td>RMS</td><td>Average level over the clip</td><td>LUFS</td></tr>
+      <tr><td>Crest</td><td>Peak minus RMS</td><td>Loudness range</td></tr>
+      <tr><td>Bands</td><td>Approximate energy per range</td><td>Weighted</td></tr>
+      <tr><td>Correlation</td><td>L and R similarity</td><td>Phase scope</td></tr></table>
+      <div class="note">This is a design preview. Blueprints and reports come from local templates, not an AI provider.</div>
+    </div></div>
+  </div>
+</section>
+</main>
+<footer>A E S T H E T I C · SceneTone · 2026</footer>
+<div id="toast" class="win"><div class="wb" id="toastT"></div></div>
+
+<script>
+const $=i=>document.getElementById(i),clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+let tt;const toast=m=>{$('toastT').textContent=m;$('toast').classList.add('show');clearTimeout(tt);tt=setTimeout(()=>$('toast').classList.remove('show'),2800)};
+const save=(n,t,ty)=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([t],{type:ty}));a.download=n;document.body.appendChild(a);a.click();a.remove();toast('Saved '+n)};
+
+/* clock + marquee */
+setInterval(()=>{const d=new Date();$('clock').textContent=d.getHours()+':'+String(d.getMinutes()).padStart(2,'0')},1000);
+$('clock').textContent=new Date().getHours()+':'+String(new Date().getMinutes()).padStart(2,'0');
+const mq='蒸気波 · PEAK · RMS · CREST · 7 BANDS · BLUEPRINT · FL STUDIO · LOCAL FIRST · ';$('mqt').innerHTML=`<span>${mq.repeat(3)}</span><span>${mq.repeat(3)}</span>`;
+
+/* draggable and minimizable windows */
+document.addEventListener('click',e=>{const b=e.target.closest('[data-min]');if(b)b.closest('.win').classList.toggle('min')});
+document.addEventListener('pointerdown',e=>{
+  const tb=e.target.closest('.tb');if(!tb||e.target.closest('button')||innerWidth<=860)return;const w=tb.closest('[data-drag]');if(!w)return;
+  const m=(w.style.transform.match(/-?[\d.]+/g)||[0,0]).map(Number);let[x0,y0]=m;const sx=e.clientX,sy=e.clientY;w.style.zIndex=20;tb.setPointerCapture(e.pointerId);
+  const mv=ev=>{w.style.transform=`translate(${x0+ev.clientX-sx}px,${y0+ev.clientY-sy}px)`};
+  const up=()=>{tb.removeEventListener('pointermove',mv);tb.removeEventListener('pointerup',up)};tb.addEventListener('pointermove',mv);tb.addEventListener('pointerup',up)});
+
+/* leave button runs away */
+$('leave').addEventListener('pointerenter',()=>{const b=$('leave');b.style.transform=`translate(${(Math.random()-.5)*120}px,${(Math.random()-.5)*60}px)`});
+$('leave').onclick=()=>toast('You cannot leave the aesthetic');
+
+/* live scene */
+const cv=$('scene'),cx=cv.getContext('2d'),sun=document.createElement('canvas');sun.width=640;sun.height=320;const sc=sun.getContext('2d');
+const MOODS=[['Cinematic tension',72,'D minor',[43,10,92],[255,113,206]],['Rain noir',64,'A minor',[8,40,92],[1,205,254]],['Lo-fi dusk',84,'F major',[92,20,80],[255,170,90]],['Dawn bloom',58,'G major',[60,30,120],[255,251,150]]];
+let mood=0,en=.6,te=.45;
+$('en').oninput=e=>en=e.target.value/100;$('te').oninput=e=>te=e.target.value/100;
+$('mood').onclick=()=>{mood=(mood+1)%4;$('sbpm').textContent=MOODS[mood][1]+' BPM';$('skey').textContent=MOODS[mood][2];toast('Mood: '+MOODS[mood][0])};
+function drawScene(t){
+  const W=640,H=320,hz=H*.58,[,,,c0,c1]=MOODS[mood];
+  let g=cx.createLinearGradient(0,0,0,hz);g.addColorStop(0,`rgb(${c0})`);g.addColorStop(1,`rgb(${c1})`);cx.fillStyle=g;cx.fillRect(0,0,W,H);
+  const r=56+en*34,sy=hz-r*.55;sc.clearRect(0,0,W,H);g=sc.createLinearGradient(0,sy-r,0,sy+r);g.addColorStop(0,'#fffb96');g.addColorStop(1,'#ff4fa8');sc.fillStyle=g;sc.beginPath();sc.arc(W/2,sy,r,0,7);sc.fill();
+  for(let i=0;i<7;i++)sc.clearRect(W/2-r,sy+r*.05+i*r*.15,r*2,1+i*1.6);cx.drawImage(sun,0,0);
+  cx.lineWidth=2;cx.shadowColor='#01cdfe';cx.shadowBlur=8;
+  for(let k=0;k<4;k++){cx.strokeStyle=k%2?'#01cdfe':'#05ffa1';cx.beginPath();for(let x=0;x<=W;x+=6){const y=hz-26-k*14+Math.sin(x/38+t/500*(1+k*.3)+k)*en*22+Math.sin(x/9+t/110)*te*7;x?cx.lineTo(x,y):cx.moveTo(x,y)}cx.stroke()}
+  cx.shadowBlur=0;cx.fillStyle='#1a0b3b';cx.fillRect(0,hz,W,H-hz);cx.strokeStyle='#ff71ce';cx.lineWidth=1.5;
+  for(let i=-10;i<=10;i++){cx.beginPath();cx.moveTo(W/2+i*14,hz);cx.lineTo(W/2+i*95,H);cx.stroke()}
+  for(let i=0;i<8;i++){const p=((i+t/900)%8)/8,y=hz+Math.pow(p,2)*(H-hz);cx.beginPath();cx.moveTo(0,y);cx.lineTo(W,y);cx.stroke()}
+}
+
+/* blueprint */
+let bp=null;
+(()=>{
+  const SEC=['Establish','Rising unease','Storm closes in','Breaking point','Release','Dawn tail'],K={'Cinematic tension':['D minor',72],'Ambient drone':['C Lydian',58],'Lo-fi dusk':['F major',84],'Sound-design heavy':['E phrygian',66]};
+  const gen=()=>{const sc=$('bpScene').value.trim()||'Untitled scene',dur=+$('bpDur').value,st=$('bpStyle').value,pl=$('bpPlat').value,con=$('bpCon').value.trim(),n=Math.min(6,3+dur),[key,bpm]=K[st];
+    const h=[...sc].reduce((a,c)=>(a*31+c.charCodeAt(0))>>>0,7),secs=Array.from({length:n},(_,i)=>{const t=i/(n-1);return{name:SEC[Math.round(i*5/(n-1))],start:Math.round(i*dur*60/n),energy:Math.round(clamp(.25+.6*Math.sin(Math.PI*Math.min(1,t*1.12))+((h>>i)&7)/60,.12,.98)*100)}});
+    const w=sc.toLowerCase().match(/[a-z]{5,}/g)||['room'],w1=w[0],w2=w[Math.min(w.length-1,2)];
+    bp={_notice:'Sample data from a local template, not AI',scene:sc,durationMin:dur,style:st,platform:pl,constraint:con||null,bpm,key,sections:secs,
+      layers:['Low drone bed','Textural pad','Pulse motif',`Ambience around "${w1}"`],foley:[`Close detail for "${w1}"`,`Distant layer for "${w2}"`,'Room tone'],
+      automation:['Slow low-pass opening through the build','Reverb send rising into the breaking point','Narrow stereo in tension, widen at release'],
+      transitions:['Reverse swell into section 3','Silence gap before release','Long tail at the end'],
+      notes:['Keep the first section sparse','Save the loudest moment for the breaking point',con?'Constraint: '+con:'No constraints'],uncertainty:['Tempo and key are starting suggestions']};
+    $('bpTitle').textContent=(sc.length>30?sc.slice(0,30)+'...':sc)+'.exe';
+    $('bpMeta').innerHTML=`<span class="tag">${bpm} BPM</span><span class="tag c">${key}</span><span class="tag g">${dur} min</span><span class="tag">${pl}</span>`;
+    $('bpSecs').innerHTML=secs.map(s=>`<div class="srow"><b>${s.name}</b><div class="bar2"><i data-w="${s.energy}"></i></div><span>${Math.floor(s.start/60)}:${String(s.start%60).padStart(2,'0')}</span></div>`).join('');
+    setTimeout(()=>$('bpSecs').querySelectorAll('i').forEach(i=>i.style.width=i.dataset.w+'%'),30);
+    const L=a=>'<ul>'+a.map(x=>`<li>${x}</li>`).join('')+'</ul>';
+    $('bpBoxes').innerHTML=[['LAYERS',bp.layers],['FOLEY',bp.foley],['AUTOMATION',bp.automation],['TRANSITIONS',bp.transitions],['NOTES',bp.notes],['ASSUMPTIONS',bp.uncertainty]].map(([t,a])=>`<div class="bx"><b>${t}</b>${L(a)}</div>`).join('')};
+  $('bpForm').onsubmit=e=>{e.preventDefault();gen();toast('Blueprint ready')};gen();
+  $('bpJson').onclick=()=>save('scenetone-blueprint.json',JSON.stringify(bp,null,2),'application/json');
+  $('bpMd').onclick=()=>{const L=a=>a.map(x=>'- '+x).join('\n');save('scenetone-blueprint.md',`# ${bp.scene}\n\n> ${bp._notice}\n\n- BPM: ${bp.bpm}\n- Key: ${bp.key}\n- Style: ${bp.style}\n\n## Sections\n${L(bp.sections.map(s=>`${s.name} (energy ${s.energy}/100)`))}\n\n## Layers\n${L(bp.layers)}\n\n## Automation\n${L(bp.automation)}\n\n## Notes\n${L(bp.notes)}\n`,'text/markdown')};
+})();
+
+/* analysis */
+const BN=['Sub','Low','Low-mid','Mid','High-mid','High','Air'],dbf=v=>v>0?20*Math.log10(v):-Infinity,fd=v=>isFinite(v)?v.toFixed(1)+' dB':'-inf';
+$('bands').innerHTML=BN.map(n=>`<div class="bn"><i></i>${n}</div>`).join('');
+function fft(re,im){const n=re.length;for(let i=1,j=0;i<n;i++){let b=n>>1;for(;j&b;b>>=1)j^=b;j^=b;if(i<j){[re[i],re[j]]=[re[j],re[i]];[im[i],im[j]]=[im[j],im[i]]}}
+  for(let l=2;l<=n;l<<=1){const a=-2*Math.PI/l,wr=Math.cos(a),wi=Math.sin(a);for(let i=0;i<n;i+=l){let cr=1,ci=0;for(let k=0;k<l/2;k++){const u=i+k,v=u+l/2,xr=re[v]*cr-im[v]*ci,xi=re[v]*ci+im[v]*cr;re[v]=re[u]-xr;im[v]=im[u]-xi;re[u]+=xr;im[u]+=xi;const t=cr*wr-ci*wi;ci=cr*wi+ci*wr;cr=t}}}}
+function analyze(buf){
+  const ch=buf.numberOfChannels,n=buf.length,sr=buf.sampleRate,d=[];for(let c=0;c<ch;c++)d.push(buf.getChannelData(c));
+  let pk=0,sq=0;for(const a of d)for(let i=0;i<n;i++){const v=a[i];if(!isFinite(v))continue;const m=Math.abs(v);if(m>pk)pk=m;sq+=v*v}
+  const rms=Math.sqrt(sq/Math.max(1,n*ch));let corr=null;
+  if(ch>=2){let lr=0,ll=0,rr=0;const L=d[0],R=d[1];for(let i=0;i<n;i++){lr+=L[i]*R[i];ll+=L[i]*L[i];rr+=R[i]*R[i]}corr=ll>0&&rr>0?lr/Math.sqrt(ll*rr):null}
+  const ed=[20,60,250,500,2000,4000,10000,sr/2],N=2048,E=new Array(7).fill(0);
+  if(pk>0&&n>=N){const fr=Math.min(160,Math.floor(n/N)),w=Float32Array.from({length:N},(_,i)=>.5-.5*Math.cos(2*Math.PI*i/(N-1)));
+    for(let f=0;f<fr;f++){const o=Math.floor(f*(n-N)/Math.max(1,fr-1)),re=new Float64Array(N),im=new Float64Array(N);for(let i=0;i<N;i++){let m=0;for(let c=0;c<ch;c++)m+=d[c][o+i];re[i]=m/ch*w[i]}fft(re,im);
+      for(let k=1;k<N/2;k++){const f0=k*sr/N;for(let b=0;b<7;b++)if(f0>=ed[b]&&f0<ed[b+1]){E[b]+=re[k]*re[k]+im[k]*im[k];break}}}}
+  const mx=Math.max(...E);return{duration:n/sr,sr,ch,peakDb:dbf(pk),rmsDb:dbf(rms),crestDb:dbf(pk)-dbf(rms),corr,silent:pk===0,rel:E.map(e=>mx>0&&e>0?+(10*Math.log10(e/mx)).toFixed(1):-60)};
+}
+let M=null,AB=null,ctxA=null,src=null,an=null,playing=false,lastRep=null;
+const sp=$('spec'),sx=sp.getContext('2d');
+const err=m=>{$('err').classList.toggle('hid',!m);$('err').textContent=m||''};
+function stop(){if(src){try{src.stop()}catch(e){}src=null}playing=false;$('play').textContent='Play'}
+function show(m,name,buf){
+  stop();M=m;AB=buf;$('fname').textContent=name;$('play').disabled=false;
+  $('mDur').textContent=m.duration.toFixed(1)+'s';$('mPeak').textContent=fmtN(m.peakDb);$('mRms').textContent=fmtN(m.rmsDb);$('mCrest').textContent=m.silent?'-':m.crestDb.toFixed(1)+' dB';
+  $('mCorr').textContent=m.corr==null?'n/a':(m.corr>=0?'+':'')+m.corr.toFixed(2);$('mCh').textContent=m.ch+'ch '+(m.sr/1000).toFixed(1)+'k';
+  document.querySelectorAll('#bands i').forEach((el,i)=>el.style.height=clamp(4+(1+m.rel[i]/40)*96,4,100)+'%');
+  $('rep').classList.add('hid');$('repBtns').classList.add('hid');err(m.silent?'This file is digital silence, so levels and bands are not meaningful.':'');
+}
+const fmtN=v=>isFinite(v)?v.toFixed(1):'-inf';
+async function loadFile(f){err('');if(!f)return;
+  if(f.size>60*1048576)return err('File is over 60 MB. Pick a smaller WAV or MP3.');
+  if(!/\.(wav|mp3)$/i.test(f.name)&&!/audio\/(wav|x-wav|mpeg|mp3)/.test(f.type))return err('Unsupported type. Use a WAV or MP3.');
+  $('fname').textContent='Decoding...';
+  try{ctxA=ctxA||new(window.AudioContext||window.webkitAudioContext)();const buf=await ctxA.decodeAudioData(await f.arrayBuffer());show(analyze(buf),f.name,buf);toast('Analyzed locally')}
+  catch(e){$('fname').textContent='No file loaded';err('Could not decode this file. It may be corrupt.')}}
+$('file').onchange=e=>{loadFile(e.target.files[0]);e.target.value=''};
+const dr=$('drop');['dragenter','dragover'].forEach(v=>dr.addEventListener(v,e=>{e.preventDefault();dr.classList.add('over')}));
+['dragleave','drop'].forEach(v=>dr.addEventListener(v,e=>{e.preventDefault();dr.classList.remove('over')}));
+dr.addEventListener('drop',e=>loadFile(e.dataTransfer.files[0]));dr.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();$('file').click()}});
+$('demo').onclick=()=>{try{ctxA=ctxA||new(window.AudioContext||window.webkitAudioContext)()}catch(e){return err('Web Audio is not available here.')}
+  const sr=44100,len=sr*6,b=ctxA.createBuffer(2,len,sr),L=b.getChannelData(0),R=b.getChannelData(1);let r=1;const rn=()=>(r=r*16807%2147483647)/2147483647-.5;
+  for(let i=0;i<len;i++){const t=i/sr,e=.55+.45*Math.sin(t*1.7),a=.25*Math.sin(6.283*55*t)+.16*Math.sin(6.283*220*t)*e+.08*Math.sin(6.283*880*t)+.05*rn();L[i]=a+.05*Math.sin(6.283*330*t);R[i]=a+.05*Math.sin(6.283*277*t)}
+  show(analyze(b),'demo.wav (made in your browser)',b);toast('Demo analyzed')};
+$('play').onclick=async()=>{if(!AB)return;if(playing){stop();return}
+  await ctxA.resume();src=ctxA.createBufferSource();src.buffer=AB;an=ctxA.createAnalyser();an.fftSize=1024;an.smoothingTimeConstant=.8;src.connect(an);an.connect(ctxA.destination);src.onended=()=>{if(playing)stop()};src.start();playing=true;$('play').textContent='Stop'};
+function drawSpec(t){const W=700,H=220;sx.fillStyle='#0d0222';sx.fillRect(0,0,W,H);
+  const N=48;let d=null;if(playing&&an){d=new Uint8Array(an.frequencyBinCount);an.getByteFrequencyData(d)}
+  const gr=sx.createLinearGradient(0,H,0,0);gr.addColorStop(0,'#01cdfe');gr.addColorStop(.6,'#ff71ce');gr.addColorStop(1,'#fffb96');sx.fillStyle=gr;
+  for(let i=0;i<N;i++){let v;if(d){const k=Math.floor(Math.pow(i/N,2)*d.length*.9)+1;v=d[k]/255}else{const rel=M?M.rel:null;v=rel?clamp(1+rel[Math.floor(i/N*7)]/40,0,1)*(.85+.15*Math.sin(t/300+i)):.08+.04*Math.sin(t/400+i*.5)}
+    const h=Math.max(4,v*(H-14)),w=W/N;sx.fillRect(i*w+2,H-h,w-4,h)}
+  sx.strokeStyle='rgba(1,205,254,.2)';for(let y=0;y<H;y+=36){sx.beginPath();sx.moveTo(0,y);sx.lineTo(W,y);sx.stroke()}}
+
+/* report */
+$('mkRep').onclick=()=>{if(!M)return toast('Load a file or the demo signal first');
+  const m=M,o=$('obj').value,me=[],hy=[],re=[];
+  me.push(`Length ${m.duration.toFixed(1)} s, ${m.ch} channel(s), ${m.sr} Hz.`,`Sample peak ${fd(m.peakDb)}, RMS ${fd(m.rmsDb)}, crest ${m.silent?'n/a':m.crestDb.toFixed(1)+' dB'}.`,m.corr==null?'Stereo correlation unavailable.':`Stereo correlation ${m.corr.toFixed(2)}.`);
+  if(!m.silent){const t=m.rel.indexOf(0),l=m.rel.indexOf(Math.min(...m.rel));me.push(`Strongest band ${BN[t]}, weakest ${BN[l]} (${m.rel[l]} dB).`);
+    if(m.peakDb>-1)hy.push('Peaks sit near full scale. True peak was not measured, so overs are possible.');
+    if(m.crestDb<8)hy.push('Low crest suggests dense or heavily limited material.');else if(m.crestDb>16)hy.push('High crest suggests very dynamic material that may sound quiet next to dense references.');
+    if(m.corr!=null&&m.corr<.3)hy.push('Low correlation suggests wide content. Check in mono.');
+    if(m.rel[2]>-3)hy.push('Low-mid energy is high and may feel crowded.');
+    if(!hy.length)hy.push('Nothing stands out from these numbers alone.');
+    re.push(`For "${o}", compare against a trusted reference by ear first.`);
+    if(m.rel[2]>-3)re.push('Try a gentle low-mid cut with Fruity Parametric EQ 2 and A/B it.');
+    if(m.peakDb>-1)re.push('Lower the level ahead of Fruity Limiter instead of pushing it harder.');
+    if(m.corr!=null&&m.corr<.3)re.push('Check stereo wideners and reverb returns for phase issues.');
+    re.push('All settings are starting points. Verify by listening.')}else re.push('Re-export the file. It is digital silence.');
+  const li=['RMS is not LUFS and no loudness range was computed.','Sample peak is not oversampled true peak.','Band energy is approximate and not weighted.','Nothing was listened to. Every line comes from numbers.'];
+  lastRep={_notice:'Local template, not AI',objective:o,metrics:{durationSec:+m.duration.toFixed(2),samplePeakDbfs:isFinite(m.peakDb)?+m.peakDb.toFixed(2):null,rmsDbfs:isFinite(m.rmsDb)?+m.rmsDb.toFixed(2):null,crestDb:isFinite(m.crestDb)?+m.crestDb.toFixed(2):null,stereoCorrelation:m.corr==null?null:+m.corr.toFixed(3),bandsRelDb:m.rel},measured:me,hypotheses:hy,recommendations:re,limitations:li};
+  const L=a=>'<ul>'+a.map(x=>`<li>${x}</li>`).join('')+'</ul>';
+  $('rep').innerHTML=[['MEASURED',me],['HYPOTHESES',hy],['RECOMMENDATIONS',re],['LIMITS',li]].map(([t,a])=>`<div class="bx" style="margin-bottom:8px"><b>${t}</b>${L(a)}</div>`).join('');
+  $('rep').classList.remove('hid');$('repBtns').classList.remove('hid')};
+$('rJson').onclick=()=>save('scenetone-mix-report.json',JSON.stringify(lastRep,null,2),'application/json');
+$('rMd').onclick=()=>{const r=lastRep,L=a=>a.map(x=>'- '+x).join('\n');save('scenetone-mix-report.md',`# Mix report\n\n> ${r._notice}\n\nGoal: ${r.objective}\n\n## Measured\n${L(r.measured)}\n\n## Hypotheses\n${L(r.hypotheses)}\n\n## Recommendations\n${L(r.recommendations)}\n\n## Limits\n${L(r.limitations)}\n`,'text/markdown')};
+
+/* FL */
+const PL=[['Fruity Parametric EQ 2','Tone','Carve low-mid mud and tame harshness','Early in the chain, before dynamics','Cuts of 1 to 3 dB, then A/B'],['Fruity Compressor','Dynamics','Glue layers, control short peaks','After EQ, before the limiter','Gentle ratio, slower attack, 1 to 3 dB of reduction'],['Maximus','Dynamics','Multiband control for one misbehaving region','On the bus, after tonal EQ','Treat only the band that needs it'],['Fruity Reeverb 2','Space','Depth and a believable room or tail','Send, not on the dry signal','Add pre-delay, trim lows in the return'],['Fruity Delay 3','Space','Echoes and movement behind a layer','Send, filtered so it stays clear','Sync to tempo, lower feedback'],['Fruity Limiter','Safety','Final ceiling and level control','Last in the chain','Leave headroom, it is not a loudness fix'],['Fruity Soft Clipper','Safety','Shave occasional peaks','Just before the limiter','Use sparingly, listen for distortion']];
+(()=>{let cat='All';const ch=$('chips'),pg=$('plugs'),cn=$('chain');
+  const r=()=>{const f=PL.filter(p=>cat==='All'||p[1]===cat);
+    pg.innerHTML=f.map(p=>`<div class="win" data-drag id="p-${p[0].replace(/\W/g,'')}"><div class="tb"><span>${p[0]}</span><button data-min>_</button></div><div class="wb kv"><span class="tag c">${p[1]}</span><b>PURPOSE</b><p>${p[2]}</p><b>PLACEMENT</b><p>${p[3]}</p><b>START WITH</b><p>${p[4]}</p></div></div>`).join('');
+    cn.innerHTML=f.map((p,i)=>`<span class="nd" data-n="${p[0].replace(/\W/g,'')}">${p[0]}</span>${i<f.length-1?'<span>></span>':''}`).join('');
+    cn.querySelectorAll('.nd').forEach(n=>n.onclick=()=>{cn.querySelectorAll('.nd').forEach(x=>x.classList.remove('on'));n.classList.add('on');const w=$('p-'+n.dataset.n);w.scrollIntoView({behavior:'smooth',block:'center'});w.classList.remove('min');w.animate([{transform:'scale(1.04)'},{transform:'none'}],200)})};
+  ch.innerHTML=['All','Tone','Dynamics','Space','Safety'].map(c=>`<button class="btn ${c==='All'?'on':''}">${c}</button>`).join('');
+  ch.querySelectorAll('.btn').forEach(b=>b.onclick=()=>{ch.querySelectorAll('.btn').forEach(x=>x.classList.remove('on'));b.classList.add('on');cat=b.textContent;r()});r()})();
+
+/* FAQ */
+$('faq').innerHTML=[['Is SceneTone a DAW?','No. It makes blueprints, measurements and reports. You do the sound design in your own DAW.'],['Does my audio get uploaded?','No. WAV and MP3 files are decoded and measured in your browser.'],['Is RMS the same as LUFS?','No. LUFS uses K-weighting and gating. This tool reports plain RMS.'],['Can it generate music?','Not in V1.'],['Does it control FL Studio?','No. It suggests stock plugins and placement for you to set up by hand.']].map(([q,a])=>`<div class="q"><button aria-expanded="false"><span>${q}</span><span>+</span></button><div class="a">${a}</div></div>`).join('');
+document.querySelectorAll('.q button').forEach(b=>b.onclick=()=>{const o=b.parentNode.classList.toggle('open');b.setAttribute('aria-expanded',o);b.lastChild.textContent=o?'-':'+'});
+
+/* router + loop */
+const pgs=[...document.querySelectorAll('.pg')];
+function route(){const r=(location.hash.replace(/^#\/?/,'')||'home');const n=pgs.some(p=>p.dataset.page===r)?r:'home';
+  pgs.forEach(p=>p.classList.toggle('show',p.dataset.page===n));document.querySelectorAll('#tabs a').forEach(a=>a.classList.toggle('on',a.dataset.r===n));scrollTo(0,0)}
+addEventListener('hashchange',route);route();
+const rm=matchMedia('(prefers-reduced-motion:reduce)').matches;
+const vis=el=>{const b=el.getBoundingClientRect();return b.width>0&&b.bottom>0&&b.top<innerHeight};
+const loop=t=>{if(vis(cv))drawScene(t);if(vis(sp))drawSpec(t);if(!rm)requestAnimationFrame(loop)};
+if(rm){drawScene(0);drawSpec(0)}else requestAnimationFrame(loop);
+</script>
+</body>
+</html>

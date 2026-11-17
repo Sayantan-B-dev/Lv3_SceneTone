@@ -1,21 +1,25 @@
 # Roadmap
 
-## Phase 0 — Audit and scaffold (current)
+## Phase 0 — Audit and scaffold (complete)
 
 - [x] Verify source docs and organize `docs/`.
 - [x] Create monorepo structure, tooling and CI.
 - [x] Add frontend shell, centralized styles and theme support.
 - [x] Add backend pipeline, models, schemas, services boundary and safe stubs.
 - [x] Add agent-state files and handoff.
-- [ ] Obtain `reference.html`.
+- [x] Obtain `reference.html` (`reference/reference.html`).
 
-## Phase 1 — Design system completion
+## Phase 1 — Design system completion (complete)
 
-- Translate the reference design into components.
-- Complete tokens, typography, responsive and accessibility behavior.
-- Record visual verification evidence.
+- [x] Centralized style layers, semantic tokens, light/dark/system themes.
+- [x] Translate the reference into taskbar, window, form and content components.
+- [x] Build Home, Blueprint, Analyze, FL Studio and About routes.
+- [x] Accessible shell, skip link, form primitives, alerts, FAQ and focus styles.
+- [x] Automated theme, field, window and FAQ tests.
+- [x] Manual light/dark and 1440/390/320px visual verification.
+- [x] Independent accessibility audit performed and findings addressed.
 
-## Phase 2 — Backend, auth and persistence
+## Phase 2 — Backend, auth and persistence (next)
 
 - MongoDB connection verification and indexes.
 - Google credential verification and user creation on verified `sub`.

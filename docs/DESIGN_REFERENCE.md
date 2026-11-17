@@ -1,23 +1,53 @@
 # Design Reference
 
-## Status: blocked
+## Status: implemented
 
-`reference.html` is not present in the repository.
+Source: `reference/reference.html` (387 lines, vaporwave/Win95 desktop concept).
 
-Per the SRS (FR-08) and the phase plan, the reference must be translated into reusable components
-and must not be iframed or pasted raw. Until the reference is supplied:
+## Reference inventory
 
-- The scaffold provides token-driven layout and primitives only.
-- Visual parity with the intended design cannot be claimed.
-- Do not invent a pixel-accurate reference.
+- Fixed purple-to-pink gradient page with a perspective neon grid floor and reduced-motion fallback.
+- Sticky silver taskbar with a start-style brand, route tabs, clock and theme control.
+- Display typography (`Press Start 2P`) and terminal body type (`VT323`), Japanese subheads.
+- Perspective "window" chrome: gradient title bars, silver bodies, bevel borders and hard shadows.
+- Home: glitch hero title, live scene visualizer, marquee, three welcome windows.
+- Blueprint: scene brief form, metadata tags, section energy bars, six output boxes, export actions.
+- Analyze: drop zone, spectrum, six metrics, seven band bars, goal-driven mix report.
+- FL Studio: category filters, chain of stock plugins, purpose/placement/starting-point cards.
+- About: FAQ accordions and a metric-definition table.
+- Lime-on-navy inset panels, dashed notes, tag chips, 3D buttons, square corners.
 
-## Required next input
+## Translation mapping
 
-Place the supplied reference file at the repository root as `reference.html` (or provide its path),
-then:
+| Reference element | Implementation |
+| --- | --- |
+| Page gradient and grid floor | `frontend/src/styles/base.css` with `--gradient-bg`, `--color-grid-line`, `--color-floor-fade` |
+| Taskbar and tabs | `components/layout/Header.tsx`, `Clock.tsx`, `ThemeToggle.tsx` |
+| Window chrome | `components/ui/Window.tsx` plus `.window` styles |
+| Tag chips and notes | `Tag.tsx`, `.tag`, `.note` |
+| Buttons | `Button.tsx` variants `primary`, `secondary`, `cyan`, `ghost` |
+| Scene visualizer | `SceneVisualizer.tsx` using CSS scene tokens and reduced-motion handling |
+| Hero, marquee, home windows | `pages/LandingPage.tsx`, `Marquee.tsx` |
+| Blueprint form and output | `pages/BlueprintPage.tsx` with local sample template |
+| Analyze layout | `pages/AnalyzePage.tsx` with inactive analysis states |
+| FL Studio catalogue | `pages/FlStudioPage.tsx` with filter and chain |
+| FAQ and definitions | `pages/AboutPage.tsx`, `FaqList.tsx` |
 
-1. Inventory sections, components, colors, type and spacing.
-2. Map design values to semantic tokens in `frontend/src/styles/tokens.css`.
-3. Add theme-aware overrides in `themes.css`.
-4. Translate layout and components into React components under `frontend/src/components/`.
-5. Verify responsive and accessibility behavior before claiming parity.
+Reference gimmicks (window dragging, minimize buttons, runaway leave button) are intentionally not
+ported because they add little product value and complicate keyboard and pointer behavior. The
+"leave" interaction is represented by an honest status message.
+
+## Honesty constraints
+
+- The blueprint is a deterministic local sample, labeled "not AI output" in the output window.
+- Analyze is visibly inactive; metrics show `—` and band bars are empty.
+- Exports are disabled and explained.
+- FL Studio content is static guidance and does not claim control over the DAW.
+
+## Verification evidence
+
+- Headless Chrome screenshots at 1440px (light and dark), 390px and 320px.
+- No horizontal overflow measured at 390px or 320px (`scrollWidth === innerWidth`).
+- Light and dark themes verified through emulated `prefers-color-scheme`.
+- Automated accessibility fixes from an independent read-only subagent audit were applied; see
+  `docs/agent-state/SESSION_LOG.md`.

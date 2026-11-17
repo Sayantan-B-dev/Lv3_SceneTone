@@ -1,21 +1,29 @@
-import { useParams } from 'react-router-dom';
-import { Card } from '@/components/ui/Card';
+import { Link, useParams } from 'react-router-dom';
+import { Alert } from '@/components/ui/Alert';
+import { Window } from '@/components/ui/Window';
 
 export function ProjectPage() {
   const { projectId } = useParams();
 
   return (
-    <section className="page">
-      <p className="eyebrow">Project</p>
-      <h1>Project workspace</h1>
-      <p className="page__lede">
-        The project composer, blueprint view, local audio analysis and mix report will be built in
-        later phases.
+    <section className="page page--narrow">
+      <h1 className="page__title">PROJECT</h1>
+      <p className="page__jp" lang="ja">
+        プロジェクト
       </p>
-      <Card>
-        <h2>Scaffold placeholder</h2>
-        <p className="text-muted">Project id: {projectId ?? 'unknown'}</p>
-      </Card>
+
+      <Window title="workspace.exe">
+        <p>Project id: {projectId ?? 'unknown'}</p>
+        <Alert variant="warning" title="Scaffold placeholder">
+          The project composer, blueprint view, local analysis and mix report will be built in later
+          phases.
+        </Alert>
+        <div className="workspace-actions">
+          <Link className="button button--secondary" to="/dashboard">
+            Back to projects
+          </Link>
+        </div>
+      </Window>
     </section>
   );
 }

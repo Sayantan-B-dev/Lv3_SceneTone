@@ -11,16 +11,20 @@ You are the primary engineering agent. Read `AGENTS.md`, `SKILLS.md`, `README.md
 - [x] Separate installed dependencies from proposed ones
 - [x] Create/update agent-state files
 - [x] Report architecture, gaps, risks, blockers and phase plan
-- [ ] `reference.html` available for design work (blocker)
+- [x] `reference.html` available for design work (`reference/reference.html`)
 
-### Phase 2 — Design system (partial)
+### Phase 2 — Design system (complete)
 - [x] Centralize styles under `frontend/src/styles/` with one global entry
 - [x] Reset, fonts, tokens, themes, base, layout, utilities, components, pages, responsive layers
 - [x] Semantic CSS variables and light/dark/system themes with persistence
 - [x] Reusable primitives and responsive application shell
+- [x] Accessible shell: skip link, landmarks, focus-visible styles, reduced motion
+- [x] Accessible form primitives (`Field`, `Input`, `Textarea`, `Select`) and `Alert`
+- [x] Automated theme persistence and field accessibility tests
 - [x] No iframe or scattered global CSS
-- [ ] Translate `reference.html` into components (blocked: file missing)
-- [ ] Accessibility review and visual parity verification
+- [x] Translate `reference.html` into taskbar, window, form and page components
+- [x] Independent accessibility audit and follow-up fixes
+- [x] Manual light/dark and 1440/390/320px visual verification
 
 ### Phase 3 — Backend, auth and persistence (scaffold only)
 - [x] MongoDB connection helpers, User/Project models and session store configuration
@@ -48,8 +52,8 @@ You are the primary engineering agent. Read `AGENTS.md`, `SKILLS.md`, `README.md
 - [ ] Nginx, systemd, TLS, Vercel and Atlas configuration
 - [ ] Deployment documentation matching actual configuration
 
-**Overall:** Phase 1 complete; Phase 2 partial and blocked on `reference.html`; Phase 3 scaffold
-only; Phases 4-5 not started.
+**Overall:** Phase 1 complete; Phase 2 design system complete; Phase 3 scaffold only; Phases 4-5
+not started.
 
 ## Phase 1 — Audit and plan
 Audit repository structure, git status, manifests, lockfiles, routes, models, components, deployment and `reference.html` if present. Do not build product features or install packages. Create/update `docs/SRS.md`, `docs/TECH_STACK.md`, `docs/ARCHITECTURE.md`, `docs/ROADMAP.md`, README and state files as needed. Separate installed dependencies from proposed ones. Use subagents for independent repo/security/docs audits where available; avoid overlapping edits. Report architecture, gaps, risks, blockers and exact phase plan. Update `STATUS.md`, `TODO.md`, `DECISIONS.md`, `FILES_CHANGED.md`, `HANDOFF.md`. Ask “Commit this phase?”

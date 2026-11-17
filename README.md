@@ -150,6 +150,7 @@ Verify:
 
 - API health: <http://localhost:5000/api/v1/health>
 - Web app: <http://localhost:5173>
+- UI routes: `/`, `/blueprint`, `/analyze`, `/fl-studio`, `/about`, `/dashboard`
 - Dashboard indicator: **API connected**
 - Backend log: `MongoDB connected` followed by `SceneTone API listening`
 
@@ -185,6 +186,7 @@ Unit tests use a test environment and do not require live MongoDB, Google or Ada
 - [API reference](docs/API_REFERENCE.md)
 - [Database schema](docs/DATABASE_SCHEMA.md)
 - [Design system](docs/DESIGN_SYSTEM.md)
+- [Design reference](docs/DESIGN_REFERENCE.md) (`reference/reference.html`)
 - [Security and privacy](docs/SECURITY_AND_PRIVACY.md)
 - [Testing](docs/TESTING.md)
 - [Roadmap](docs/ROADMAP.md)

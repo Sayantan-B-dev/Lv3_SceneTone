@@ -2,19 +2,10 @@
 
 ## P0 - Next
 
-- [ ] Obtain `reference.html` - acceptance: file exists at the repository root or its path is
-  recorded - blocker for visual parity
-- [ ] Commit approved scaffold - acceptance: explicit user approval, then one conventional commit
+- [ ] Commit Phase 2 design system after explicit approval - acceptance: one conventional commit
+- [ ] Start Phase 3 backend/auth - acceptance: plan reported before broad edits
 
-## P1 - Design system phase
-
-- [ ] Translate the reference design into reusable components - acceptance: no iframe/raw HTML paste,
-  centralized styles, responsive layout
-- [ ] Complete token and theme coverage - acceptance: light/dark/system switching without reload and
-  persisted preference
-- [ ] Verify focus, contrast and narrow viewport behavior - acceptance: documented check results
-
-## P1 - Backend and auth phase
+## P1 - Backend, auth and persistence
 
 - [ ] Implement Google sign-in and local user creation - acceptance: verified `sub`, invalid
   signature/issuer/audience/expiry rejected
@@ -22,7 +13,7 @@
 - [ ] Wire session creation/logout and CSRF behavior - acceptance: cookie flags and logout tests
 - [ ] Verify session TTL cleanup on the local database - acceptance: expired session removed
 
-## P1 - Core product phase
+## P1 - Core product and audio
 
 - [ ] Implement Adaption adapter with timeout and error mapping - acceptance: 429, 5xx, timeout and
   malformed output tests; no fabricated output
@@ -33,6 +24,8 @@
 - [ ] Implement FL Studio handoff and JSON/Markdown/TXT export - acceptance: manual guidance only;
   secret-free export
 - [ ] Disclose scene brief and metric transmission to the AI provider in the UI
+- [ ] Replace the labeled local blueprint sample with the validated provider response
+- [ ] Activate the Analyze page and real spectrum/band rendering
 
 ## P2 - Later
 
@@ -51,3 +44,11 @@
 - [x] Local `.env` files created (gitignored) with local MongoDB default
 - [x] Local MongoDB connectivity verified
 - [x] Frontend origin/CORS and backend health connection verified
+- [x] Reference translated into taskbar, window, tag, form and page components
+- [x] Home, Blueprint, Analyze, FL Studio and About routes built
+- [x] Accessible skip link and focusable main landmark
+- [x] Form primitives with label/hint/error association and `Alert`
+- [x] Theme-aware focus, warning, label and scene tokens
+- [x] Theme persistence, field, window and FAQ tests
+- [x] Independent accessibility audit and follow-up fixes
+- [x] Light/dark and mobile visual verification without horizontal overflow

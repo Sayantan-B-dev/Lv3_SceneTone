@@ -2,95 +2,91 @@
 
 ## Resume point
 
-- Phase/state: Phase 1 audit and repository scaffold - verified
-- Branch/last commit: `main`, no commits yet
-- Current task: scaffold complete; start the design system phase only after `reference.html` is
-  supplied
+- Phase/state: Phase 2 design system complete, uncommitted
+- Branch/last commit: `main`, `0ca1702` (Phase 1 scaffold)
+- Next phase: Phase 3 backend, auth and persistence
+- Current task: obtain commit approval for Phase 2, then implement auth/session/projects
 
 ## Completed and verified
 
-- Frontend and backend are independent applications with separate `package.json`, lockfiles,
-  `node_modules`, `.env` files and build outputs.
-- Root package is dependency-free orchestration only: `npm run install:all`, `npm run dev`,
-  `npm run dev:backend`, `npm run dev:frontend` and forwarded checks.
-- Frontend Vite/React/TypeScript shell with routes, layout, theme toggle, centralized CSS layers and
-  a dashboard API status indicator.
-- Backend Express/TypeScript pipeline with Mongo-first startup, sessions, security middleware,
-  validation, safe errors, redacted logging and a health endpoint.
-- Mongoose `User`/`Project` models and Zod contracts for auth, projects, audio metrics, blueprints
-  and reports.
-- Honest feature stubs: unimplemented routes return `501`; no mock inference is produced.
-- Documentation set, diagrams, CI workflow and agent-state files created.
-- Local MongoDB at `127.0.0.1:27017` responds to ping; backend connected and served health.
-- Exact CORS origin (`http://localhost:5173`) and credentials header verified on health response.
-- Frontend dev server served `200` on port 5173.
+### Phase 1 (committed)
 
-## In progress
+- Independent frontend/backend apps with separate lockfiles, installs, env files and build outputs.
+- Root orchestration is dependency-free; no root `node_modules`.
+- Express pipeline, sessions, security middleware, validation, safe errors, redacted logs, models
+  and Zod contracts; feature routes remain honest `501` stubs.
+- Local MongoDB connection, exact CORS and frontend health link verified.
+- Full scaffold checks passed.
 
-- Nothing partially implemented. All feature work is intentionally deferred.
+### Phase 2 (uncommitted)
+
+- `reference/reference.html` translated into a vaporwave/Win95 React UI.
+- Taskbar shell, window chrome, gradient floor, display fonts, tags, notes, buttons and footer.
+- Routes: `/`, `/blueprint`, `/analyze`, `/fl-studio`, `/about`, `/dashboard`,
+  `/projects/:projectId`, 404.
+- Home scene visualizer with sliders and mood presets; reduced-motion static frame.
+- Blueprint page produces a deterministic local sample, explicitly labeled not AI output; exports
+  disabled and explained.
+- Analyze page is visibly inactive; metrics and bands remain placeholders.
+- FL Studio catalogue is static guidance with filters and chain; no DAW control claim.
+- About FAQ and definitions; accessible accordion and scroll-safe table.
+- Light/dark/system tokens, focus contrast, `lang="ja"` and scoped live regions.
+- Independent accessibility audit performed and findings addressed.
+- Tests: backend 1; frontend 5 files / 6 tests.
+
+## Important constraints for next agent
+
+- The UI is visually complete but AI generation, audio analysis, persistence and exports are not
+  implemented. Do not describe the sample blueprint as inference.
+- Replace the local template in `frontend/src/pages/BlueprintPage.tsx` only when the Adaption flow
+  and validation exist.
+- Activate Analyze only with real browser-local Web Audio metrics; never fabricate numbers.
+- Keep window chrome decorative; no dragging/minimize behavior was ported.
 
 ## Exact next action
 
 1. Open: repository root.
-2. Inspect: confirm `reference.html` exists.
-3. Do: if present, inventory the design and implement Phase 2; if absent, request it before claiming
-   visual parity.
+2. Inspect: `docs/SRS.md` auth/project requirements and current backend stubs.
+3. Do: implement Google credential verification, app-owned sessions and owner-scoped project CRUD
+   with mocked tests; do not require live Google credentials.
 4. Verify: `npm run typecheck && npm run lint && npm test && npm run build && npm run format:check`.
 
 ## Relevant files
 
-- `README.md` - separate-server local setup and run instructions
-- `docs/SRS.md` - approved requirements baseline
-- `docs/TECH_STACK.md` - approved stack and dependency policy
-- `docs/ARCHITECTURE.md` - scaffold boundaries and target flow
-- `frontend/src/styles/index.css` - single global style entry
-- `frontend/src/styles/tokens.css` - semantic tokens to extend
-- `frontend/src/lib/api.ts` - API link used by the frontend
-- `frontend/src/components/ui/ApiStatus.tsx` - health connection indicator
-- `backend/src/app.ts` - API middleware order
-- `backend/src/config/env.ts` - validated environment, including blank optional values
-- `backend/src/schemas/ai.schema.ts` - provider request/response contracts
-- `backend/src/services/adaption.ts` - AI adapter boundary (stub)
+- `frontend/src/pages/BlueprintPage.tsx` - sample template to replace in the AI phase
+- `frontend/src/pages/AnalyzePage.tsx` - inactive analyzer to activate in the audio phase
+- `frontend/src/pages/FlStudioPage.tsx` - static plugin catalogue
+- `frontend/src/components/ui/` - Window, Field controls, Alert, FaqList, visualizer
+- `frontend/src/styles/` - all design tokens and layers
+- `reference/reference.html` - source design, do not iframe
+- `backend/src/middleware/`, `backend/src/routes/`, `backend/src/services/` - Phase 3 targets
+- `backend/src/config/env.ts` - blank optional env values are accepted
 
 ## Checks
 
-- `npm run install:all` - passed; separate app installs and lockfiles
 - `npm run typecheck` - passed
 - `npm run lint` - passed
-- `npm test` - passed (2 tests total)
+- `npm test` - passed (backend 1 test; frontend 5 files / 6 tests)
 - `npm run build` - passed
 - `npm run format:check` - passed
-- Local MongoDB ping - passed
-- Backend health with frontend origin - passed; `200` plus exact CORS and credentials headers
-- Frontend Vite server - passed; `200` on port 5173
+- Manual visual: 1440px light/dark, 390px and 320px; no horizontal overflow
 
 ## Blockers and assumptions
 
-- Blocker: `reference.html` is absent, so visual parity cannot be implemented or claimed.
-- Google OAuth and Adaption calls remain unverified; local `.env` values for those are placeholders.
-- The Adaption model catalogue has not been queried; no model ID or pricing is assumed.
-- Node 24.19.0 and npm 11.16.0 were used locally; CI uses Node 22.
+- No blocker for Phase 3 coding. Live Google OAuth and Adaption calls are unverified and need real
+  credentials only for manual smoke tests, not automated tests.
+- Local MongoDB at `127.0.0.1:27017` was verified earlier.
+- Google Fonts are loaded from a third party; fallbacks are in place.
 
 ## Required environment variable names
 
-- `NODE_ENV` - runtime mode
-- `PORT` - API port (local 5000)
-- `FRONTEND_ORIGIN` - exact allowed CORS origin (local `http://localhost:5173`)
-- `MONGODB_URI` - database connection (secret)
-- `SESSION_SECRET` - session signing secret (secret)
-- `GOOGLE_CLIENT_ID` - public OAuth client id
-- `GOOGLE_CLIENT_SECRET` - only if applicable (secret)
-- `ADAPTION_API_KEY` - provider key (secret)
-- `ADAPTION_BASE_URL` - provider base URL
-- `ADAPTION_MODEL` - provider model selected from the current catalogue
-- `AI_REQUEST_TIMEOUT_MS` - provider timeout
-- `VITE_API_BASE_URL` - public frontend API base (local `http://localhost:5000/api/v1`)
-- `VITE_GOOGLE_CLIENT_ID` - public frontend Google client id
+- `NODE_ENV`, `PORT`, `FRONTEND_ORIGIN`, `MONGODB_URI`, `SESSION_SECRET`, `GOOGLE_CLIENT_ID`,
+  `GOOGLE_CLIENT_SECRET`, `ADAPTION_API_KEY`, `ADAPTION_BASE_URL`, `ADAPTION_MODEL`,
+  `AI_REQUEST_TIMEOUT_MS`, `VITE_API_BASE_URL`, `VITE_GOOGLE_CLIENT_ID`
 
 ## Git state
 
-- Working tree: all files untracked
+- Working tree: Phase 2 changes uncommitted
 - Ignored: `backend/.env`, `frontend/.env`, `node_modules/`, build outputs
-- Uncommitted files: entire scaffold
-- Commit status: not committed
+- Commit status: Phase 1 committed; Phase 2 not committed
 - Do not commit without user approval.
