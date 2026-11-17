@@ -2,23 +2,21 @@
 
 ## P0 - Next
 
-- [ ] Commit Phase 3 auth and persistence - acceptance: one conventional commit
-- [ ] Build the Adaption provider adapter - acceptance: timeout, 429, 5xx and malformed output
-  mapped to safe errors; no fabricated output
+- [ ] Commit Phase 4 core product - acceptance: one conventional commit
+- [ ] Phase 5 integration and deployment readiness - acceptance: production build, end-to-end
+  auth/ownership/report/export checks and deployment docs matching configuration
 
 ## P1 - Core product and audio
 
-- [ ] Implement Adaption adapter with timeout and error mapping - acceptance: 429, 5xx, timeout and
-  malformed output tests; no fabricated output
-- [ ] Implement browser-local audio analysis - acceptance: silence, mono, stereo and decode failure
-  tests; numeric metrics only
-- [ ] Implement qualified mix report - acceptance: facts, hypotheses, recommendations and limitations
-  separated
-- [ ] Implement FL Studio handoff and JSON/Markdown/TXT export - acceptance: manual guidance only;
-  secret-free export
-- [ ] Disclose scene brief and metric transmission to the AI provider in the UI
-- [ ] Replace the labeled local blueprint sample with the validated provider response
-- [ ] Activate the Analyze page and real spectrum/band rendering
+- [x] Implement Adaption adapter with timeout and error mapping
+- [x] Implement browser-local audio analysis with numeric metrics only
+- [x] Implement qualified mix report with separated facts and hypotheses
+- [x] Blueprint/mix-report JSON and Markdown export
+- [x] Disclose scene brief and metric transmission to the AI provider in the UI
+- [x] Replace the local sample blueprint with the validated provider response
+- [x] Activate the Analyze page with real band energy rendering
+- [ ] Live provider verification with a real Adaption key - acceptance: one successful blueprint and
+  report against the deployed model
 
 ## P2 - Later
 

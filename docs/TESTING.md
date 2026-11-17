@@ -22,6 +22,10 @@ Each command forwards to `backend` and `frontend`; each app can also be run dire
 | Backend  | `backend/test/auth.test.ts`                     | Invalid credential, missing credential, session lifecycle, logout, stale session, validation, CSRF origin |
 | Backend  | `backend/test/google.test.ts`                   | Audience-bound verification, missing `sub`, verifier failure propagation |
 | Backend  | `backend/test/projects.test.ts`                 | Owner-scoped list/create/read/update/delete filters      |
+| Backend  | `backend/test/adaption.test.ts`                 | Timeout, 429, 401/403, 5xx, malformed output, missing config |
+| Backend  | `backend/test/ai.test.ts`                       | AI route auth, validation, persistence, provider failure  |
+| Frontend | `frontend/src/lib/audio-analysis.test.ts`       | Silence, mono, stereo, correlation, band energy          |
+| Frontend | `frontend/src/lib/export.test.ts`               | Blueprint/report Markdown and safe filenames             |
 | -------- | ----------------------------------------------- | ------------------------------------------------------- |
 | Backend  | `backend/test/health.test.ts`                   | `GET /api/v1/health` returns `200` and service shape    |
 | Frontend | `frontend/src/components/ui/Button.test.tsx`    | Button renders with an accessible name                  |
@@ -53,7 +57,8 @@ Tests run with a test environment and do not require live MongoDB, Google or Ada
   (Adjust: service-level cross-user denial and route validation are covered; live MongoDB
   persistence is verified manually.)
 - AI: success, malformed structured output, timeout, 429/quota and 5xx; no fabricated fallback.
-- Audio: silence, mono, stereo, decode failure and non-finite metric handling.
+- Audio: silence, mono, stereo, correlation and band energy are covered; browser decode failure
+  is handled but not automated.
 - Privacy: raw audio is never uploaded; exports contain no secrets.
 - Themes: light/dark/system switching across routes without reload.
 - Build and focused checks recorded with exact commands and results.

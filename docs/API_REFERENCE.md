@@ -1,9 +1,9 @@
 # API Reference
 
 **Base path:** `/api/v1`  
-**Status:** auth, sessions and owner-scoped project CRUD are implemented. The AI routes validate
-input and return `501 NOT_IMPLEMENTED` until the Adaption adapter and browser-local analysis land.
-No mock inference is returned.
+**Status:** auth, sessions, owner-scoped project CRUD and AI generation are implemented. Audio
+analysis happens in the browser and only numeric metrics are accepted. No mock inference is
+returned.
 
 ## Conventions
 
@@ -29,8 +29,10 @@ No mock inference is returned.
 | GET    | `/projects/:projectId` | Yes  | Reads an owned project, `404` for unknown or foreign owners  |
 | PATCH  | `/projects/:projectId` | Yes  | Updates an owned project, `404` for unknown or foreign owner |
 | DELETE | `/projects/:projectId` | Yes  | Deletes an owned project, `204`, `404` otherwise             |
-| POST   | `/ai/blueprint`        | Yes  | Validates body, returns `501` until the adapter lands        |
-| POST   | `/ai/mix-report`       | Yes  | Validates body, returns `501` until the adapter lands        |
+| GET    | `/auth/google/start`   | No   | Redirects to Google for redirect-mode OAuth                  |
+| GET    | `/auth/google/callback`| No   | Exchanges the code, establishes the session, redirects home  |
+| POST   | `/ai/blueprint`        | Yes  | Generates and validates a blueprint; optional persistence    |
+| POST   | `/ai/mix-report`       | Yes  | Generates a qualified report from metrics; optional save     |
 
 ## Request notes
 
@@ -79,14 +81,26 @@ A project is returned as:
 `GET /projects` returns `{ "projects": [...] }`. All queries are scoped to the session user, so a
 project owned by another account is reported as `404 PROJECT_NOT_FOUND` rather than `403`.
 
+### AI responses
+
+`POST /ai/blueprint` returns `{ blueprint, model, project, persisted }`. `POST /ai/mix-report`
+returns `{ report, model, project, persisted }`. `project` is the updated project when an owned
+`projectId` was supplied, otherwise `null`. Provider failures never fall back to local samples.
+
 ## Error codes
 
-| Code                   | Status | Meaning                                       |
-| ---------------------- | ------ | --------------------------------------------- |
-| `VALIDATION_ERROR`     | 400    | Zod validation failed                         |
-| `UNAUTHENTICATED`      | 401    | No session user                               |
-| `CSRF_ORIGIN_REJECTED` | 403    | Unsafe request from an unexpected origin      |
-| `NOT_FOUND`            | 404    | Unknown route                                 |
-| `NOT_IMPLEMENTED`      | 501    | Feature not built yet                         |
-| `INTERNAL_ERROR`       | 500    | Unexpected failure                            |
-| `AI_NOT_CONFIGURED`    | 503    | Adaption environment is incomplete (reserved) |
+| Code                     | Status | Meaning                                        |
+| ------------------------ | ------ | ---------------------------------------------- |
+| `VALIDATION_ERROR`       | 400    | Zod validation failed                          |
+| `UNAUTHENTICATED`        | 401    | No session user                                |
+| `CSRF_ORIGIN_REJECTED`   | 403    | Unsafe request from an unexpected origin       |
+| `PROJECT_NOT_FOUND`      | 404    | Unknown project or one owned by another user   |
+| `NOT_FOUND`              | 404    | Unknown route                                  |
+| `AI_RATE_LIMITED`        | 429    | Provider quota or rate limit                   |
+| `INTERNAL_ERROR`         | 500    | Unexpected failure                             |
+| `AI_UNAVAILABLE`         | 502    | Provider outage or unreachable endpoint        |
+| `AI_INVALID_RESPONSE`    | 502    | Unreadable or empty provider response          |
+| `AI_INVALID_OUTPUT`      | 502    | Provider output failed schema validation       |
+| `AI_NOT_CONFIGURED`      | 503    | Adaption environment is incomplete             |
+| `AI_AUTH_FAILED`         | 503    | Provider rejected the server credentials       |
+| `AI_TIMEOUT`             | 504    | Provider exceeded `AI_REQUEST_TIMEOUT_MS`      |

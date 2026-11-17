@@ -1,6 +1,7 @@
 import type { HydratedDocument } from 'mongoose';
 import { AppError } from '../lib/errors.js';
 import { ProjectModel, type Project } from '../models/Project.js';
+import type { AudioMetrics, MixReport, SoundscapeBlueprint } from '../schemas/ai.schema.js';
 import type { CreateProjectRequest, UpdateProjectRequest } from '../schemas/project.schema.js';
 
 export type ProjectDocument = HydratedDocument<Project> & {
@@ -66,6 +67,43 @@ export async function updateProject(
     { _id: projectId, userId: ownerId },
     { $set: input },
     { new: true, runValidators: true },
+  ).exec();
+
+  if (!project) {
+    throw notFound();
+  }
+
+  return project as ProjectDocument;
+}
+
+export async function saveBlueprint(
+  ownerId: string,
+  projectId: string,
+  blueprint: SoundscapeBlueprint,
+): Promise<ProjectDocument> {
+  const project = await ProjectModel.findOneAndUpdate(
+    { _id: projectId, userId: ownerId },
+    { $set: { blueprint } },
+    { new: true },
+  ).exec();
+
+  if (!project) {
+    throw notFound();
+  }
+
+  return project as ProjectDocument;
+}
+
+export async function saveMixReport(
+  ownerId: string,
+  projectId: string,
+  mixReport: MixReport,
+  audioAnalysis: AudioMetrics,
+): Promise<ProjectDocument> {
+  const project = await ProjectModel.findOneAndUpdate(
+    { _id: projectId, userId: ownerId },
+    { $set: { mixReport, audioAnalysis } },
+    { new: true },
   ).exec();
 
   if (!project) {

@@ -138,11 +138,23 @@ export function ProjectPage() {
                 <dd>{formatDate(project.data.project.updatedAt)}</dd>
               </div>
             </dl>
-            <Alert variant="info" title="Composer arrives next phase">
-              Scene briefs, generated blueprints, local audio analysis and mix reports will be
-              added here. Nothing is fabricated while these features are unbuilt.
+            <Alert variant="info" title="Audio stays in your browser">
+              Blueprints, numeric metrics and mix reports are saved to this project. The audio file
+              itself is never uploaded.
             </Alert>
             <div className="workspace-actions">
+              <Link
+                className="button button--primary"
+                to={`/blueprint?projectId=${project.data.project.id}`}
+              >
+                Generate blueprint
+              </Link>
+              <Link
+                className="button button--secondary"
+                to={`/analyze?projectId=${project.data.project.id}`}
+              >
+                Analyze audio
+              </Link>
               <Link className="button button--secondary" to="/dashboard">
                 Back to projects
               </Link>

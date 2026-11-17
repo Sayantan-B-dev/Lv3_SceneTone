@@ -304,3 +304,16 @@
     align-items: end;
   }
 }
+
+.drop input[type='file'] {
+  max-width: 100%;
+  margin-bottom: var(--space-2);
+  font-family: var(--font-body);
+}
+
+.report-heading {
+  margin: var(--space-4) 0 var(--space-2);
+  font-family: var(--font-display);
+  font-size: var(--text-xs);
+  line-height: 1.6;
+}

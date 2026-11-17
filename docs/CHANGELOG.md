@@ -65,3 +65,26 @@
 - Feature endpoints are stubs and return `501 NOT_IMPLEMENTED`.
 - No live Google or Adaption integration is verified.
 - The design reference is now available; visual translation is tracked above.
+
+## Unreleased - Phase 4 core product and audio
+
+### Added
+
+- Adaption adapter with bearer auth, configurable base URL/model, request timeout, and safe mapping
+  for 429, provider 401/403, 5xx, network failure, empty responses and schema-invalid output.
+- Prompt builders for scene blueprints and qualified mix reports that forbid listening claims.
+- `POST /ai/blueprint` and `POST /ai/mix-report` wired to the adapter, with optional persistence into
+  an owned project (`blueprint`, `mixReport`, numeric `audioAnalysis`).
+- Browser-local Web Audio analysis: duration, sample peak dBFS, RMS dBFS, crest factor,
+  approximate FFT band energy and stereo correlation.
+- Blueprint page now calls the API and exports JSON/Markdown; Analyze page decodes local files,
+  shows real metrics, requests a mix report and exports it.
+- Redirect-mode Google sign-in routes (`/auth/google/start`, `/auth/google/callback`) using
+  `GOOGLE_CALLBACK_URL`.
+- Backend adapter and AI route tests; frontend metric and export tests.
+
+### Changed
+
+- Removed the local sample blueprint; the page shows no blueprint until generation succeeds.
+- Project workspace links to blueprint generation and audio analysis.
+- Removed hard-coded dev host links from source; the Vite port and proxy target come from env.

@@ -1,5 +1,44 @@
 # Files Changed
 
+## 2026-11-17 - Phase 4 core product and audio
+
+### Backend
+
+- `backend/src/services/adaption.service.ts` - chat completions adapter, timeout, error mapping and
+  schema validation
+- `backend/src/services/ai-prompts.ts` - blueprint and mix-report prompts with honesty rules
+- `backend/src/controllers/ai.controller.ts` - generation handlers with optional persistence
+- `backend/src/services/projects.service.ts` - `saveBlueprint` and `saveMixReport`
+- `backend/src/services/google.ts` - redirect-mode auth URL and code exchange
+- `backend/src/controllers/auth.controller.ts`, `backend/src/routes/auth.routes.ts` - redirect-mode
+  sign-in routes
+- `backend/src/middleware/auth.ts` - `requireSessionUserId`
+- `backend/src/schemas/ai.schema.ts` - exported `AudioMetrics`
+- `backend/src/types/express-session.d.ts` - `oauthState`
+- `backend/test/adaption.test.ts`, `backend/test/ai.test.ts` - provider and route coverage
+- `backend/.env.example` - `GOOGLE_CALLBACK_URL` value
+
+### Frontend
+
+- `frontend/src/lib/audio-analysis.ts` - Web Audio decoding, FFT band energy and metrics
+- `frontend/src/lib/export.ts` - blueprint/report Markdown and local downloads
+- `frontend/src/hooks/useAi.ts` - blueprint and mix-report mutations
+- `frontend/src/pages/BlueprintPage.tsx` - real generation, result rendering and exports
+- `frontend/src/pages/AnalyzePage.tsx` - local analysis, metrics, band bars, report and exports
+- `frontend/src/pages/ProjectPage.tsx` - links to generation and analysis
+- `frontend/src/types/index.ts` - blueprint, report and AI response types
+- `frontend/src/styles/pages.css` - file input and report heading styles
+- `frontend/src/lib/audio-analysis.test.ts`, `frontend/src/lib/export.test.ts` - new tests
+- `frontend/vite.config.ts` - env-driven dev port and proxy target
+
+### Checks
+
+- `npm run typecheck --prefix backend` - passed
+- `npm run typecheck --prefix frontend` - passed
+- `npm test --prefix backend` - passed (6 files / 30 tests)
+- `npm test --prefix frontend` - passed (7 files / 14 tests)
+- `npm run build --prefix backend` / `--prefix frontend` - passed
+
 ## 2026-11-17 - Phase 3 auth and persistence
 
 ### Backend

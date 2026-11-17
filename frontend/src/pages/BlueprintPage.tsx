@@ -1,4 +1,6 @@
-import { useId, useState, type FormEvent } from 'react';
+import { useState, type FormEvent } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { Alert } from '@/components/ui/Alert';
 import { Button } from '@/components/ui/Button';
 import { Field } from '@/components/ui/Field';
 import { Input } from '@/components/ui/Input';
@@ -6,44 +8,9 @@ import { Select } from '@/components/ui/Select';
 import { Tag } from '@/components/ui/Tag';
 import { Textarea } from '@/components/ui/Textarea';
 import { Window } from '@/components/ui/Window';
-
-const SECTION_NAMES = [
-  'Establish',
-  'Rising unease',
-  'Storm closes in',
-  'Breaking point',
-  'Release',
-  'Dawn tail',
-];
-
-const STYLE_SETTINGS: Record<string, { key: string; bpm: number }> = {
-  'Cinematic tension': { key: 'D minor', bpm: 72 },
-  'Ambient drone': { key: 'C Lydian', bpm: 58 },
-  'Lo-fi dusk': { key: 'F major', bpm: 84 },
-  'Sound-design heavy': { key: 'E phrygian', bpm: 66 },
-};
-
-interface SampleSection {
-  name: string;
-  start: number;
-  energy: number;
-}
-
-interface SampleBlueprint {
-  title: string;
-  bpm: number;
-  key: string;
-  durationMin: number;
-  style: string;
-  platform: string;
-  sections: SampleSection[];
-  layers: string[];
-  foley: string[];
-  automation: string[];
-  transitions: string[];
-  notes: string[];
-  assumptions: string[];
-}
+import { useGenerateBlueprint } from '@/hooks/useAi';
+import { blueprintToMarkdown, downloadJson, downloadMarkdown, exportBaseName } from '@/lib/export';
+import type { SoundscapeBlueprint } from '@/types';
 
 interface FormState {
   scene: string;
@@ -62,81 +29,121 @@ const INITIAL_FORM: FormState = {
   constraint: 'No percussion in the first 30 seconds',
 };
 
-function clamp(value: number, min: number, max: number): number {
-  return Math.max(min, Math.min(max, value));
+function percent(value: number): number {
+  return Math.round(value * 100);
 }
 
-function hashScene(value: string): number {
-  return [...value].reduce((hash, character) => (hash * 31 + character.charCodeAt(0)) >>> 0, 7);
+function listBox(label: string, items: string[]) {
+  return (
+    <div className="blueprint-box" key={label}>
+      <b className="blueprint-box__label">{label}</b>
+      <ul>
+        {items.map((item) => (
+          <li key={item}>{item}</li>
+        ))}
+      </ul>
+    </div>
+  );
 }
 
-function buildSampleBlueprint(form: FormState): SampleBlueprint {
-  const scene = form.scene.trim() || 'Untitled scene';
-  const durationMin = Number(form.duration);
-  const setting = STYLE_SETTINGS[form.style] ?? STYLE_SETTINGS['Cinematic tension'];
-  const sectionCount = Math.min(6, 3 + durationMin);
-  const hash = hashScene(scene);
-  const words = scene.toLowerCase().match(/[a-z]{5,}/g) ?? ['room'];
-  const firstWord = words[0];
-  const secondWord = words[Math.min(words.length - 1, 2)];
+function BlueprintResult({
+  blueprint,
+  model,
+}: {
+  blueprint: SoundscapeBlueprint;
+  model: string | null;
+}) {
+  const title = blueprint.title;
 
-  const sections = Array.from({ length: sectionCount }, (_, index) => {
-    const position = index / (sectionCount - 1);
-    return {
-      name: SECTION_NAMES[Math.round((index * 5) / (sectionCount - 1))],
-      start: Math.round((index * durationMin * 60) / sectionCount),
-      energy: Math.round(
-        clamp(
-          0.25 +
-            0.6 * Math.sin(Math.PI * Math.min(1, position * 1.12)) +
-            ((hash >> index) & 7) / 60,
-          0.12,
-          0.98,
-        ) * 100,
-      ),
-    };
-  });
+  return (
+    <>
+      <div className="blueprint-meta">
+        {blueprint.bpm ? <Tag>{blueprint.bpm} BPM</Tag> : null}
+        {blueprint.key ? <Tag variant="cyan">{blueprint.key}</Tag> : null}
+        <Tag variant="green">{blueprint.mood.primary}</Tag>
+        {blueprint.mood.secondary.map((mood) => (
+          <Tag variant="yellow" key={mood}>
+            {mood}
+          </Tag>
+        ))}
+      </div>
 
-  return {
-    title: scene.length > 30 ? `${scene.slice(0, 30)}...` : scene,
-    bpm: setting.bpm,
-    key: setting.key,
-    durationMin,
-    style: form.style,
-    platform: form.platform,
-    sections,
-    layers: ['Low drone bed', 'Textural pad', 'Pulse motif', `Ambience around "${firstWord}"`],
-    foley: [`Close detail for "${firstWord}"`, `Distant layer for "${secondWord}"`, 'Room tone'],
-    automation: [
-      'Slow low-pass opening through the build',
-      'Reverb send rising into the breaking point',
-      'Narrow stereo in tension, widen at release',
-    ],
-    transitions: [
-      'Reverse swell into section 3',
-      'Silence gap before release',
-      'Long tail at the end',
-    ],
-    notes: [
-      'Keep the first section sparse',
-      'Save the loudest moment for the breaking point',
-      form.constraint.trim() ? `Constraint: ${form.constraint.trim()}` : 'No constraints',
-    ],
-    assumptions: ['Tempo and key are starting suggestions'],
-  };
-}
+      <p>{blueprint.summary}</p>
 
-function formatTime(seconds: number): string {
-  return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, '0')}`;
+      <div>
+        {blueprint.arrangement.map((section) => (
+          <div className="energy-row" key={section.name}>
+            <strong>{section.name}</strong>
+            <div className="energy-bar">
+              <span
+                className="energy-row__fill"
+                style={{ width: `${percent(section.energy)}%` }}
+                aria-hidden="true"
+              />
+            </div>
+            <span>{section.bars ? `${section.bars} bars` : `${percent(section.energy)}%`}</span>
+          </div>
+        ))}
+      </div>
+
+      <div className="blueprint-boxes">
+        {listBox(
+          'LAYERS',
+          blueprint.layers.map((layer) => `${layer.name} — ${layer.role}: ${layer.description}`),
+        )}
+        {listBox('FOLEY', blueprint.foleyAndAmbience)}
+        {listBox('AUTOMATION', blueprint.automation)}
+        {listBox('TRANSITIONS', blueprint.transitions)}
+        {listBox('NOTES', blueprint.productionNotes)}
+        {listBox('ASSUMPTIONS', blueprint.assumptions)}
+        {listBox('UNCERTAINTY', blueprint.uncertainty)}
+        {listBox(
+          'FL STUDIO CHAIN',
+          blueprint.flStudioChain.map(
+            (step) => `${step.plugin} — ${step.purpose} (${step.placement}; ${step.startingPoint})`,
+          ),
+        )}
+      </div>
+
+      <div className="cta-row">
+        <Button
+          type="button"
+          variant="secondary"
+          onClick={() => downloadJson(`${exportBaseName(title)}-blueprint.json`, blueprint)}
+        >
+          Save JSON
+        </Button>
+        <Button
+          type="button"
+          variant="secondary"
+          onClick={() =>
+            downloadMarkdown(
+              `${exportBaseName(title)}-blueprint.md`,
+              blueprintToMarkdown(blueprint, {
+                model,
+                generatedAt: new Date().toISOString(),
+              }),
+            )
+          }
+        >
+          Save Markdown
+        </Button>
+      </div>
+      <p className="note">
+        Exports are written locally in your browser. Plugin settings are starting points, not a DAW
+        project — SceneTone never creates `.flp` files.
+      </p>
+    </>
+  );
 }
 
 export function BlueprintPage() {
-  const exportNoteId = useId();
+  const [searchParams] = useSearchParams();
+  const projectId = searchParams.get('projectId') ?? undefined;
+  const generate = useGenerateBlueprint();
   const [form, setForm] = useState<FormState>(INITIAL_FORM);
-  const [blueprint, setBlueprint] = useState<SampleBlueprint>(() =>
-    buildSampleBlueprint(INITIAL_FORM),
-  );
-  const [revision, setRevision] = useState(0);
+  const [blueprint, setBlueprint] = useState<SoundscapeBlueprint | null>(null);
+  const [model, setModel] = useState<string | null>(null);
 
   const update = (field: keyof FormState, value: string) => {
     setForm((current) => ({ ...current, [field]: value }));
@@ -144,18 +151,28 @@ export function BlueprintPage() {
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setBlueprint(buildSampleBlueprint(form));
-    setRevision((current) => current + 1);
-  };
+    const scene = form.scene.trim();
+    if (scene.length < 10) {
+      return;
+    }
 
-  const boxes = [
-    ['LAYERS', blueprint.layers],
-    ['FOLEY', blueprint.foley],
-    ['AUTOMATION', blueprint.automation],
-    ['TRANSITIONS', blueprint.transitions],
-    ['NOTES', blueprint.notes],
-    ['ASSUMPTIONS', blueprint.assumptions],
-  ] as const;
+    generate.mutate(
+      {
+        sceneDescription: scene,
+        durationSeconds: Number(form.duration) * 60,
+        styleDirection: form.style,
+        platform: form.platform,
+        ...(form.constraint.trim() ? { constraints: form.constraint.trim() } : {}),
+        ...(projectId ? { projectId } : {}),
+      },
+      {
+        onSuccess: (data) => {
+          setBlueprint(data.blueprint);
+          setModel(data.model);
+        },
+      },
+    );
+  };
 
   return (
     <section className="page">
@@ -166,12 +183,13 @@ export function BlueprintPage() {
 
       <div className="grid grid--12">
         <Window title="brief.exe">
-          <form onSubmit={handleSubmit}>
-            <Field label="Scene">
+          <form onSubmit={handleSubmit} noValidate>
+            <Field label="Scene" hint="10-4000 characters. Sent to the AI provider.">
               {(fieldProps) => (
                 <Textarea
                   {...fieldProps}
                   value={form.scene}
+                  maxLength={4000}
                   onChange={(event) => update('scene', event.target.value)}
                 />
               )}
@@ -228,6 +246,7 @@ export function BlueprintPage() {
                   <Input
                     {...fieldProps}
                     value={form.constraint}
+                    maxLength={1000}
                     onChange={(event) => update('constraint', event.target.value)}
                   />
                 )}
@@ -235,68 +254,47 @@ export function BlueprintPage() {
             </div>
 
             <div className="cta-row">
-              <Button type="submit" variant="primary">
-                Generate blueprint
+              <Button
+                type="submit"
+                variant="primary"
+                disabled={generate.isPending || form.scene.trim().length < 10}
+              >
+                {generate.isPending ? 'Generating...' : 'Generate blueprint'}
               </Button>
             </div>
           </form>
+
+          {generate.isError ? (
+            <Alert variant="danger" title="Blueprint not generated">
+              {generate.error.message}
+            </Alert>
+          ) : null}
         </Window>
 
         <Window title="blueprint.exe">
           <p className="visually-hidden" role="status">
-            Sample blueprint refreshed ({revision}).
+            {generate.isPending
+              ? 'Generating blueprint.'
+              : blueprint
+                ? `Blueprint ready: ${blueprint.title}.`
+                : 'No blueprint generated yet.'}
           </p>
-          <p className="note">
-            Sample data from a local template, not AI output. Nothing is sent anywhere.
-          </p>
-          <div className="blueprint-meta">
-            <Tag>{blueprint.bpm} BPM</Tag>
-            <Tag variant="cyan">{blueprint.key}</Tag>
-            <Tag variant="green">{blueprint.durationMin} min</Tag>
-            <Tag variant="yellow">{blueprint.platform}</Tag>
-          </div>
 
-          <div>
-            {blueprint.sections.map((section) => (
-              <div className="energy-row" key={`${section.name}-${section.start}`}>
-                <strong>{section.name}</strong>
-                <div className="energy-bar">
-                  <span
-                    className="energy-row__fill"
-                    style={{ width: `${section.energy}%` }}
-                    aria-hidden="true"
-                  />
-                </div>
-                <span>{formatTime(section.start)}</span>
-              </div>
-            ))}
-          </div>
+          {!blueprint && !generate.isPending ? (
+            <>
+              <p className="note">
+                No blueprint yet. Nothing is generated locally and no sample is shown as AI output.
+              </p>
+              <p className="text-muted">
+                Submitting the brief sends the scene description to the AI provider from the
+                server. Audio is never uploaded.
+              </p>
+            </>
+          ) : null}
 
-          <div className="blueprint-boxes">
-            {boxes.map(([label, items]) => (
-              <div className="blueprint-box" key={label}>
-                <b className="blueprint-box__label">{label}</b>
-                <ul>
-                  {items.map((item) => (
-                    <li key={item}>{item}</li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
+          {generate.isPending ? <p role="status">Waiting for the AI provider...</p> : null}
 
-          <div className="cta-row">
-            <Button type="button" variant="secondary" disabled aria-describedby={exportNoteId}>
-              Save JSON
-            </Button>
-            <Button type="button" variant="secondary" disabled aria-describedby={exportNoteId}>
-              Save Markdown
-            </Button>
-          </div>
-          <p className="note" id={exportNoteId}>
-            JSON and Markdown export connect with the persistence phase. This build produces no
-            files.
-          </p>
+          {blueprint ? <BlueprintResult blueprint={blueprint} model={model} /> : null}
         </Window>
       </div>
     </section>

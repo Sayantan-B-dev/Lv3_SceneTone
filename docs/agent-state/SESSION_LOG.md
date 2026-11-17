@@ -62,3 +62,12 @@
   workspace rename/delete.
 - Moved the Vite dev port, API proxy target, OAuth callback and API base URL into env files.
 - Checks: backend typecheck and tests pass; frontend typecheck and tests pass.
+
+## 2026-11-17 - Phase 4 core product and audio
+
+- Added the Adaption chat-completions adapter with timeout and safe error mapping, prompt builders
+  and AI routes with optional owner-scoped persistence.
+- Implemented browser-local FFT band energy plus peak, RMS, crest and stereo correlation.
+- Blueprint and Analyze pages now use real generation/measurement and export JSON/Markdown.
+- Added redirect-mode Google sign-in using `GOOGLE_CALLBACK_URL`.
+- Checks: backend 30 tests, frontend 14 tests, both typechecks and builds pass.

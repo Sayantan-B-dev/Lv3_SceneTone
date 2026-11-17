@@ -1,13 +1,96 @@
+import { useRef, useState, type ChangeEvent } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Alert } from '@/components/ui/Alert';
 import { Button } from '@/components/ui/Button';
 import { Field } from '@/components/ui/Field';
 import { Select } from '@/components/ui/Select';
 import { Window } from '@/components/ui/Window';
+import { useGenerateMixReport } from '@/hooks/useAi';
+import { analyzeAudioFile, type AudioAnalysis } from '@/lib/audio-analysis';
+import { downloadJson, downloadMarkdown, exportBaseName, reportToMarkdown } from '@/lib/export';
+import type { MixReport } from '@/types';
 
-const BANDS = ['Sub', 'Low', 'Low-mid', 'Mid', 'High-mid', 'High', 'Air'];
-const METRICS = ['Length', 'Sample peak', 'RMS', 'Crest', 'Stereo corr.', 'Channels'];
+const BANDS = [
+  { key: 'low', label: 'Low < 250 Hz' },
+  { key: 'mid', label: 'Mid 250 Hz-4 kHz' },
+  { key: 'high', label: 'High > 4 kHz' },
+] as const;
+
+const OBJECTIVES = [
+  'Streaming master',
+  'Film / video cue',
+  'Game ambience loop',
+  'Rough demo',
+] as const;
+
+function metricRows(analysis: AudioAnalysis) {
+  return [
+    ['Length', `${analysis.durationSeconds.toFixed(2)} s`],
+    ['Channels', analysis.channels === 1 ? 'Mono' : 'Stereo'],
+    ['Sample peak', analysis.samplePeakDbfs === null ? 'Silent' : `${analysis.samplePeakDbfs} dBFS`],
+    ['RMS', analysis.rmsDbfs === null ? 'Silent' : `${analysis.rmsDbfs} dBFS`],
+    ['Crest', analysis.crestFactorDb === null ? '—' : `${analysis.crestFactorDb} dB`],
+    [
+      'Stereo corr.',
+      analysis.stereoCorrelation === null ? 'n/a (mono)' : analysis.stereoCorrelation.toFixed(3),
+    ],
+  ] as const;
+}
 
 export function AnalyzePage() {
+  const [searchParams] = useSearchParams();
+  const projectId = searchParams.get('projectId') ?? undefined;
+  const fileInput = useRef<HTMLInputElement>(null);
+  const report = useGenerateMixReport();
+  const [analysis, setAnalysis] = useState<AudioAnalysis | null>(null);
+  const [decodeError, setDecodeError] = useState<string | null>(null);
+  const [decoding, setDecoding] = useState(false);
+  const [objective, setObjective] = useState<string>(OBJECTIVES[0]);
+  const [mixReport, setMixReport] = useState<MixReport | null>(null);
+
+  async function handleFile(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    if (!file) {
+      return;
+    }
+
+    setDecodeError(null);
+    setMixReport(null);
+    setDecoding(true);
+
+    try {
+      setAnalysis(await analyzeAudioFile(file));
+    } catch (error) {
+      setAnalysis(null);
+      setDecodeError(error instanceof Error ? error.message : 'The file could not be analyzed.');
+    } finally {
+      setDecoding(false);
+    }
+  }
+
+  function handleReport() {
+    if (!analysis) {
+      return;
+    }
+
+    report.mutate(
+      {
+        objective,
+        metrics: {
+          channels: analysis.channels,
+          durationSeconds: analysis.durationSeconds,
+          samplePeakDbfs: analysis.samplePeakDbfs,
+          rmsDbfs: analysis.rmsDbfs,
+          crestFactorDb: analysis.crestFactorDb,
+          bandEnergy: analysis.bandEnergy,
+          stereoCorrelation: analysis.stereoCorrelation,
+        },
+        ...(projectId ? { projectId } : {}),
+      },
+      { onSuccess: (data) => setMixReport(data.report) },
+    );
+  }
+
   return (
     <section className="page">
       <h1 className="page__title">ANALYZE</h1>
@@ -21,72 +104,196 @@ export function AnalyzePage() {
             <span className="drop__icon" aria-hidden="true">
               ♪
             </span>
-            <b className="drop__title">Drop WAV or MP3</b>
-            Local decoding connects in the audio phase. Nothing is uploaded, ever.
+            <label className="drop__title" htmlFor="audio-file">
+              Choose a WAV or MP3
+            </label>
+            <input
+              ref={fileInput}
+              id="audio-file"
+              type="file"
+              accept="audio/wav,audio/mpeg,audio/*,.wav,.mp3"
+              onChange={handleFile}
+            />
+            <p>Decoded in this tab. The audio file is never uploaded.</p>
           </div>
+
           <div className="cta-row">
-            <Button type="button" variant="cyan" disabled>
-              Use demo signal
+            <Button type="button" variant="secondary" onClick={() => fileInput.current?.click()}>
+              {analysis ? 'Load another file' : 'Load file'}
             </Button>
-            <Button type="button" variant="secondary" disabled>
-              Play
-            </Button>
-            <span>No file loaded</span>
+            <span>
+              {decoding
+                ? 'Decoding...'
+                : analysis
+                  ? `${analysis.fileName} (${(analysis.sizeBytes / 1024 / 1024).toFixed(2)} MB)`
+                  : 'No file loaded'}
+            </span>
           </div>
-          <Alert variant="warning" title="Not active in this build">
-            This page is a design preview. No audio is decoded, measured or played here yet.
+
+          {decodeError ? (
+            <Alert variant="danger" title="Audio could not be decoded">
+              {decodeError}
+            </Alert>
+          ) : null}
+
+          <Alert variant="info" title="What this measures">
+            Duration, sample peak dBFS, RMS dBFS, crest factor, approximate band energy and stereo
+            correlation. RMS is not LUFS and sample peak is not true peak.
           </Alert>
         </Window>
 
-        <Window title="spectrum.exe">
-          <div className="spectrum">
-            <span className="spectrum__empty">No signal loaded</span>
-          </div>
+        <Window title="metrics.exe">
           <div className="metric-grid">
-            {METRICS.map((metric) => (
-              <div className="metric" key={metric}>
-                <span className="metric__label">{metric}</span>
-                <span className="metric__value">—</span>
-              </div>
-            ))}
+            {(analysis ? metricRows(analysis) : metricRows(emptyAnalysis())).map(
+              ([label, value]) => (
+                <div className="metric" key={label}>
+                  <span className="metric__label">{label}</span>
+                  <span className="metric__value">{analysis ? value : '—'}</span>
+                </div>
+              ),
+            )}
           </div>
-        </Window>
-      </div>
 
-      <div className="grid grid--2 section-stack">
-        <Window title="band_energy.exe">
           <div className="inset-panel">
-            <div className="bands" role="group" aria-label="Band energy placeholder">
+            <div className="bands" role="group" aria-label="Approximate band energy">
               {BANDS.map((band) => (
-                <div className="band" key={band}>
-                  <span className="band__bar" style={{ height: '4%' }} aria-hidden="true" />
-                  <span className="band__label">{band}</span>
+                <div className="band" key={band.key}>
+                  <span
+                    className="band__bar"
+                    style={{
+                      height: analysis
+                        ? `${Math.max(4, Math.round(analysis.bandEnergy[band.key] * 100))}%`
+                        : '4%',
+                    }}
+                    aria-hidden="true"
+                  />
+                  <span className="band__label">{band.label}</span>
                 </div>
               ))}
             </div>
           </div>
-        </Window>
 
+          {analysis?.samplePeakDbfs === null ? (
+            <Alert variant="warning" title="Silent signal">
+              Every sample is zero. Metrics that need signal are reported as unavailable.
+            </Alert>
+          ) : null}
+        </Window>
+      </div>
+
+      <div className="grid grid--2 section-stack">
         <Window title="mix_report.exe">
           <Field label="Goal">
             {(fieldProps) => (
-              <Select {...fieldProps} defaultValue="Streaming master">
-                <option>Streaming master</option>
-                <option>Film / video cue</option>
-                <option>Game ambience loop</option>
-                <option>Rough demo</option>
+              <Select
+                {...fieldProps}
+                value={objective}
+                onChange={(event) => setObjective(event.target.value)}
+              >
+                {OBJECTIVES.map((option) => (
+                  <option key={option}>{option}</option>
+                ))}
               </Select>
             )}
           </Field>
           <div className="cta-row">
-            <Button type="button" variant="primary" disabled>
-              Build report
+            <Button
+              type="button"
+              variant="primary"
+              disabled={!analysis || report.isPending}
+              onClick={handleReport}
+            >
+              {report.isPending ? 'Building...' : 'Build report'}
             </Button>
           </div>
+          {report.isError ? (
+            <Alert variant="danger" title="Report not generated">
+              {report.error.message}
+            </Alert>
+          ) : null}
           <Alert variant="info" title="Metrics only">
-            Reports will separate measured facts, hypotheses and recommendations. They will never
-            claim that a model listened to your audio.
+            Only the numbers above are sent. The model never receives your audio and never listened
+            to it.
           </Alert>
+        </Window>
+
+        <Window title="report_view.exe">
+          {!mixReport ? (
+            <p className="text-muted">
+              Load a file and build a report. Measured facts, hypotheses, recommendations and
+              limitations are listed separately.
+            </p>
+          ) : (
+            <>
+              <h2 className="report-heading">MEASURED FACTS</h2>
+              <ul>
+                {mixReport.measuredFacts.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+              <h2 className="report-heading">HYPOTHESES</h2>
+              <ul>
+                {mixReport.hypotheses.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+              <h2 className="report-heading">RECOMMENDATIONS</h2>
+              <ul>
+                {mixReport.recommendations.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+              <h2 className="report-heading">LIMITATIONS</h2>
+              <ul>
+                {mixReport.limitations.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+
+              <div className="cta-row">
+                <Button
+                  type="button"
+                  variant="secondary"
+                  onClick={() =>
+                    downloadJson(`${exportBaseName(objective)}-mix-report.json`, {
+                      objective,
+                      metrics: {
+                        channels: analysis?.channels,
+                        durationSeconds: analysis?.durationSeconds,
+                        samplePeakDbfs: analysis?.samplePeakDbfs,
+                        rmsDbfs: analysis?.rmsDbfs,
+                        crestFactorDb: analysis?.crestFactorDb,
+                        bandEnergy: analysis?.bandEnergy,
+                        stereoCorrelation: analysis?.stereoCorrelation,
+                      },
+                      report: mixReport,
+                    })
+                  }
+                >
+                  Save JSON
+                </Button>
+                <Button
+                  type="button"
+                  variant="secondary"
+                  disabled={!analysis}
+                  onClick={() =>
+                    analysis
+                      ? downloadMarkdown(
+                          `${exportBaseName(objective)}-mix-report.md`,
+                          reportToMarkdown(mixReport, {
+                            objective,
+                            metrics: analysis,
+                            model: null,
+                          }),
+                        )
+                      : undefined
+                  }
+                >
+                  Save Markdown
+                </Button>
+              </div>
+            </>
+          )}
         </Window>
       </div>
 
@@ -96,4 +303,18 @@ export function AnalyzePage() {
       </div>
     </section>
   );
+}
+
+function emptyAnalysis(): AudioAnalysis {
+  return {
+    fileName: '',
+    sizeBytes: 0,
+    channels: 1,
+    durationSeconds: 0,
+    samplePeakDbfs: null,
+    rmsDbfs: null,
+    crestFactorDb: null,
+    bandEnergy: { low: 0, mid: 0, high: 0 },
+    stereoCorrelation: null,
+  };
 }

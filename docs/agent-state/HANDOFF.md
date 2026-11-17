@@ -2,53 +2,40 @@
 
 ## Resume point
 
-- Phase/state: Phase 3 auth and persistence complete and verified; Phase 4 next
-- Branch/last commit: `main`, `61d2178` (Phase 2 design system); Phase 3 pending commit
-- Next phase: Phase 4 core product and audio
-- Current task: commit Phase 3, then implement the Adaption adapter, local audio analysis, mix
-  report and exports
+- Phase/state: Phase 4 complete and verified; Phase 5 next
+- Branch/last commit: `main`, `b92faa9` (Phase 3); Phase 4 pending commit
+- Next phase: Phase 5 integration and deployment readiness
+- Current task: commit Phase 4, then verify end-to-end paths and deployment configuration
 
 ## Completed and verified
 
-### Phase 1 (committed `0ca1702`)
+### Phases 1-3 (committed)
 
-- Independent frontend/backend apps with separate lockfiles, installs, env files and build outputs.
-- Bearer-free Express pipeline with sessions, security middleware, validation, safe errors and
-  redacted logs.
+- Scaffold, design system, and auth/session/owner-scoped project CRUD.
+- Backend tests for auth boundaries, Google verification, project ownership and CSRF.
 
-### Phase 2 (committed `61d2178`)
+### Phase 4 (uncommitted)
 
-- `reference/reference.html` translated into the vaporwave/Win95 UI with centralized token CSS.
-- Routes: `/`, `/blueprint`, `/analyze`, `/fl-studio`, `/about`, `/dashboard`,
-  `/projects/:projectId`, 404.
-- Accessible shell, form primitives, theme persistence and design-system tests.
-
-### Phase 3 (uncommitted)
-
-- `POST /auth/google` verifies the Google ID token, upserts the user on the verified `sub`, rotates
-  the session id and returns the public user.
-- `GET /auth/me` invalidates stale sessions; `POST /auth/logout` destroys the session and clears the
-  cookie.
-- Owner-scoped project CRUD with Zod validation; foreign or unknown projects return
-  `404 PROJECT_NOT_FOUND`.
-- Frontend sign-in control in the header, session-aware dashboard with project creation/listing and
-  a project workspace with rename and delete.
-- Dev port, API proxy target, API base URL, CORS origin and OAuth callback URL all come from env.
-- Tests: backend 4 files / 16 tests; frontend 5 files / 6 tests; both typechecks pass.
+- Adaption adapter: `/chat/completions`, bearer auth, configurable base URL/model, timeout and safe
+  mapping for 429, 401/403, 5xx, network failure, empty and schema-invalid output.
+- Blueprint and mix report routes validate provider JSON with Zod and optionally persist to an owned
+  project; no local fallback exists.
+- Browser-local analysis: duration, sample peak dBFS, RMS dBFS, crest factor, FFT band energy and
+  stereo correlation. Only metrics leave the browser.
+- Blueprint and Analyze pages use real data and export JSON/Markdown.
+- Redirect-mode Google sign-in available through `GOOGLE_CALLBACK_URL`.
+- Checks: backend 6 files / 30 tests, frontend 7 files / 14 tests, both typechecks and builds pass.
 
 ## Important constraints for next agent
 
-- `POST /ai/blueprint` and `POST /ai/mix-report` still return `501`. Do not present the local sample
-  blueprint as inference.
-- Audio analysis must stay in the browser; only numeric metrics may reach the backend.
-- The Analyze page is still inactive; activate it only with real Web Audio metrics.
-- `GOOGLE_CALLBACK_URL` is reserved for redirect-mode OAuth; the current flow uses ID tokens.
-- Never add secrets to `VITE_*` variables or to source.
+- Live AI generation requires `ADAPTION_API_KEY`, `ADAPTION_BASE_URL`, `ADAPTION_MODEL`; nothing has
+  been verified against the live provider yet.
+- Do not call AI_NOT_CONFIGURED behaviour a provider test.
+- Audio never leaves the browser; exports must stay secret-free.
+- Keep all environment-specific URLs in env files, never in source.
 
 ## Exact next action
 
-1. Open: `backend/src/controllers/ai.controller.ts`, `backend/src/schemas/ai.schema.ts`.
-2. Inspect: `docs/SRS.md` FR-03 to FR-07 and `docs/TECH_STACK.md` Adaption notes.
-3. Do: implement the Adaption adapter with timeout/429/5xx/malformed-output handling, then wire the
-   Blueprint page, browser-local analysis, qualified mix report and JSON/Markdown/TXT export.
-4. Check: backend and frontend typecheck/tests, then update docs and state files.
+1. Open: `docs/SRS.md` section 13 and `docs/DEPLOYMENT.md`.
+2. Inspect: current Nginx/systemd/Vercel/Atlas docs against the implementation.
+3. Do: Phase 5 verification, production build, deployment documentation and limitations list.

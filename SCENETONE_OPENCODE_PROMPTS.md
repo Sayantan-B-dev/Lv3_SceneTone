@@ -38,21 +38,21 @@ You are the primary engineering agent. Read `AGENTS.md`, `SKILLS.md`, `README.md
 - [x] Auth boundary, session, CRUD and cross-user tests
 - [x] Live persistence CRUD verification (local MongoDB connection verified; CRUD pending)
 
-### Phase 4 — Core product and audio (not started)
+### Phase 4 — Core product and audio (complete)
 - [x] Zod contracts for blueprint, mix report and numeric audio metrics
 - [x] Frontend/domain types for blueprint and mix report
-- [ ] Adaption provider requests, timeout and error mapping
-- [ ] Browser-local Web Audio analysis
-- [ ] Qualified mix report generation
-- [ ] FL Studio handoff and JSON/Markdown/TXT export
-- [ ] Silence, mono, stereo, decode and provider failure tests
+- [x] Adaption provider requests, timeout and error mapping
+- [x] Browser-local Web Audio analysis
+- [x] Qualified mix report generation
+- [x] FL Studio handoff and JSON/Markdown/TXT export
+- [x] Silence, mono, stereo, decode and provider failure tests
 
 ### Phase 5 — Integration and deployment readiness (not started)
 - [ ] End-to-end verification of auth, ownership, blueprint/report, exports and themes
 - [ ] Nginx, systemd, TLS, Vercel and Atlas configuration
 - [ ] Deployment documentation matching actual configuration
 
-**Overall:** Phases 1-3 complete; Phase 4 core product and audio next; Phase 5 not started.
+**Overall:** Phases 1-4 complete; Phase 5 integration and deployment readiness next.
 
 ## Phase 1 — Audit and plan
 Audit repository structure, git status, manifests, lockfiles, routes, models, components, deployment and `reference.html` if present. Do not build product features or install packages. Create/update `docs/SRS.md`, `docs/TECH_STACK.md`, `docs/ARCHITECTURE.md`, `docs/ROADMAP.md`, README and state files as needed. Separate installed dependencies from proposed ones. Use subagents for independent repo/security/docs audits where available; avoid overlapping edits. Report architecture, gaps, risks, blockers and exact phase plan. Update `STATUS.md`, `TODO.md`, `DECISIONS.md`, `FILES_CHANGED.md`, `HANDOFF.md`. Ask “Commit this phase?”

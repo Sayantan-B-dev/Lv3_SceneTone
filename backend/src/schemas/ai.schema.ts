@@ -96,6 +96,7 @@ export const mixReportSchema = z.object({
   limitations: z.array(z.string()),
 });
 
+export type AudioMetrics = z.infer<typeof audioMetricsSchema>;
 export type BlueprintRequest = z.infer<typeof blueprintRequestSchema>;
 export type MixReportRequest = z.infer<typeof mixReportRequestSchema>;
 export type SoundscapeBlueprint = z.infer<typeof soundscapeBlueprintSchema>;
