@@ -42,7 +42,7 @@
   background: var(--color-chrome);
   color: var(--color-chrome-text);
   font-family: var(--font-display);
-  font-size: 0.6875rem;
+  font-size: 0.8125rem;
   line-height: 1.5;
   text-transform: uppercase;
 }
@@ -136,8 +136,8 @@
 }
 
 .app-auth__signout {
-  padding: 3px 10px;
-  font-size: var(--text-sm);
+  padding: 4px 12px;
+  font-size: var(--text-xs);
 }
 
 .sign-in {
@@ -145,6 +145,30 @@
   flex-wrap: wrap;
   align-items: center;
   gap: var(--space-2);
+}
+
+.sign-in__button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 7px 14px;
+  font-size: var(--text-sm);
+  letter-spacing: 0.01em;
+  text-transform: none;
+}
+
+.sign-in__button:hover {
+  text-decoration: none;
+}
+
+.sign-in__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  background: #fff;
+  border-radius: 2px;
 }
 
 .sign-in__status,

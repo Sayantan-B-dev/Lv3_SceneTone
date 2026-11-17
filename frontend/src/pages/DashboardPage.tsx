@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { SignInButton } from '@/components/auth/SignInButton';
 import { Alert } from '@/components/ui/Alert';
 import { ApiStatus } from '@/components/ui/ApiStatus';
@@ -19,6 +19,8 @@ function formatDate(value: string): string {
 }
 
 export function DashboardPage() {
+  const [searchParams] = useSearchParams();
+  const authStatus = searchParams.get('auth');
   const { data: user, isPending, isError } = useCurrentUser();
   const projects = useProjects(Boolean(user));
   const createProject = useCreateProject();
@@ -45,6 +47,19 @@ export function DashboardPage() {
       <p className="page__jp" lang="ja">
         計画 ワークスペース
       </p>
+
+      {authStatus === 'failed' ? (
+        <Alert variant="danger" title="Google sign-in did not complete">
+          The provider returned an error or the request was cancelled. Check that the authorized
+          redirect URI in Google Cloud matches <code>GOOGLE_CALLBACK_URL</code>, then try again.
+        </Alert>
+      ) : null}
+      {authStatus === 'unconfigured' ? (
+        <Alert variant="warning" title="Server sign-in is not configured">
+          Set <code>GOOGLE_CLIENT_ID</code>, <code>GOOGLE_CLIENT_SECRET</code> and
+          <code> GOOGLE_CALLBACK_URL</code> on the backend, then restart it.
+        </Alert>
+      ) : null}
 
       {isPending ? (
         <Window title="workspace.exe">

@@ -1,5 +1,5 @@
 :root {
-  --font-display: 'Press Start 2P', 'Courier New', ui-monospace, monospace;
-  --font-body: 'VT323', 'Courier New', ui-monospace, monospace;
-  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
+  --font-display: 'Space Grotesk', 'Segoe UI', system-ui, sans-serif;
+  --font-body: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 }

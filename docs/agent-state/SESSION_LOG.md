@@ -71,3 +71,10 @@
 - Blueprint and Analyze pages now use real generation/measurement and export JSON/Markdown.
 - Added redirect-mode Google sign-in using `GOOGLE_CALLBACK_URL`.
 - Checks: backend 30 tests, frontend 14 tests, both typechecks and builds pass.
+
+## 2026-11-17 - sign-in origin fix and typography
+
+- Diagnosed the empty `VITE_GOOGLE_CLIENT_ID` and the Google `origin_mismatch`; switched the UI to
+  the backend redirect flow so only the redirect URI must be registered.
+- Replaced the Google-rendered button with a styled button and removed `@react-oauth/google`.
+- Replaced pixel fonts with Space Grotesk, Inter and JetBrains Mono and a readable type scale.

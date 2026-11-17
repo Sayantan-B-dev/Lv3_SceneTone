@@ -42,8 +42,10 @@ returned.
 { "credential": "<Google ID token>" }
 ```
 
-The backend verifies signature, issuer, audience and expiry server-side with `google-auth-library`
-and keys the user on the verified `sub`. A successful call returns `{ "user": { ... } }`, rotates the
+`/auth/google` accepts a Google ID token from the popup flow. The web UI instead links to
+`/auth/google/start`, which redirects to Google and returns to `GOOGLE_CALLBACK_URL`; the backend
+exchanges the code and verifies the resulting ID token with `google-auth-library`. Both paths key
+the user on the verified `sub`. A successful call returns `{ "user": { ... } }`, rotates the
 session id and sets `scenetone.sid`. Invalid credentials return `401 INVALID_GOOGLE_TOKEN`.
 
 ### POST `/ai/blueprint`

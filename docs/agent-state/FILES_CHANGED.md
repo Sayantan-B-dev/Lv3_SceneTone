@@ -1,5 +1,23 @@
 # Files Changed
 
+## 2026-11-17 - sign-in flow and typography fix
+
+- `frontend/src/components/auth/SignInButton.tsx` - custom styled link to `/auth/google/start`
+- `frontend/src/main.tsx` - removed the unused Google Identity Services provider
+- `frontend/src/pages/DashboardPage.tsx` - surfaces `auth=failed` and `auth=unconfigured`
+- `frontend/src/styles/fonts.css`, `tokens.css`, `base.css`, `components.css`, `layout.css`,
+  `pages.css`, `responsive.css` - Space Grotesk/Inter type system with readable sizes
+- `frontend/index.html` - new font loading
+- `frontend/package.json`, lockfile - removed `@react-oauth/google`
+- `frontend/.env.example`, `README.md` - frontend no longer needs a Google client id
+- `backend/src/controllers/auth.controller.ts` - start route redirects to a safe notice when
+  redirect config is missing
+- Docs: `docs/DESIGN_SYSTEM.md`, `docs/DESIGN_REFERENCE.md`, `docs/API_REFERENCE.md`,
+  `docs/CHANGELOG.md`
+
+Checks: backend typecheck, backend tests (30), frontend typecheck, frontend tests (14), frontend
+build all pass.
+
 ## 2026-11-17 - Phase 4 core product and audio
 
 ### Backend

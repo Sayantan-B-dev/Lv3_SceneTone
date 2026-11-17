@@ -45,6 +45,17 @@
   design-system phase.
 - Headless Chrome checks at 1440px in light/dark and at 390px/320px; no horizontal overflow.
 
+## Unreleased - sign-in and typography fixes
+
+### Changed
+
+- Sign-in uses the server redirect flow behind a custom styled button, so no Google-rendered button
+  or JavaScript-origin registration is required; only the authorized redirect URI.
+- Typography switched from `Press Start 2P`/`VT323` to `Space Grotesk`/`Inter`/`JetBrains Mono`
+  with a readable scale and line height.
+- Removed the unused `@react-oauth/google` dependency and `VITE_GOOGLE_CLIENT_ID` config.
+- Auth redirect outcomes surface on the dashboard (`?auth=failed`, `?auth=unconfigured`).
+
 ## 0.1.0 — 2026-11-17
 
 ### Added

@@ -102,7 +102,7 @@ GOOGLE_CALLBACK_URL=http://localhost:5000/api/v1/auth/google/callback
 MONGODB_URI=mongodb://127.0.0.1:27017/scenetone
 SESSION_SECRET=<at least 32 random characters>
 GOOGLE_CLIENT_ID=<Google OAuth client id>
-GOOGLE_CLIENT_SECRET=<optional, backend-only>
+GOOGLE_CLIENT_SECRET=<required for Google redirect sign-in, backend-only>
 ADAPTION_API_KEY=<backend-only>
 ADAPTION_BASE_URL=<Adaption base URL>
 ADAPTION_MODEL=<current model id>
@@ -121,8 +121,15 @@ node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 VITE_API_BASE_URL=http://localhost:5000/api/v1
 DEV_SERVER_PORT=5173
 DEV_API_PROXY_TARGET=http://localhost:5000
-VITE_GOOGLE_CLIENT_ID=<same public Google client id>
 ```
+
+Google sign-in runs on the backend: the UI links to `/api/v1/auth/google/start`, Google returns
+to `GOOGLE_CALLBACK_URL`, and the backend sets the session. No Google client id is needed in the
+frontend env.
+
+In Google Cloud Console, add the exact `GOOGLE_CALLBACK_URL` value
+(`http://localhost:5000/api/v1/auth/google/callback` locally) as an **Authorized redirect URI**.
+Without it Google returns `Error 400: redirect_uri_mismatch`.
 
 Only public values belong in `VITE_*` variables. Never commit `.env` files or put backend secrets in
 the frontend environment. Local `.env` files in this working copy are gitignored placeholders.

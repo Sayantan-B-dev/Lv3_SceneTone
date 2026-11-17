@@ -22,7 +22,7 @@ All styles live under `frontend/src/styles/` and are imported once from `fronten
 | `pages.css`      | Hero, page grids and reference page composition                         |
 | `responsive.css` | Tablet/narrow viewport and no-overflow adjustments                      |
 
-Display type uses `Press Start 2P` and body type uses `VT323`, loaded from Google Fonts in
+Display type uses `Space Grotesk`, body type uses `Inter` and code uses `JetBrains Mono`, loaded from Google Fonts in
 `frontend/index.html` with monospace fallbacks. No font files are committed.
 
 ## Tokens

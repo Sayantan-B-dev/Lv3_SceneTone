@@ -72,11 +72,18 @@ export const signInWithGoogle: RequestHandler = async (req, res) => {
 };
 
 export const startGoogleRedirect: RequestHandler = async (req, res) => {
-  const state = randomBytes(32).toString('hex');
-  req.session.oauthState = state;
-  await saveSession(req);
+  let authUrl: string;
 
-  res.redirect(buildGoogleAuthUrl(state));
+  try {
+    authUrl = buildGoogleAuthUrl(randomBytes(32).toString('hex'));
+  } catch {
+    res.redirect(`${env.FRONTEND_ORIGIN}/dashboard?auth=unconfigured`);
+    return;
+  }
+
+  req.session.oauthState = new URL(authUrl).searchParams.get('state') ?? undefined;
+  await saveSession(req);
+  res.redirect(authUrl);
 };
 
 export const handleGoogleCallback: RequestHandler = async (req, res) => {

@@ -53,13 +53,15 @@ h2,
 h3,
 h4 {
   font-family: var(--font-display);
-  font-weight: var(--weight-regular);
-  line-height: 1.4;
+  font-weight: var(--weight-bold);
+  line-height: var(--leading-tight);
+  letter-spacing: -0.015em;
+  text-wrap: balance;
 }
 
 h1 {
   font-size: var(--text-4xl);
-  letter-spacing: -0.04em;
+  letter-spacing: -0.03em;
 }
 
 h2 {
