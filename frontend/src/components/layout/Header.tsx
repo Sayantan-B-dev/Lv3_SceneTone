@@ -1,5 +1,6 @@
 import { Link, NavLink } from 'react-router-dom';
 import { AuthControl } from '@/components/auth/AuthControl';
+import { BrandMark } from './BrandMark';
 import { Clock } from './Clock';
 import { ThemeToggle } from './ThemeToggle';
 
@@ -15,7 +16,7 @@ export function Header() {
     <header className="app-header">
       <div className="app-header__inner">
         <Link to="/" className="app-brand">
-          <span className="app-brand__mark" aria-hidden="true" />
+          <BrandMark className="app-brand__mark" />
           SceneTone
         </Link>
         <nav className="app-nav" aria-label="Primary">

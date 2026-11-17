@@ -45,6 +45,17 @@
   design-system phase.
 - Headless Chrome checks at 1440px in light/dark and at 390px/320px; no horizontal overflow.
 
+## Unreleased - logo and monospace type
+
+### Added
+
+- `ST` logo marks in `frontend/public/` (dark and light), used in the header, footer and favicon with
+  theme-aware switching.
+
+### Changed
+
+- Display, body and mono type unified on `Iosevka Charon Mono`, with the scale retuned for monospace.
+
 ## Unreleased - provider fallback and typography
 
 ### Added

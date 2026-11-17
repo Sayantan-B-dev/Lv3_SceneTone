@@ -8,7 +8,7 @@ Source: `reference/reference.html` (387 lines, vaporwave/Win95 desktop concept).
 
 - Fixed purple-to-pink gradient page with a perspective neon grid floor and reduced-motion fallback.
 - Sticky silver taskbar with a start-style brand, route tabs, clock and theme control.
-- Display typography (`MedievalSharp`) and readable body type (`Macondo`), Japanese subheads.
+- Monospace type via `Iosevka Charon Mono`, a theme-aware `ST` logo mark in the header and footer, Japanese subheads.
 - Perspective "window" chrome: gradient title bars, silver bodies, bevel borders and hard shadows.
 - Home: glitch hero title, live scene visualizer, marquee, three welcome windows.
 - Blueprint: scene brief form, metadata tags, section energy bars, six output boxes, export actions.

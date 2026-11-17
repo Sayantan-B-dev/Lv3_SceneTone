@@ -1,4 +1,5 @@
 import { Link, Outlet } from 'react-router-dom';
+import { BrandMark } from './BrandMark';
 import { Header } from './Header';
 
 export function AppShell() {
@@ -14,6 +15,7 @@ export function AppShell() {
         </main>
         <footer className="app-footer">
           <p>
+            <BrandMark className="app-footer__mark" />
             A E S T H E T I C · SceneTone · 2026 · <Link to="/dashboard">Workspace</Link>
           </p>
         </footer>

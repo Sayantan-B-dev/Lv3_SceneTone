@@ -1,5 +1,5 @@
 :root {
-  --font-display: 'MedievalSharp', 'Palatino Linotype', Georgia, serif;
-  --font-body: 'Macondo', 'Segoe UI', system-ui, -apple-system, sans-serif;
-  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --font-display: 'Iosevka Charon Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --font-body: 'Iosevka Charon Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --font-mono: 'Iosevka Charon Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 }

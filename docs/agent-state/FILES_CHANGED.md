@@ -1,5 +1,18 @@
 # Files Changed
 
+## 2026-11-17 - logo assets and Iosevka Charon Mono
+
+- `frontend/public/logo-dark.webp`, `logo-light.webp` - supplied logos moved into the Vite public dir
+  (the `loght` filename typo fixed)
+- `frontend/public/logo-mark-dark.webp`, `logo-mark-light.webp` - square 256px crops for UI and favicon
+- `frontend/src/components/layout/BrandMark.tsx` - theme-aware logo component
+- `frontend/src/components/layout/Header.tsx`, `AppShell.tsx` - mark in brand and footer
+- `frontend/index.html` - favicons, apple touch icon and the Iosevka Charon Mono font link
+- `frontend/src/styles/fonts.css`, `tokens.css`, `base.css`, `layout.css` - mono type system, scale and
+  logo sizing
+
+Checks: frontend typecheck and production build pass; assets emitted to `dist/`.
+
 ## 2026-11-17 - OpenRouter fallback and MedievalSharp/Macondo type
 
 - `backend/src/services/adaption.service.ts` - provider chain: Adaption, then OpenRouter keys 1-3,

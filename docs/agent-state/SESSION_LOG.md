@@ -84,3 +84,9 @@
 - Added OpenRouter as a fallback provider with three keys rotated one at a time; Adaption stays first.
 - AI responses now name the provider attempt that succeeded.
 - Swapped display/body fonts to MedievalSharp and Macondo and raised the reading size.
+
+## 2026-11-17 - logo integration and mono typography
+
+- Moved the supplied logos into `frontend/public`, fixed the filename typo and derived square marks
+  for the header, footer and favicon.
+- Unified display/body/code type on Iosevka Charon Mono and retuned the type scale.

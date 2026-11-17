@@ -22,7 +22,7 @@ All styles live under `frontend/src/styles/` and are imported once from `fronten
 | `pages.css`      | Hero, page grids and reference page composition                         |
 | `responsive.css` | Tablet/narrow viewport and no-overflow adjustments                      |
 
-Display type uses `MedievalSharp`, body type uses `Macondo` and code uses `JetBrains Mono`, loaded from Google Fonts in
+Display, body and code type use `Iosevka Charon Mono` (weights 300-700 plus italics), loaded from Google Fonts in
 `frontend/index.html` with monospace fallbacks. No font files are committed.
 
 ## Tokens
