@@ -103,7 +103,11 @@ describe('AI endpoints', () => {
     mocks.verifyGoogleIdToken.mockResolvedValue(identity);
     mocks.upsertGoogleUser.mockResolvedValue(user);
     mocks.findUserById.mockResolvedValue(user);
-    mocks.requestStructuredOutput.mockResolvedValue(blueprint);
+    mocks.requestStructuredOutput.mockResolvedValue({
+      data: blueprint,
+      model: 'test-model',
+      provider: 'adaption',
+    });
   });
 
   it('requires a session', async () => {
@@ -167,7 +171,11 @@ describe('AI endpoints', () => {
   });
 
   it('returns a qualified mix report from numeric metrics', async () => {
-    mocks.requestStructuredOutput.mockResolvedValue(report);
+    mocks.requestStructuredOutput.mockResolvedValue({
+      data: report,
+      model: 'test-model',
+      provider: 'openrouter-key-1',
+    });
 
     const agent = await signedInAgent();
     const response = await agent.post('/api/v1/ai/mix-report').send({

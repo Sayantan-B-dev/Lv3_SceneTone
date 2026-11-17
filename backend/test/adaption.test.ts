@@ -34,7 +34,11 @@ describe('Adaption adapter', () => {
     const fetchMock = vi.fn().mockResolvedValue(chatResponse('```json\n{"answer":"ok"}\n```'));
     vi.stubGlobal('fetch', fetchMock);
 
-    await expect(requestStructuredOutput(request)).resolves.toEqual({ answer: 'ok' });
+    await expect(requestStructuredOutput(request)).resolves.toMatchObject({
+      data: { answer: 'ok' },
+      model: 'test-model',
+      provider: 'adaption',
+    });
 
     const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
     expect(url).toBe('https://adaption.test/api/v1/chat/completions');

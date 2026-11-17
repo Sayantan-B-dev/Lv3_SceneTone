@@ -1,5 +1,4 @@
 import type { RequestHandler } from 'express';
-import { env } from '../config/env.js';
 import { requireSessionUserId } from '../middleware/auth.js';
 import type { BlueprintRequest, MixReportRequest, SoundscapeBlueprint } from '../schemas/ai.schema.js';
 import {
@@ -22,18 +21,19 @@ function savedProject(project: ProjectDocument | null) {
 
 export const generateBlueprint: RequestHandler = async (req, res) => {
   const input = req.body as BlueprintRequest;
-  const blueprint = await requestStructuredOutput<SoundscapeBlueprint>({
+  const result = await requestStructuredOutput<SoundscapeBlueprint>({
     ...buildBlueprintPrompt(input),
     schema: soundscapeBlueprintSchema,
   });
 
   const project = input.projectId
-    ? await saveBlueprint(requireSessionUserId(req), input.projectId, blueprint)
+    ? await saveBlueprint(requireSessionUserId(req), input.projectId, result.data)
     : null;
 
   res.json({
-    blueprint,
-    model: env.ADAPTION_MODEL ?? null,
+    blueprint: result.data,
+    model: result.model,
+    provider: result.provider,
     project: savedProject(project),
     persisted: Boolean(project),
   });
@@ -41,19 +41,20 @@ export const generateBlueprint: RequestHandler = async (req, res) => {
 
 export const generateMixReport: RequestHandler = async (req, res) => {
   const input = req.body as MixReportRequest;
-  const report = await requestStructuredOutput<MixReport>({
+  const result = await requestStructuredOutput<MixReport>({
     ...buildMixReportPrompt(input),
     schema: mixReportSchema,
     temperature: 0.4,
   });
 
   const project = input.projectId
-    ? await saveMixReport(requireSessionUserId(req), input.projectId, report, input.metrics)
+    ? await saveMixReport(requireSessionUserId(req), input.projectId, result.data, input.metrics)
     : null;
 
   res.json({
-    report,
-    model: env.ADAPTION_MODEL ?? null,
+    report: result.data,
+    model: result.model,
+    provider: result.provider,
     project: savedProject(project),
     persisted: Boolean(project),
   });

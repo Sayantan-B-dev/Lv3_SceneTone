@@ -31,9 +31,9 @@
 Use Web Audio API first. Add an FFT/DSP package only when a concrete requirement needs it; record package, pinned version, licence, purpose and tests. RMS is not LUFS. Sample peak is not true peak.
 
 ## AI provider
-Call Adaption only from backend through a provider adapter. Discover model IDs from the current model catalogue. Handle malformed structured output, timeout, 429/quota and 5xx. Inference is credit/token priced; never promise unlimited or guaranteed free inference.
+Call Adaption and OpenRouter only from the backend through one provider adapter. Providers are tried in order (Adaption, then OpenRouter keys 1-3) with per-attempt timeout; malformed structured output, timeout, 429/quota and 5xx move to the next attempt. Discover model IDs from the current catalogues; `openrouter/auto` is the OpenRouter default and can be overridden. Inference is credit/token priced; never promise unlimited or guaranteed free inference.
 
 ## Environment variable names
-`NODE_ENV`, `PORT`, `FRONTEND_ORIGIN`, `MONGODB_URI`, `SESSION_SECRET`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` (only if applicable), `ADAPTION_API_KEY`, `ADAPTION_BASE_URL`, `ADAPTION_MODEL`, `AI_REQUEST_TIMEOUT_MS`.
+`NODE_ENV`, `PORT`, `FRONTEND_ORIGIN`, `MONGODB_URI`, `SESSION_SECRET`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` (only if applicable), `ADAPTION_API_KEY`, `ADAPTION_BASE_URL`, `ADAPTION_MODEL`, `OPENROUTER_BASE_URL`, `OPENROUTER_MODEL`, `OPENROUTER_API_KEY_1`, `OPENROUTER_API_KEY_2`, `OPENROUTER_API_KEY_3`, `AI_REQUEST_TIMEOUT_MS`.
 
 Never expose secrets through `VITE_*` variables or commit `.env`. Inspect manifests and lockfiles before installing; add only dependencies actually used and pin compatible versions.

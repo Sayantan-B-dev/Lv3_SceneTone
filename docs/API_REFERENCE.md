@@ -85,8 +85,11 @@ project owned by another account is reported as `404 PROJECT_NOT_FOUND` rather t
 
 ### AI responses
 
-`POST /ai/blueprint` returns `{ blueprint, model, project, persisted }`. `POST /ai/mix-report`
-returns `{ report, model, project, persisted }`. `project` is the updated project when an owned
+`POST /ai/blueprint` returns `{ blueprint, model, provider, project, persisted }`.
+`POST /ai/mix-report` returns `{ report, model, provider, project, persisted }`. `provider` names the
+attempt that succeeded (`adaption`, `openrouter-key-1` ... `openrouter-key-3`). Providers are tried
+in order: Adaption when configured, then each OpenRouter key. Retryable failures move to the next
+attempt; the final error is returned. `project` is the updated project when an owned
 `projectId` was supplied, otherwise `null`. Provider failures never fall back to local samples.
 
 ## Error codes

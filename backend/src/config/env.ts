@@ -16,6 +16,11 @@ const envSchema = z.object({
   ADAPTION_API_KEY: optionalString,
   ADAPTION_BASE_URL: optionalUrl,
   ADAPTION_MODEL: optionalString,
+  OPENROUTER_BASE_URL: optionalUrl,
+  OPENROUTER_MODEL: optionalString,
+  OPENROUTER_API_KEY_1: optionalString,
+  OPENROUTER_API_KEY_2: optionalString,
+  OPENROUTER_API_KEY_3: optionalString,
   AI_REQUEST_TIMEOUT_MS: z.coerce.number().int().positive().default(30000),
 });
 

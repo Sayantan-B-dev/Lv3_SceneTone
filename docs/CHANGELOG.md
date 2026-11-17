@@ -45,6 +45,18 @@
   design-system phase.
 - Headless Chrome checks at 1440px in light/dark and at 390px/320px; no horizontal overflow.
 
+## Unreleased - provider fallback and typography
+
+### Added
+
+- OpenRouter provider fallback with three server-side keys tried one at a time after Adaption.
+- `provider` in AI responses naming the attempt that succeeded.
+- Fallback tests covering provider failure, key rotation and exhausted keys.
+
+### Changed
+
+- Display/body type switched to `MedievalSharp` and `Macondo`, with a larger base size for long text.
+
 ## Unreleased - sign-in and typography fixes
 
 ### Changed

@@ -95,6 +95,7 @@ export interface MixReport {
 
 export interface AiResponse<T> {
   model: string | null;
+  provider?: string;
   persisted: boolean;
   project: Project | null;
   blueprint?: T;

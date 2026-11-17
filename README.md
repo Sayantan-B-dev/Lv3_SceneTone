@@ -103,9 +103,14 @@ MONGODB_URI=mongodb://127.0.0.1:27017/scenetone
 SESSION_SECRET=<at least 32 random characters>
 GOOGLE_CLIENT_ID=<Google OAuth client id>
 GOOGLE_CLIENT_SECRET=<required for Google redirect sign-in, backend-only>
-ADAPTION_API_KEY=<backend-only>
+ADAPTION_API_KEY=<backend-only, optional when OpenRouter is set>
 ADAPTION_BASE_URL=<Adaption base URL>
 ADAPTION_MODEL=<current model id>
+OPENROUTER_BASE_URL=https://openrouter.ai/api/v1
+OPENROUTER_MODEL=openrouter/auto
+OPENROUTER_API_KEY_1=<backend-only>
+OPENROUTER_API_KEY_2=<backend-only, fallback>
+OPENROUTER_API_KEY_3=<backend-only, fallback>
 AI_REQUEST_TIMEOUT_MS=30000
 ```
 
@@ -122,6 +127,10 @@ VITE_API_BASE_URL=http://localhost:5000/api/v1
 DEV_SERVER_PORT=5173
 DEV_API_PROXY_TARGET=http://localhost:5000
 ```
+
+The AI provider chain is Adaption first (when configured), then the three OpenRouter keys in order.
+A failed attempt (timeout, rate limit, provider error, invalid output) moves to the next provider or
+key; keys are never sent together and never exposed to the browser.
 
 Google sign-in runs on the backend: the UI links to `/api/v1/auth/google/start`, Google returns
 to `GOOGLE_CALLBACK_URL`, and the backend sets the session. No Google client id is needed in the

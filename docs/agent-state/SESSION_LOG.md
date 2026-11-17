@@ -78,3 +78,9 @@
   the backend redirect flow so only the redirect URI must be registered.
 - Replaced the Google-rendered button with a styled button and removed `@react-oauth/google`.
 - Replaced pixel fonts with Space Grotesk, Inter and JetBrains Mono and a readable type scale.
+
+## 2026-11-17 - OpenRouter fallback and font switch
+
+- Added OpenRouter as a fallback provider with three keys rotated one at a time; Adaption stays first.
+- AI responses now name the provider attempt that succeeded.
+- Swapped display/body fonts to MedievalSharp and Macondo and raised the reading size.

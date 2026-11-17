@@ -1,5 +1,20 @@
 # Files Changed
 
+## 2026-11-17 - OpenRouter fallback and MedievalSharp/Macondo type
+
+- `backend/src/services/adaption.service.ts` - provider chain: Adaption, then OpenRouter keys 1-3,
+  per-attempt timeout and retryable failure handling
+- `backend/src/config/env.ts` - OpenRouter base URL, model and three key variables
+- `backend/src/controllers/ai.controller.ts` - returns the model and provider that succeeded
+- `backend/test/openrouter.test.ts` - provider fallback and key rotation tests
+- `backend/test/adaption.test.ts`, `backend/test/ai.test.ts` - updated result shape
+- `backend/.env.example`, `README.md`, `docs/API_REFERENCE.md`, `docs/TECH_STACK.md` - provider keys
+- `frontend/index.html`, `frontend/src/styles/fonts.css`, `tokens.css`, `base.css` - MedievalSharp
+  display and Macondo body type with a larger reading size
+- `frontend/src/types/index.ts` - optional provider field
+
+Checks: backend typecheck and 34 tests pass; frontend typecheck, 14 tests and build pass.
+
 ## 2026-11-17 - sign-in flow and typography fix
 
 - `frontend/src/components/auth/SignInButton.tsx` - custom styled link to `/auth/google/start`
