@@ -15,9 +15,13 @@ npm run format:check
 Each command forwards to `backend` and `frontend`; each app can also be run directly with
 `npm run <script> --prefix <app>`.
 
-## Current tests (scaffold + design system)
+## Current tests (auth, persistence, design system)
 
 | Suite    | File                                            | Covers                                                  |
+| -------- | ----------------------------------------------- | ------------------------------------------------------- |
+| Backend  | `backend/test/auth.test.ts`                     | Invalid credential, missing credential, session lifecycle, logout, stale session, validation, CSRF origin |
+| Backend  | `backend/test/google.test.ts`                   | Audience-bound verification, missing `sub`, verifier failure propagation |
+| Backend  | `backend/test/projects.test.ts`                 | Owner-scoped list/create/read/update/delete filters      |
 | -------- | ----------------------------------------------- | ------------------------------------------------------- |
 | Backend  | `backend/test/health.test.ts`                   | `GET /api/v1/health` returns `200` and service shape    |
 | Frontend | `frontend/src/components/ui/Button.test.tsx`    | Button renders with an accessible name                  |
@@ -43,7 +47,11 @@ Tests run with a test environment and do not require live MongoDB, Google or Ada
 ## Required coverage before V1 acceptance
 
 - Auth: invalid signature, issuer, audience and expiry rejected; session flags; logout.
+  (Adjust: route-level coverage exists; issuer/audience/expiry rely on `google-auth-library`
+  verification and are not re-tested against live Google keys.)
 - Projects: CRUD validation, persistence and cross-user denial.
+  (Adjust: service-level cross-user denial and route validation are covered; live MongoDB
+  persistence is verified manually.)
 - AI: success, malformed structured output, timeout, 429/quota and 5xx; no fabricated fallback.
 - Audio: silence, mono, stereo, decode failure and non-finite metric handling.
 - Privacy: raw audio is never uploaded; exports contain no secrets.

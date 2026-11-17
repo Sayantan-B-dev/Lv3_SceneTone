@@ -12,6 +12,7 @@ const envSchema = z.object({
   SESSION_SECRET: z.string().min(32),
   GOOGLE_CLIENT_ID: z.string().min(1),
   GOOGLE_CLIENT_SECRET: optionalString,
+  GOOGLE_CALLBACK_URL: optionalUrl,
   ADAPTION_API_KEY: optionalString,
   ADAPTION_BASE_URL: optionalUrl,
   ADAPTION_MODEL: optionalString,

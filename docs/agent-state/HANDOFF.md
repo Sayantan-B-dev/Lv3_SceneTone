@@ -2,91 +2,53 @@
 
 ## Resume point
 
-- Phase/state: Phase 2 design system complete, uncommitted
-- Branch/last commit: `main`, `0ca1702` (Phase 1 scaffold)
-- Next phase: Phase 3 backend, auth and persistence
-- Current task: obtain commit approval for Phase 2, then implement auth/session/projects
+- Phase/state: Phase 3 auth and persistence complete and verified; Phase 4 next
+- Branch/last commit: `main`, `61d2178` (Phase 2 design system); Phase 3 pending commit
+- Next phase: Phase 4 core product and audio
+- Current task: commit Phase 3, then implement the Adaption adapter, local audio analysis, mix
+  report and exports
 
 ## Completed and verified
 
-### Phase 1 (committed)
+### Phase 1 (committed `0ca1702`)
 
 - Independent frontend/backend apps with separate lockfiles, installs, env files and build outputs.
-- Root orchestration is dependency-free; no root `node_modules`.
-- Express pipeline, sessions, security middleware, validation, safe errors, redacted logs, models
-  and Zod contracts; feature routes remain honest `501` stubs.
-- Local MongoDB connection, exact CORS and frontend health link verified.
-- Full scaffold checks passed.
+- Bearer-free Express pipeline with sessions, security middleware, validation, safe errors and
+  redacted logs.
 
-### Phase 2 (uncommitted)
+### Phase 2 (committed `61d2178`)
 
-- `reference/reference.html` translated into a vaporwave/Win95 React UI.
-- Taskbar shell, window chrome, gradient floor, display fonts, tags, notes, buttons and footer.
+- `reference/reference.html` translated into the vaporwave/Win95 UI with centralized token CSS.
 - Routes: `/`, `/blueprint`, `/analyze`, `/fl-studio`, `/about`, `/dashboard`,
   `/projects/:projectId`, 404.
-- Home scene visualizer with sliders and mood presets; reduced-motion static frame.
-- Blueprint page produces a deterministic local sample, explicitly labeled not AI output; exports
-  disabled and explained.
-- Analyze page is visibly inactive; metrics and bands remain placeholders.
-- FL Studio catalogue is static guidance with filters and chain; no DAW control claim.
-- About FAQ and definitions; accessible accordion and scroll-safe table.
-- Light/dark/system tokens, focus contrast, `lang="ja"` and scoped live regions.
-- Independent accessibility audit performed and findings addressed.
-- Tests: backend 1; frontend 5 files / 6 tests.
+- Accessible shell, form primitives, theme persistence and design-system tests.
+
+### Phase 3 (uncommitted)
+
+- `POST /auth/google` verifies the Google ID token, upserts the user on the verified `sub`, rotates
+  the session id and returns the public user.
+- `GET /auth/me` invalidates stale sessions; `POST /auth/logout` destroys the session and clears the
+  cookie.
+- Owner-scoped project CRUD with Zod validation; foreign or unknown projects return
+  `404 PROJECT_NOT_FOUND`.
+- Frontend sign-in control in the header, session-aware dashboard with project creation/listing and
+  a project workspace with rename and delete.
+- Dev port, API proxy target, API base URL, CORS origin and OAuth callback URL all come from env.
+- Tests: backend 4 files / 16 tests; frontend 5 files / 6 tests; both typechecks pass.
 
 ## Important constraints for next agent
 
-- The UI is visually complete but AI generation, audio analysis, persistence and exports are not
-  implemented. Do not describe the sample blueprint as inference.
-- Replace the local template in `frontend/src/pages/BlueprintPage.tsx` only when the Adaption flow
-  and validation exist.
-- Activate Analyze only with real browser-local Web Audio metrics; never fabricate numbers.
-- Keep window chrome decorative; no dragging/minimize behavior was ported.
+- `POST /ai/blueprint` and `POST /ai/mix-report` still return `501`. Do not present the local sample
+  blueprint as inference.
+- Audio analysis must stay in the browser; only numeric metrics may reach the backend.
+- The Analyze page is still inactive; activate it only with real Web Audio metrics.
+- `GOOGLE_CALLBACK_URL` is reserved for redirect-mode OAuth; the current flow uses ID tokens.
+- Never add secrets to `VITE_*` variables or to source.
 
 ## Exact next action
 
-1. Open: repository root.
-2. Inspect: `docs/SRS.md` auth/project requirements and current backend stubs.
-3. Do: implement Google credential verification, app-owned sessions and owner-scoped project CRUD
-   with mocked tests; do not require live Google credentials.
-4. Verify: `npm run typecheck && npm run lint && npm test && npm run build && npm run format:check`.
-
-## Relevant files
-
-- `frontend/src/pages/BlueprintPage.tsx` - sample template to replace in the AI phase
-- `frontend/src/pages/AnalyzePage.tsx` - inactive analyzer to activate in the audio phase
-- `frontend/src/pages/FlStudioPage.tsx` - static plugin catalogue
-- `frontend/src/components/ui/` - Window, Field controls, Alert, FaqList, visualizer
-- `frontend/src/styles/` - all design tokens and layers
-- `reference/reference.html` - source design, do not iframe
-- `backend/src/middleware/`, `backend/src/routes/`, `backend/src/services/` - Phase 3 targets
-- `backend/src/config/env.ts` - blank optional env values are accepted
-
-## Checks
-
-- `npm run typecheck` - passed
-- `npm run lint` - passed
-- `npm test` - passed (backend 1 test; frontend 5 files / 6 tests)
-- `npm run build` - passed
-- `npm run format:check` - passed
-- Manual visual: 1440px light/dark, 390px and 320px; no horizontal overflow
-
-## Blockers and assumptions
-
-- No blocker for Phase 3 coding. Live Google OAuth and Adaption calls are unverified and need real
-  credentials only for manual smoke tests, not automated tests.
-- Local MongoDB at `127.0.0.1:27017` was verified earlier.
-- Google Fonts are loaded from a third party; fallbacks are in place.
-
-## Required environment variable names
-
-- `NODE_ENV`, `PORT`, `FRONTEND_ORIGIN`, `MONGODB_URI`, `SESSION_SECRET`, `GOOGLE_CLIENT_ID`,
-  `GOOGLE_CLIENT_SECRET`, `ADAPTION_API_KEY`, `ADAPTION_BASE_URL`, `ADAPTION_MODEL`,
-  `AI_REQUEST_TIMEOUT_MS`, `VITE_API_BASE_URL`, `VITE_GOOGLE_CLIENT_ID`
-
-## Git state
-
-- Working tree: Phase 2 changes uncommitted
-- Ignored: `backend/.env`, `frontend/.env`, `node_modules/`, build outputs
-- Commit status: Phase 1 committed; Phase 2 not committed
-- Do not commit without user approval.
+1. Open: `backend/src/controllers/ai.controller.ts`, `backend/src/schemas/ai.schema.ts`.
+2. Inspect: `docs/SRS.md` FR-03 to FR-07 and `docs/TECH_STACK.md` Adaption notes.
+3. Do: implement the Adaption adapter with timeout/429/5xx/malformed-output handling, then wire the
+   Blueprint page, browser-local analysis, qualified mix report and JSON/Markdown/TXT export.
+4. Check: backend and frontend typecheck/tests, then update docs and state files.

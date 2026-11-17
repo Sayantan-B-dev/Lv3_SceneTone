@@ -2,16 +2,9 @@
 
 ## P0 - Next
 
-- [ ] Commit Phase 2 design system after explicit approval - acceptance: one conventional commit
-- [ ] Start Phase 3 backend/auth - acceptance: plan reported before broad edits
-
-## P1 - Backend, auth and persistence
-
-- [ ] Implement Google sign-in and local user creation - acceptance: verified `sub`, invalid
-  signature/issuer/audience/expiry rejected
-- [ ] Implement owner-scoped project CRUD - acceptance: CRUD validation and cross-user denial tests
-- [ ] Wire session creation/logout and CSRF behavior - acceptance: cookie flags and logout tests
-- [ ] Verify session TTL cleanup on the local database - acceptance: expired session removed
+- [ ] Commit Phase 3 auth and persistence - acceptance: one conventional commit
+- [ ] Build the Adaption provider adapter - acceptance: timeout, 429, 5xx and malformed output
+  mapped to safe errors; no fabricated output
 
 ## P1 - Core product and audio
 
@@ -40,6 +33,13 @@
 
 ## Completed
 
+- [x] Google sign-in: ID-token verification, user upsert on verified `sub`, session rotation
+- [x] `GET /auth/me` with stale-session invalidation and `POST /auth/logout`
+- [x] Owner-scoped project list/create/read/update/delete with Zod validation
+- [x] Auth, Google verification, project ownership and CSRF tests (backend 16 tests)
+- [x] Frontend sign-in control, session-aware dashboard and project workspace
+- [x] All environment-specific URLs configurable through env (`VITE_API_BASE_URL`,
+  `FRONTEND_ORIGIN`, `GOOGLE_CALLBACK_URL`, `DEV_SERVER_PORT`, `DEV_API_PROXY_TARGET`)
 - [x] Independent frontend/backend installs with separate lockfiles and no root `node_modules`
 - [x] Local `.env` files created (gitignored) with local MongoDB default
 - [x] Local MongoDB connectivity verified

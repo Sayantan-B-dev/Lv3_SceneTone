@@ -4,6 +4,8 @@ import { env, isProduction, isTest } from '../config/env.js';
 
 const sessionTtlMs = 7 * 24 * 60 * 60 * 1000;
 
+export const SESSION_COOKIE_NAME = 'scenetone.sid';
+
 const store = isTest
   ? undefined
   : MongoStore.create({
@@ -14,7 +16,7 @@ const store = isTest
     });
 
 export const sessionMiddleware = session({
-  name: 'scenetone.sid',
+  name: SESSION_COOKIE_NAME,
   secret: env.SESSION_SECRET,
   store,
   resave: false,

@@ -1,10 +1,10 @@
 import { Router } from 'express';
 import {
-  createProject,
-  deleteProject,
-  getProject,
-  listProjects,
-  updateProject,
+  createOneProject,
+  deleteOneProject,
+  getOneProject,
+  listAllProjects,
+  updateOneProject,
 } from '../controllers/projects.controller.js';
 import { requireAuth } from '../middleware/auth.js';
 import { validateBody, validateParams } from '../middleware/validate.js';
@@ -18,13 +18,13 @@ export const projectsRouter = Router();
 
 projectsRouter.use(requireAuth);
 
-projectsRouter.get('/', listProjects);
-projectsRouter.post('/', validateBody(createProjectSchema), createProject);
-projectsRouter.get('/:projectId', validateParams(projectIdParamsSchema), getProject);
+projectsRouter.get('/', listAllProjects);
+projectsRouter.post('/', validateBody(createProjectSchema), createOneProject);
+projectsRouter.get('/:projectId', validateParams(projectIdParamsSchema), getOneProject);
 projectsRouter.patch(
   '/:projectId',
   validateParams(projectIdParamsSchema),
   validateBody(updateProjectSchema),
-  updateProject,
+  updateOneProject,
 );
-projectsRouter.delete('/:projectId', validateParams(projectIdParamsSchema), deleteProject);
+projectsRouter.delete('/:projectId', validateParams(projectIdParamsSchema), deleteOneProject);

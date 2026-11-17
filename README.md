@@ -98,6 +98,7 @@ Current local defaults:
 NODE_ENV=development
 PORT=5000
 FRONTEND_ORIGIN=http://localhost:5173
+GOOGLE_CALLBACK_URL=http://localhost:5000/api/v1/auth/google/callback
 MONGODB_URI=mongodb://127.0.0.1:27017/scenetone
 SESSION_SECRET=<at least 32 random characters>
 GOOGLE_CLIENT_ID=<Google OAuth client id>
@@ -118,6 +119,8 @@ node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 
 ```dotenv
 VITE_API_BASE_URL=http://localhost:5000/api/v1
+DEV_SERVER_PORT=5173
+DEV_API_PROXY_TARGET=http://localhost:5000
 VITE_GOOGLE_CLIENT_ID=<same public Google client id>
 ```
 

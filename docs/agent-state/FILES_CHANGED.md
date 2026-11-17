@@ -1,6 +1,50 @@
 # Files Changed
 
-## 2026-11-17 - Phase 2 design system (uncommitted)
+## 2026-11-17 - Phase 3 auth and persistence
+
+### Backend
+
+- `backend/src/services/users.service.ts` - Google identity upsert, lookup and public user mapping
+- `backend/src/services/projects.service.ts` - owner-scoped list/create/read/update/delete helpers
+- `backend/src/controllers/auth.controller.ts` - credential verification, session rotation, me/logout
+- `backend/src/controllers/projects.controller.ts` - CRUD handlers scoped to the session user
+- `backend/src/routes/projects.routes.ts` - wired to the implemented controllers
+- `backend/src/middleware/session.ts` - shared cookie name constant and store configuration
+- `backend/src/config/env.ts` - added optional `GOOGLE_CALLBACK_URL`
+- `backend/test/auth.test.ts` - auth boundary, session lifecycle, validation, CSRF origin
+- `backend/test/google.test.ts` - audience-bound verification and failure propagation
+- `backend/test/projects.test.ts` - ownership filters for every project operation
+- `backend/.env.example` - documented `GOOGLE_CALLBACK_URL`
+
+### Frontend
+
+- `frontend/src/hooks/useAuth.ts` - current user, Google sign-in and sign-out hooks
+- `frontend/src/hooks/useProjects.ts` - list/detail/create/update/delete hooks
+- `frontend/src/components/auth/SignInButton.tsx` - GIS button with configuration and error states
+- `frontend/src/components/auth/AuthControl.tsx` - header session state and sign-out
+- `frontend/src/components/layout/Header.tsx` - renders `AuthControl`
+- `frontend/src/pages/DashboardPage.tsx` - session-aware project creation and listing
+- `frontend/src/pages/ProjectPage.tsx` - project workspace, rename, delete and unavailable states
+- `frontend/src/types/index.ts` - added `Project` type
+- `frontend/src/styles/layout.css`, `frontend/src/styles/pages.css` - auth and project styles
+- `frontend/vite.config.ts` - dev port and API proxy target from env
+- `frontend/.env.example` - documented `DEV_SERVER_PORT` and `DEV_API_PROXY_TARGET`
+
+### Docs
+
+- `docs/API_REFERENCE.md` - implemented endpoints, project payloads and error codes
+- `docs/TESTING.md`, `docs/CHANGELOG.md`, `README.md` - phase 3 coverage, changelog and env keys
+- `SCENETONE_OPENCODE_PROMPTS.md` - phase 3 marked complete
+- `docs/agent-state/` - status, TODO, decisions, files, handoff, session log
+
+### Checks
+
+- `npm run typecheck --prefix backend` - passed
+- `npm run typecheck --prefix frontend` - passed
+- `npm test --prefix backend` - passed (4 files / 16 tests)
+- `npm test --prefix frontend` - passed (5 files / 6 tests)
+
+## 2026-11-17 - Phase 2 design system (committed as `61d2178`)
 
 ### Reference and theme layer
 

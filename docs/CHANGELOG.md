@@ -4,6 +4,16 @@
 
 ### Added
 
+- Google sign-in: backend ID-token verification, user upsert on verified `sub`, session id rotation
+  and `POST /auth/google`.
+- Application sessions: Mongo-backed store, `GET /auth/me` with stale-session invalidation and
+  `POST /auth/logout`.
+- Owner-scoped project CRUD service, controllers and routes with Zod validation.
+- Frontend auth: `useAuth` hooks, `SignInButton`, `AuthControl` in the header and a session-aware
+  dashboard.
+- Frontend projects: `useProjects` hooks, project creation/listing on the dashboard and a project
+  workspace with rename, delete and unavailable states.
+- Backend tests for auth boundaries, Google verification, project ownership and CSRF rejection.
 - Translation of `reference/reference.html` into a vaporwave/Win95 UI: taskbar, window chrome,
   tags, gradient floor, glitch hero, marquee and inset panels.
 - Home, Blueprint, Analyze, FL Studio and About routes, plus routed sample and inactive states.
@@ -28,7 +38,11 @@
 
 ### Verified
 
-- `npm run typecheck`, `npm run lint`, `npm test`, `npm run build`, `npm run format:check` pass.
+- `npm run typecheck --prefix backend` and `--prefix frontend` pass.
+- `npm test --prefix backend` passes (4 files / 16 tests).
+- `npm test --prefix frontend` passes (5 files / 6 tests).
+- `npm run typecheck`, `npm run lint`, `npm test`, `npm run build`, `npm run format:check` pass for the
+  design-system phase.
 - Headless Chrome checks at 1440px in light/dark and at 390px/320px; no horizontal overflow.
 
 ## 0.1.0 — 2026-11-17

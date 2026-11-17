@@ -1,4 +1,5 @@
 import { Link, NavLink } from 'react-router-dom';
+import { AuthControl } from '@/components/auth/AuthControl';
 import { Clock } from './Clock';
 import { ThemeToggle } from './ThemeToggle';
 
@@ -28,6 +29,7 @@ export function Header() {
             </NavLink>
           ))}
         </nav>
+        <AuthControl />
         <ThemeToggle />
         <Clock />
       </div>

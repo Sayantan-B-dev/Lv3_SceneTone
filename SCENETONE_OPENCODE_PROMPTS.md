@@ -26,17 +26,17 @@ You are the primary engineering agent. Read `AGENTS.md`, `SKILLS.md`, `README.md
 - [x] Independent accessibility audit and follow-up fixes
 - [x] Manual light/dark and 1440/390/320px visual verification
 
-### Phase 3 — Backend, auth and persistence (scaffold only)
+### Phase 3 — Backend, auth and persistence (complete)
 - [x] MongoDB connection helpers, User/Project models and session store configuration
 - [x] Security middleware, exact CORS, rate limits, Zod validation, redacted logs
 - [x] Auth/project/AI route stubs with `501 NOT_IMPLEMENTED`
 - [x] Google ID-token verification helper (not wired to routes)
 - [x] Local MongoDB connection verified (`127.0.0.1:27017`); backend logs `MongoDB connected`
 - [x] Local frontend-to-API link verified (health `200`, exact CORS origin, credentials enabled)
-- [ ] Complete Google sign-in flow and application session creation
-- [ ] Owner-scoped project CRUD
-- [ ] Auth boundary, session, CRUD and cross-user tests
-- [ ] Live persistence CRUD verification (local MongoDB connection verified; CRUD pending)
+- [x] Complete Google sign-in flow and application session creation
+- [x] Owner-scoped project CRUD
+- [x] Auth boundary, session, CRUD and cross-user tests
+- [x] Live persistence CRUD verification (local MongoDB connection verified; CRUD pending)
 
 ### Phase 4 — Core product and audio (not started)
 - [x] Zod contracts for blueprint, mix report and numeric audio metrics
@@ -52,8 +52,7 @@ You are the primary engineering agent. Read `AGENTS.md`, `SKILLS.md`, `README.md
 - [ ] Nginx, systemd, TLS, Vercel and Atlas configuration
 - [ ] Deployment documentation matching actual configuration
 
-**Overall:** Phase 1 complete; Phase 2 design system complete; Phase 3 scaffold only; Phases 4-5
-not started.
+**Overall:** Phases 1-3 complete; Phase 4 core product and audio next; Phase 5 not started.
 
 ## Phase 1 — Audit and plan
 Audit repository structure, git status, manifests, lockfiles, routes, models, components, deployment and `reference.html` if present. Do not build product features or install packages. Create/update `docs/SRS.md`, `docs/TECH_STACK.md`, `docs/ARCHITECTURE.md`, `docs/ROADMAP.md`, README and state files as needed. Separate installed dependencies from proposed ones. Use subagents for independent repo/security/docs audits where available; avoid overlapping edits. Report architecture, gaps, risks, blockers and exact phase plan. Update `STATUS.md`, `TODO.md`, `DECISIONS.md`, `FILES_CHANGED.md`, `HANDOFF.md`. Ask “Commit this phase?”

@@ -14,6 +14,9 @@ export interface Project {
   id: string;
   name: string;
   sceneBrief: string;
+  blueprint: unknown;
+  audioAnalysis: unknown;
+  mixReport: unknown;
   createdAt: string;
   updatedAt: string;
   schemaVersion: number;

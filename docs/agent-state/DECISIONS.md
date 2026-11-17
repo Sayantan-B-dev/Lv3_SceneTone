@@ -123,3 +123,32 @@
 - Consequences: Phase 3 replaces the sample template and activates Analyze only when real flows and
   tests exist.
 - Related files: `frontend/src/pages/BlueprintPage.tsx`, `frontend/src/pages/AnalyzePage.tsx`
+
+## D-012 - Application-owned sessions keyed on the verified Google subject
+
+- Date: 2026-11-17
+- Status: accepted
+- Decision: `/auth/google` verifies the Google ID token, upserts a local user on the verified `sub`,
+  regenerates the session id and stores only `userId` in a Mongo-backed session. `/auth/me` destroys
+  the session when its user is gone.
+- Reason: Keeps identity server-owned, avoids long-lived tokens in the browser and makes stale
+  sessions fail closed.
+- Consequences: Client-submitted identity fields are ignored; project queries always filter by
+  session owner and return `404` for foreign projects.
+- Related files: `backend/src/controllers/auth.controller.ts`,
+  `backend/src/services/users.service.ts`, `backend/src/services/projects.service.ts`
+
+## D-013 - Every environment-specific URL comes from env, not source
+
+- Date: 2026-11-17
+- Status: accepted
+- Decision: The Vite dev server port and API proxy target are read from `DEV_SERVER_PORT` and
+  `DEV_API_PROXY_TARGET`; browser URLs come from `VITE_API_BASE_URL`; backend origins and OAuth
+  callbacks come from `FRONTEND_ORIGIN` and `GOOGLE_CALLBACK_URL`.
+- Reason: Deployment hosts, ports and the Google redirect URI differ per environment and must be
+  changeable without editing code.
+- Consequences: Local defaults exist only as fallbacks in `vite.config.ts`; the production values are
+  supplied by env. The callback URL is unused by the current ID-token popup flow and is reserved for
+  redirect-mode OAuth.
+- Related files: `frontend/vite.config.ts`, `frontend/.env.example`, `backend/.env.example`,
+  `backend/src/config/env.ts`

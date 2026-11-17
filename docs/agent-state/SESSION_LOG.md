@@ -52,3 +52,13 @@
   only used dependencies installed.
 - Commit: `0ca1702`.
 - Blockers: `reference.html` missing; no live provider verification.
+
+## 2026-11-17 - Phase 3 auth and persistence
+
+- Implemented Google credential verification wiring, user upsert, session rotation, `/auth/me`,
+  logout and owner-scoped project CRUD.
+- Added backend auth, Google verification and project service tests; 4 files / 16 tests pass.
+- Wired frontend sign-in, header auth control, dashboard project creation/listing and project
+  workspace rename/delete.
+- Moved the Vite dev port, API proxy target, OAuth callback and API base URL into env files.
+- Checks: backend typecheck and tests pass; frontend typecheck and tests pass.
