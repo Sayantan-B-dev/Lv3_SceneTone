@@ -172,3 +172,14 @@
 - Reason: Useful page help without a vector store, embeddings or audio access, while staying honest
   about uncertainty.
 - Consequences: Hedged language, no claim of listening, graceful behaviour offline.
+
+## D-016 - Split app and AI API origins
+
+- Date: 2026-11-17
+- Status: accepted
+- Decision: The frontend reads `VITE_APP_API_URL` for auth, sessions, projects and health, and
+  `VITE_AI_API_URL` for the AI routes. Missing AI URL falls back to the app URL; `VITE_API_BASE_URL`
+  stays as a legacy app alias.
+- Reason: Express and the Worker deploy as separate apps, so one base URL cannot address both.
+- Consequences: Sign-in can never be sent to the Worker by accident; AI traffic can move to the edge
+  without touching auth. Worker CORS must allow the frontend origin.

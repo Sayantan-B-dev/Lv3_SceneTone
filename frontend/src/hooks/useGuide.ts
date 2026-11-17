@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
-import { apiRequest } from '@/lib/api';
+import { aiRequest } from '@/lib/api';
 
 export interface GuideChatRequest {
   question: string;
@@ -16,7 +16,7 @@ export interface GuideChatResponse {
 export function useGuideChat() {
   return useMutation({
     mutationFn: (input: GuideChatRequest) =>
-      apiRequest<GuideChatResponse>('/ai/guide', {
+      aiRequest<GuideChatResponse>('/ai/guide', {
         method: 'POST',
         body: JSON.stringify(input),
       }),

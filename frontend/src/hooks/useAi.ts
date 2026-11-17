@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
-import { apiRequest } from '@/lib/api';
+import { aiRequest } from '@/lib/api';
 import type { AiResponse, MixReport, SoundscapeBlueprint } from '@/types';
 
 export interface BlueprintRequest {
@@ -32,7 +32,7 @@ export interface MixReportRequest {
 export function useGenerateBlueprint() {
   return useMutation({
     mutationFn: (input: BlueprintRequest) =>
-      apiRequest<AiResponse<SoundscapeBlueprint> & { blueprint: SoundscapeBlueprint }>(
+      aiRequest<AiResponse<SoundscapeBlueprint> & { blueprint: SoundscapeBlueprint }>(
         '/ai/blueprint',
         { method: 'POST', body: JSON.stringify(input) },
       ),
@@ -42,7 +42,7 @@ export function useGenerateBlueprint() {
 export function useGenerateMixReport() {
   return useMutation({
     mutationFn: (input: MixReportRequest) =>
-      apiRequest<AiResponse<MixReport> & { report: MixReport }>('/ai/mix-report', {
+      aiRequest<AiResponse<MixReport> & { report: MixReport }>('/ai/mix-report', {
         method: 'POST',
         body: JSON.stringify(input),
       }),

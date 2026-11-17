@@ -99,3 +99,8 @@
   failing field; UI errors now include those details.
 - Added retro hand cursors, fixed the marquee motion, and scaffolded `backend-worker/` (Hono +
   Wrangler) without touching the Express backend.
+
+## 2026-11-17 - separate app and AI API origins
+
+- Split the frontend base URL into `VITE_APP_API_URL` and `VITE_AI_API_URL` so auth and projects stay
+  on Express while AI calls can target the Worker. Legacy `VITE_API_BASE_URL` still works for the app.

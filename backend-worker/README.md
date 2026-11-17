@@ -47,6 +47,8 @@ npm run typecheck
 
 ## Frontend note
 
-`frontend/.env` already points at `/api/v1` through the Vite proxy. If you want the browser to talk
-to this Worker directly, set `VITE_API_BASE_URL` to the Worker URL and keep `FRONTEND_ORIGIN` in sync.
-Doing that routes sign-in and project calls to the Worker, which returns `501`.
+Set `VITE_AI_API_URL` in `frontend/.env` to this Worker's `/api/v1` root to send only AI calls
+(`/ai/blueprint`, `/ai/mix-report`, `/ai/guide`) here, and keep `VITE_APP_API_URL` on the Express
+backend for sign-in and projects. Keep `FRONTEND_ORIGIN` in sync with the browser origin.
+
+Do not point `VITE_APP_API_URL` at this Worker: auth and project routes return `501`.

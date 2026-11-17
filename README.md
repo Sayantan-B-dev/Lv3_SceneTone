@@ -50,7 +50,9 @@ Browser :5173  ->  Vite frontend server
    Backend API :5000  ->  Local MongoDB 127.0.0.1:27017/scenetone
 ```
 
-- The frontend calls the backend directly using `VITE_API_BASE_URL`.
+- The frontend calls the app backend with `VITE_APP_API_URL` and the AI service with
+  `VITE_AI_API_URL`. Both are separate apps; when `VITE_AI_API_URL` is unset, AI calls use the app
+  backend. `VITE_API_BASE_URL` still works as a legacy alias for the app URL.
 - The backend accepts only the exact `FRONTEND_ORIGIN` and enables credentials for the session
   cookie.
 - The backend connects to `MONGODB_URI` before it starts listening. If MongoDB is unavailable, the
@@ -123,7 +125,8 @@ node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 ### `frontend/.env`
 
 ```dotenv
-VITE_API_BASE_URL=http://localhost:5000/api/v1
+VITE_APP_API_URL=http://localhost:5000/api/v1
+VITE_AI_API_URL=http://localhost:8787/api/v1
 DEV_SERVER_PORT=5173
 DEV_API_PROXY_TARGET=http://localhost:5000
 ```
@@ -175,7 +178,9 @@ Verify:
 
 ### Port and connection rules
 
-- `VITE_API_BASE_URL` must point at the backend API root, including `/api/v1`.
+- `VITE_APP_API_URL` and `VITE_AI_API_URL` must each include the `/api/v1` prefix. Leave
+  `VITE_AI_API_URL` empty to route AI calls through the app backend, or unset both and use the Vite
+  proxy at `/api/v1`.
 - `FRONTEND_ORIGIN` must exactly match the browser origin (scheme, host and port). Default:
   `http://localhost:5173`.
 - Vite runs with `strictPort`, so it fails instead of silently moving to another port. If you change

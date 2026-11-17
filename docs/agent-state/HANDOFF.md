@@ -5,7 +5,7 @@
 - Phase/state: Phase 5 implemented and verified; Worker deploy pending
 - Branch/last commit: `main`, newest commit adds the page guide and Worker scaffold
 - Next phase: Cloudflare deployment and live provider verification
-- Current task: push the repo, set Worker secrets, deploy `scenetone-api`, update `FRONTEND_ORIGIN`
+- Current task: set `VITE_APP_API_URL` and `VITE_AI_API_URL`, deploy `scenetone-api`, update `FRONTEND_ORIGIN`
 
 ## Completed and verified
 

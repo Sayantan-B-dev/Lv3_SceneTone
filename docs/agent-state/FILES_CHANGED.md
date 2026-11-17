@@ -1,5 +1,15 @@
 # Files Changed
 
+## 2026-11-17 - split app and AI API origins
+
+- `frontend/src/lib/api.ts`: `APP_API_URL`, `AI_API_URL`, `aiRequest`
+- `frontend/src/hooks/useAi.ts`, `frontend/src/hooks/useGuide.ts`: AI calls use `aiRequest`
+- `frontend/src/components/auth/SignInButton.tsx`: sign-in link uses `APP_API_URL`
+- `frontend/src/vite-env.d.ts`, `frontend/.env.example`: new variables
+- `README.md`, `backend-worker/README.md`, `docs/CHANGELOG.md`
+
+Checks: frontend typecheck and 18 tests pass.
+
 ## 2026-11-17 - page guide, validation clarity, Worker backend
 
 - Backend: `src/schemas/ai.schema.ts` (relaxed decoded peak, guide schema), `src/middleware/error-handler.ts`

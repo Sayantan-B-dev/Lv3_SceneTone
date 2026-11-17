@@ -1,4 +1,12 @@
-const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL ?? '/api/v1').replace(/\/$/, '');
+const trimBase = (value: string) => value.replace(/\/$/, '');
+
+/** Auth, sessions, projects and health live on the app backend. */
+export const APP_API_URL = trimBase(
+  import.meta.env.VITE_APP_API_URL ?? import.meta.env.VITE_API_BASE_URL ?? '/api/v1',
+);
+
+/** AI routes can be served by a separate app, such as the Cloudflare Worker. */
+export const AI_API_URL = trimBase(import.meta.env.VITE_AI_API_URL ?? APP_API_URL);
 
 interface ApiErrorPayload {
   error?: {
@@ -23,7 +31,16 @@ export class ApiError extends Error {
 }
 
 export async function apiRequest<T>(path: string, init: RequestInit = {}): Promise<T> {
-  const response = await fetch(`${API_BASE_URL}${path}`, {
+  return sendRequest<T>(APP_API_URL, path, init);
+}
+
+/** Sends AI calls to `VITE_AI_API_URL` when set, otherwise to the app backend. */
+export async function aiRequest<T>(path: string, init: RequestInit = {}): Promise<T> {
+  return sendRequest<T>(AI_API_URL, path, init);
+}
+
+async function sendRequest<T>(baseUrl: string, path: string, init: RequestInit): Promise<T> {
+  const response = await fetch(`${baseUrl}${path}`, {
     credentials: 'include',
     ...init,
     headers: {

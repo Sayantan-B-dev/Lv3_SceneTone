@@ -1,4 +1,6 @@
-const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL ?? '/api/v1').replace(/\/$/u, '');
+import { APP_API_URL } from '@/lib/api';
+
+const API_BASE_URL = APP_API_URL;
 
 export function SignInButton() {
   return (
