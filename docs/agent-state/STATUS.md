@@ -1,9 +1,9 @@
 # Current Status
 
 - Phase: Next.js monolith migration
-- State: implemented and verified locally; ready to merge
+- State: merged to `main` and verified locally
 - Updated: 2026-11-21
-- Branch: `feat/nextjs-monolith`
+- Branch: `main` (merged from `feat/nextjs-monolith`)
 - Current task: single Next.js 16.4.6 App Router app replaces Vite frontend, Express backend and
   Cloudflare Worker
 - Checks: `npm run typecheck`, `npm run lint`, `npm test` (8 files / 18 tests) and `npm run build`

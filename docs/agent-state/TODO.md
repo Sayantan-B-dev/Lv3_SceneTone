@@ -2,7 +2,8 @@
 
 ## P0 - Deploy
 
-- [ ] Merge `feat/nextjs-monolith` to `main`
+- [x] Merge `feat/nextjs-monolith` to `main`
+- [ ] Push `main` to origin
 - [ ] Create Vercel project with the Next.js preset
 - [ ] Set `APP_ORIGIN`, `MONGODB_URI`, `SESSION_SECRET`, Google and AI env values
 - [ ] Add `${APP_ORIGIN}/api/v1/auth/google/callback` to Google Cloud Console
