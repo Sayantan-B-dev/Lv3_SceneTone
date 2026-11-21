@@ -3,9 +3,9 @@
 ## Resume point
 
 - Phase/state: Next.js monolith migration complete and verified locally
-- Branch: `main` (monolith merge complete, not pushed)
+- Branch: `main` (monolith merge complete and pushed)
 - Next phase: deploy
-- Current task: push `main`, create the Vercel project and set production env values
+- Current task: create the Vercel project and set production env values
 
 ## Completed and verified
 

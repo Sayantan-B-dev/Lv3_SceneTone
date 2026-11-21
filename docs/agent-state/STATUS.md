@@ -1,7 +1,7 @@
 # Current Status
 
 - Phase: Next.js monolith migration
-- State: merged to `main` and verified locally
+- State: merged to `main`, pushed and verified locally
 - Updated: 2026-11-21
 - Branch: `main` (merged from `feat/nextjs-monolith`)
 - Current task: single Next.js 16.4.6 App Router app replaces Vite frontend, Express backend and
