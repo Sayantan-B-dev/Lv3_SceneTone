@@ -1,0 +1,101 @@
+@media (max-width: 53.75rem) {
+  .hero,
+  .grid--2,
+  .grid--3,
+  .grid--12,
+  .plugin-grid,
+  .about-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .metric-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .energy-row {
+    grid-template-columns: 100px 1fr 44px;
+  }
+}
+
+@media (max-width: 53.75rem) {
+  .app-nav {
+    order: 3;
+    flex-basis: 100%;
+  }
+
+  .theme-toggle {
+    margin-inline-start: auto;
+  }
+}
+
+@media (max-width: 40rem) {
+  .app-header__inner {
+    gap: 4px;
+  }
+
+  .app-brand {
+    font-size: 0.75rem;
+  }
+
+  .app-nav {
+    order: 3;
+    flex-basis: 100%;
+  }
+
+  .app-nav__link {
+    flex: 1;
+    text-align: center;
+  }
+
+  .theme-toggle {
+    margin-inline-start: auto;
+  }
+
+  .app-main {
+    padding-block: var(--space-4) var(--space-16);
+  }
+
+  .page__title {
+    font-size: clamp(1.25rem, 7vw, 2rem);
+  }
+
+  .hero {
+    padding-block: var(--space-4);
+  }
+
+  .hero__lead {
+    font-size: var(--text-lg);
+  }
+
+  .blueprint-boxes,
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .metric-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .marquee {
+    margin-inline: calc(var(--space-4) * -1);
+  }
+
+  .energy-row {
+    grid-template-columns: 90px 1fr 40px;
+    font-size: 1.125rem;
+  }
+
+  .data-table {
+    font-size: 1.125rem;
+  }
+}
+
+@media (max-width: 24rem) {
+  .metric-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .energy-row {
+    grid-template-columns: 80px 1fr 36px;
+  }
+}

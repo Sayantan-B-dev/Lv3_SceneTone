@@ -1,0 +1,145 @@
+html {
+  scroll-padding-top: calc(var(--layout-header) + var(--space-4));
+}
+
+body {
+  background-color: var(--color-bg);
+  background-image: var(--gradient-bg);
+  background-attachment: fixed;
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
+}
+
+body::before {
+  position: fixed;
+  right: -50%;
+  bottom: 0;
+  left: -50%;
+  z-index: 0;
+  height: 42vh;
+  background-image:
+    linear-gradient(transparent, var(--color-floor-fade)),
+    linear-gradient(var(--color-grid-line) 2px, transparent 2px),
+    linear-gradient(90deg, var(--color-grid-line) 2px, transparent 2px);
+  background-position:
+    0 0,
+    0 0,
+    0 0;
+  background-size:
+    100% 100%,
+    100% 48px,
+    64px 100%;
+  content: '';
+  opacity: 0.55;
+  pointer-events: none;
+  transform: perspective(260px) rotateX(58deg);
+  transform-origin: bottom;
+  animation: floor-scroll 1.2s linear infinite;
+}
+
+@keyframes floor-scroll {
+  to {
+    background-position:
+      0 0,
+      0 48px,
+      0 0;
+  }
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-display);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-tight);
+  letter-spacing: 0.01em;
+  text-wrap: balance;
+}
+
+h1 {
+  font-size: var(--text-4xl);
+  letter-spacing: 0.005em;
+}
+
+h2 {
+  font-size: var(--text-2xl);
+}
+
+h3 {
+  font-size: var(--text-lg);
+}
+
+a {
+  color: var(--color-link);
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--color-link-hover);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+:focus-visible {
+  outline: var(--focus-ring-width) dashed var(--color-focus);
+  outline-offset: var(--focus-ring-offset);
+}
+
+.app-header :focus-visible,
+.window :focus-visible {
+  outline-color: var(--color-focus-on-surface);
+}
+
+::selection {
+  background: var(--color-accent);
+  color: var(--color-accent-contrast);
+}
+
+a,
+button,
+summary,
+select,
+label[for],
+[role='button'],
+.button,
+.drop,
+.chain__node,
+.faq__question {
+  cursor: var(--cursor-hand);
+}
+
+.scene-console__canvas {
+  cursor: var(--cursor-grab);
+}
+
+.scene-console__canvas:active {
+  cursor: var(--cursor-grabbing);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  body::before {
+    animation: none;
+  }
+
+  /* The ticker keeps drifting, just slowly, so it never looks frozen. */
+  .marquee__track {
+    animation-duration: 140s !important;
+    animation-iteration-count: infinite !important;
+  }
+}
+
+.marquee__track {
+  animation-play-state: running;
+}
