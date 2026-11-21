@@ -1,13 +1,13 @@
 node_modules/
+.next/
+out/
 dist/
 build/
 coverage/
 .vite/
+.vercel/
 *.tsbuildinfo
 .eslintcache
-
-# Root package is script-only; each app owns its lockfile.
-/package-lock.json
 
 .env
 .env.*
