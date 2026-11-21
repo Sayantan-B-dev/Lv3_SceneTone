@@ -183,3 +183,17 @@
 - Reason: Express and the Worker deploy as separate apps, so one base URL cannot address both.
 - Consequences: Sign-in can never be sent to the Worker by accident; AI traffic can move to the edge
   without touching auth. Worker CORS must allow the frontend origin.
+
+## D-017 - Collapse the repository into one Next.js monolith
+
+- Date: 2026-11-21
+- Status: accepted
+- Decision: Replace the Vite SPA, Express API and Cloudflare Worker with one Next.js 16 App Router
+  application at the repository root.
+- Reason: One deployable, one package and lockfile, same-origin cookies, no CORS, and a simpler
+  Vercel deployment. Mongoose, Google verification, Zod, TanStack Query and browser audio analysis
+  port directly.
+- Consequences: Sessions are application-owned opaque IDs in MongoDB instead of `express-session`;
+  rate limits are Mongo-backed for serverless; AI runs in Next route handlers; Google callback moves
+  to the deployed Next origin; existing Express sessions are invalid after the switch.
+- Related files: `package.json`, `next.config.ts`, `src/app/`, `src/server/`, `src/proxy.ts`

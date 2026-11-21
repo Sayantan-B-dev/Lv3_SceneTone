@@ -3,6 +3,11 @@
 **Date:** 17 November 2026  
 **Status:** Approved implementation direction; verify against the existing repository before coding.
 
+> **Implementation note (2026-11-21):** V1 is now one Next.js 16 App Router application. The
+> browser and API share an origin, sessions are Mongo-backed opaque cookies, and the Cloudflare
+> Worker and separate Express backend are removed. See `docs/TECH_STACK.md` and
+> `docs/ARCHITECTURE.md` for the implemented stack.
+
 ## 1. Product definition
 SceneTone is an AI soundscape composition and audio-production co-pilot. It turns a creative scene brief into a structured soundscape blueprint and helps a producer interpret objective audio measurements. Tagline: “From a creative scene to a production-ready sound.” It is a browser application, not a full DAW.
 

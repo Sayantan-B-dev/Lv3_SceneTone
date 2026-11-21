@@ -1,48 +1,38 @@
 # Deployment
 
-**Status:** not configured. This document records the approved target direction only.
+**Target:** one Vercel Next.js project plus MongoDB Atlas.
 
-## Target topology
+## Topology
 
-| Layer               | Target                         | Notes                                              |
-| ------------------- | ------------------------------ | -------------------------------------------------- |
-| Frontend            | Vercel Hobby                   | Plan and personal-use constraints apply            |
-| API                 | Oracle Cloud Always Free A1 VM | Capacity and idle reclamation can apply            |
-| Database            | MongoDB Atlas M0               | Storage and feature limits apply                   |
-| AI                  | Adaption API                   | Credit/token priced; not assumed unlimited or free |
-| Reverse proxy       | Nginx                          | Only 80/443 public; proxy to Express on localhost  |
-| Process supervision | systemd                        | Do not run PM2 as a competing supervisor           |
-| TLS                 | Let's Encrypt                  | Automate renewal and monitor expiry                |
-
-A ₹0 target is an objective, not a guarantee.
+| Layer | Target | Notes |
+| --- | --- | --- |
+| App | Vercel | One Next.js deployment serves UI and `/api/v1` |
+| Database | MongoDB Atlas M0 | Users, projects, sessions and rate limits |
+| AI | Adaption / OpenRouter | Server-side keys only |
 
 ## Environment variables (names only)
 
-Backend: `NODE_ENV`, `PORT`, `FRONTEND_ORIGIN`, `MONGODB_URI`, `SESSION_SECRET`,
-`GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` (only if applicable), `ADAPTION_API_KEY`,
-`ADAPTION_BASE_URL`, `ADAPTION_MODEL`, `AI_REQUEST_TIMEOUT_MS`.
+`NODE_ENV`, `APP_ORIGIN`, `MONGODB_URI`, `SESSION_SECRET`, `GOOGLE_CLIENT_ID`,
+`GOOGLE_CLIENT_SECRET`, `GOOGLE_CALLBACK_URL`, `ADAPTION_API_KEY`, `ADAPTION_BASE_URL`,
+`ADAPTION_MODEL`, `OPENROUTER_BASE_URL`, `OPENROUTER_MODEL`, `OPENROUTER_API_KEY_1`,
+`OPENROUTER_API_KEY_2`, `OPENROUTER_API_KEY_3`, `AI_REQUEST_TIMEOUT_MS`.
 
-Frontend: `VITE_API_BASE_URL`, `VITE_GOOGLE_CLIENT_ID` (public values only).
+`APP_ORIGIN` must be the exact deployed origin. `GOOGLE_CALLBACK_URL` must be
+`${APP_ORIGIN}/api/v1/auth/google/callback`.
 
-## Independent deployables
+## Steps
 
-The frontend and backend each own a `package.json`, lockfile and build output. Deploy only the
-relevant directory and run its install/build inside that directory. The root package is for local
-orchestration only and has no runtime dependencies.
+1. Import the repository into Vercel. Framework preset: Next.js. Build: `npm run build`.
+2. Add the environment variables above for Production and Preview as needed.
+3. Add the exact callback URL to Google Cloud Console authorized redirect URIs.
+4. Allow Vercel egress in MongoDB Atlas network access.
+5. Verify health at `${APP_ORIGIN}/api/v1/health`, sign-in, project CRUD and one AI failure path.
+6. Confirm the session cookie is `Secure` and the app is served over HTTPS.
 
-## Planned steps
+## Notes
 
-1. Provision the Oracle VM and restrict inbound traffic to 80/443.
-2. Install Node.js LTS, build the API, and create a systemd unit bound to localhost.
-3. Configure Nginx reverse proxy and Let's Encrypt certificates.
-4. Set Atlas network access and indexes; verify session TTL cleanup.
-5. Deploy the frontend to Vercel with the exact API base URL.
-6. Set backend `FRONTEND_ORIGIN` to the exact Vercel origin; verify CORS and cookies.
-7. Verify `Secure` cookies, proxy trust, rate limits, logging redaction and health checks.
-8. Document actual configuration and limitations before claiming deployment readiness.
-
-## Not yet present
-
-- Nginx, systemd and TLS configuration files.
-- CI deployment stages.
-- Live smoke tests against a deployed environment.
+- Sessions use a Mongo TTL index and an opaque HMAC-signed cookie.
+- Rate limits are Mongo-backed so they work across serverless instances.
+- AI route handlers request `maxDuration = 60`; keep `AI_REQUEST_TIMEOUT_MS` within the plan limit.
+- No Nginx, systemd, Cloudflare Worker or separate frontend deployment is required.
+- Audio never leaves the browser; only numeric metrics are sent to the AI provider.

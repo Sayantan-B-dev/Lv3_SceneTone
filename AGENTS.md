@@ -7,19 +7,21 @@ Build SceneTone as a small deployable soundscape production co-pilot, not a full
 Read `AGENTS.md`, `SKILLS.md`, `README.md`, `docs/SRS.md`, `docs/TECH_STACK.md` and all files under `docs/agent-state/`. Inspect repo structure, git status, manifests, lockfiles and current implementation. Read `reference.html` if present. Report a concise plan and blockers before broad edits.
 
 ## Architecture and safety
+- One Next.js 16 App Router application: UI in `src/app/` and API route handlers in `src/app/api/v1/`.
 - Preserve existing compatible frameworks and repository conventions.
-- Keep docs at root `docs/`, not nested in frontend/backend.
-- Centralize CSS under `frontend/src/styles/`; one global stylesheet entry imported once.
+- Keep docs at root `docs/`, not nested in app folders.
+- Centralize CSS under `src/styles/`; one global stylesheet entry imported once from `src/app/layout.tsx`.
 - Use semantic CSS tokens and light/dark/system themes.
 - Google OAuth establishes identity; MongoDB stores app data. Verify token server-side and key identity on verified `sub`.
-- Use application-owned server-side sessions; do not store long-lived tokens in localStorage.
-- Adaption key, Mongo URI and session secret remain backend-only.
+- Use application-owned server-side sessions stored in MongoDB; do not store long-lived tokens in localStorage.
+- Adaption key, Mongo URI and session secret remain server-only.
 - Audio stays in browser in V1; send numeric metrics, never raw audio.
 - RMS is not LUFS; sample peak is not true peak.
 - Never claim AI listened to audio when it only received metrics.
 - Never present mock output as real inference.
 - Scope every project operation to authenticated owner.
-- Use exact CORS origins, secure cookies, CSRF mitigation, rate limits and secret-redacted logs.
+- Use same-origin requests, Origin checks for mutations, secure cookies, rate limits and secret-redacted logs.
+- Keep route handlers on the Node.js runtime; never import Mongoose into proxy/edge code.
 
 ## Scope
 V1: Google sign-in, MongoDB projects, scene blueprint, local audio analysis, metric-based mix report, FL Studio manual handoff, JSON/Markdown export. No full DAW, VST hosting, `.flp` creation, automatic mastering, stem separation, guaranteed generation, MCP bridge or cloud audio storage in V1.

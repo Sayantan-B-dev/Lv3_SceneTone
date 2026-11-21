@@ -2,40 +2,34 @@
 
 ## Resume point
 
-- Phase/state: Phase 5 implemented and verified; Worker deploy pending
-- Branch/last commit: `main`, newest commit adds the page guide and Worker scaffold
-- Next phase: Cloudflare deployment and live provider verification
-- Current task: set `VITE_APP_API_URL` and `VITE_AI_API_URL`, deploy `scenetone-api`, update `FRONTEND_ORIGIN`
+- Phase/state: Next.js monolith migration complete and verified locally
+- Branch: `feat/nextjs-monolith`
+- Next phase: merge and deploy
+- Current task: merge to `main`, create the Vercel project and set production env values
 
 ## Completed and verified
 
-### Phases 1-3 (committed)
+- One Next.js 16.4.6 App Router app serves UI and `/api/v1`.
+- Vite, Express and the Cloudflare Worker were removed.
+- Mongo-backed opaque sessions with signed HttpOnly cookies.
+- Same-origin Origin checks and Mongo-backed rate limits.
+- Google redirect and ID-token sign-in routes.
+- Owner-scoped project CRUD and AI routes.
+- Browser-local audio analysis and exports preserved.
+- Checks: typecheck, lint, 18 tests and production build pass.
 
-- Scaffold, design system, and auth/session/owner-scoped project CRUD.
-- Backend tests for auth boundaries, Google verification, project ownership and CSRF.
+## Important constraints
 
-### Phase 4 (uncommitted)
-
-- Adaption adapter: `/chat/completions`, bearer auth, configurable base URL/model, timeout and safe
-  mapping for 429, 401/403, 5xx, network failure, empty and schema-invalid output.
-- Blueprint and mix report routes validate provider JSON with Zod and optionally persist to an owned
-  project; no local fallback exists.
-- Browser-local analysis: duration, sample peak dBFS, RMS dBFS, crest factor, FFT band energy and
-  stereo correlation. Only metrics leave the browser.
-- Blueprint and Analyze pages use real data and export JSON/Markdown.
-- Redirect-mode Google sign-in available through `GOOGLE_CALLBACK_URL`.
-- Checks: backend 6 files / 30 tests, frontend 7 files / 14 tests, both typechecks and builds pass.
-
-## Important constraints for next agent
-
-- Live AI generation requires `ADAPTION_API_KEY`, `ADAPTION_BASE_URL`, `ADAPTION_MODEL`; nothing has
-  been verified against the live provider yet.
-- Do not call AI_NOT_CONFIGURED behaviour a provider test.
+- `APP_ORIGIN` must exactly match the deployed origin.
+- `GOOGLE_CALLBACK_URL` must be `${APP_ORIGIN}/api/v1/auth/google/callback`.
 - Audio never leaves the browser; exports must stay secret-free.
-- Keep all environment-specific URLs in env files, never in source.
+- AI route handlers use `maxDuration = 60`; keep `AI_REQUEST_TIMEOUT_MS` within the Vercel limit.
+- Do not import Mongoose into `src/proxy.ts`.
 
 ## Exact next action
 
-1. Open: `docs/SRS.md` section 13 and `docs/DEPLOYMENT.md`.
-2. Inspect: current Nginx/systemd/Vercel/Atlas docs against the implementation.
-3. Do: Phase 5 verification, production build, deployment documentation and limitations list.
+1. Merge `feat/nextjs-monolith` to `main`.
+2. Create the Vercel project with the Next.js preset.
+3. Set the env names from `README.md` and `.env.example`.
+4. Add the callback URL to Google Cloud Console and allow Vercel in Atlas.
+5. Smoke-test health, sign-in, project CRUD and one AI failure path.

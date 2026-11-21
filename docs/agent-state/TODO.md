@@ -1,32 +1,20 @@
 # Prioritized TODO
 
-## P0 - Next
+## P0 - Deploy
 
-- [ ] Deploy `backend-worker/` to Cloudflare as `scenetone-api` - acceptance: health and AI routes
-  respond on the deployed URL with secrets set
-- [ ] Set `FRONTEND_ORIGIN` to the deployed frontend origin and verify CORS
+- [ ] Merge `feat/nextjs-monolith` to `main`
+- [ ] Create Vercel project with the Next.js preset
+- [ ] Set `APP_ORIGIN`, `MONGODB_URI`, `SESSION_SECRET`, Google and AI env values
+- [ ] Add `${APP_ORIGIN}/api/v1/auth/google/callback` to Google Cloud Console
+- [ ] Allow Vercel egress in MongoDB Atlas
+- [ ] Smoke-test health, sign-in, project CRUD and one AI failure path
+- [ ] Verify live AI generation with real provider credentials
 
-- [ ] Commit Phase 4 core product - acceptance: one conventional commit
-- [ ] Phase 5 integration and deployment readiness - acceptance: production build, end-to-end
-  auth/ownership/report/export checks and deployment docs matching configuration
+## P1 - Follow-up
 
-## P1 - Core product and audio
-
-- [x] Implement Adaption adapter with timeout and error mapping
-- [x] Implement browser-local audio analysis with numeric metrics only
-- [x] Implement qualified mix report with separated facts and hypotheses
-- [x] Blueprint/mix-report JSON and Markdown export
-- [x] Disclose scene brief and metric transmission to the AI provider in the UI
-- [x] Replace the local sample blueprint with the validated provider response
-- [x] Activate the Analyze page with real band energy rendering
-- [ ] Live provider verification with a real Adaption key - acceptance: one successful blueprint and
-  report against the deployed model
-
-## P2 - Later
-
-- [ ] Deployment scaffolding: Nginx, systemd, TLS, Vercel, Atlas verification
-- [ ] Playwright end-to-end coverage
-- [ ] History and visualization improvements (V1.1)
+- [ ] Add route-handler tests for auth, ownership and AI error mapping
+- [ ] Verify CSP in production with the Vercel deployment
+- [ ] Confirm Mongo session TTL cleanup and rate-limit TTL in Atlas
 
 ## Deferred / out of scope
 
@@ -35,22 +23,13 @@
 
 ## Completed
 
-- [x] Google sign-in: ID-token verification, user upsert on verified `sub`, session rotation
-- [x] `GET /auth/me` with stale-session invalidation and `POST /auth/logout`
-- [x] Owner-scoped project list/create/read/update/delete with Zod validation
-- [x] Auth, Google verification, project ownership and CSRF tests (backend 16 tests)
-- [x] Frontend sign-in control, session-aware dashboard and project workspace
-- [x] All environment-specific URLs configurable through env (`VITE_API_BASE_URL`,
-  `FRONTEND_ORIGIN`, `GOOGLE_CALLBACK_URL`, `DEV_SERVER_PORT`, `DEV_API_PROXY_TARGET`)
-- [x] Independent frontend/backend installs with separate lockfiles and no root `node_modules`
-- [x] Local `.env` files created (gitignored) with local MongoDB default
-- [x] Local MongoDB connectivity verified
-- [x] Frontend origin/CORS and backend health connection verified
-- [x] Reference translated into taskbar, window, tag, form and page components
-- [x] Home, Blueprint, Analyze, FL Studio and About routes built
-- [x] Accessible skip link and focusable main landmark
-- [x] Form primitives with label/hint/error association and `Alert`
-- [x] Theme-aware focus, warning, label and scene tokens
-- [x] Theme persistence, field, window and FAQ tests
-- [x] Independent accessibility audit and follow-up fixes
-- [x] Light/dark and mobile visual verification without horizontal overflow
+- [x] One Next.js App Router app for UI and `/api/v1`
+- [x] Mongo-backed opaque sessions with signed HttpOnly cookies
+- [x] Same-origin Origin checks and Mongo-backed rate limits
+- [x] Google redirect and ID-token sign-in routes
+- [x] Owner-scoped project CRUD route handlers
+- [x] Blueprint, mix-report and page-guide AI routes
+- [x] Browser-local audio analysis and exports preserved
+- [x] Cloudflare Worker and separate frontend/backend removed
+- [x] Single root package, lockfile, CI job and Vercel deployment path
+- [x] Typecheck, lint, tests and production build pass

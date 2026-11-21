@@ -104,3 +104,11 @@
 
 - Split the frontend base URL into `VITE_APP_API_URL` and `VITE_AI_API_URL` so auth and projects stay
   on Express while AI calls can target the Worker. Legacy `VITE_API_BASE_URL` still works for the app.
+
+## 2026-11-21 - Next.js monolith
+
+- Migrated to one Next.js App Router app.
+- Replaced Express sessions with Mongo-backed opaque sessions.
+- Added proxy CSP nonce, Origin checks and Mongo-backed rate limits.
+- Removed frontend, backend and backend-worker.
+- Checks: typecheck, lint, 18 tests and build pass.
