@@ -19,15 +19,15 @@ Execution checklist for the first wave. Keep `docs/agent-state/TODO.md` in sync.
 
 ## Phase 2 — Saved project workspace (item 8)
 
-- [ ] Extract shared `BlueprintView` and `MixReportView` components
-- [ ] Type `Project` blueprint/analysis/report outputs
-- [ ] ProjectPage saved-outputs section with guards and empty states
-- [ ] Re-export JSON/Markdown with honest metadata
-- [ ] Tests: saved render, empty state, malformed guard
-- [ ] Run typecheck, lint, test, build, format:check
-- [ ] Commit phase
+- [x] Extract shared `BlueprintView` and `MixReportView` components
+- [x] Type `Project` blueprint/analysis/report outputs
+- [x] ProjectPage saved-outputs section with guards and empty states
+- [x] Re-export JSON/Markdown with honest metadata
+- [x] Tests: saved render, empty state, malformed guard
+- [x] Run typecheck, lint, test, build (format:check still fails on pre-existing files)
+- [x] Commit phase
 
 ## Wrap-up
 
-- [ ] Update `docs/CHANGELOG.md` and `docs/agent-state/*`
-- [ ] Final handoff notes
+- [x] Update `docs/CHANGELOG.md` and `docs/agent-state/*`
+- [x] Final handoff notes

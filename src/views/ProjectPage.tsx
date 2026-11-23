@@ -4,6 +4,8 @@ import { useState, type FormEvent } from 'react';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { SignInButton } from '@/components/auth/SignInButton';
+import { BlueprintView } from '@/components/blueprint/BlueprintView';
+import { MixReportView } from '@/components/report/MixReportView';
 import { Alert } from '@/components/ui/Alert';
 import { Button } from '@/components/ui/Button';
 import { Field } from '@/components/ui/Field';
@@ -13,13 +15,88 @@ import { useCurrentUser } from '@/hooks/useAuth';
 import { useDeleteProject, useProject, useUpdateProject } from '@/hooks/useProjects';
 import { ApiError } from '@/lib/api';
 import { describeError } from '@/lib/errors';
-import type { Project } from '@/types';
+import { isAudioMetrics, isMixReport, isSoundscapeBlueprint } from '@/lib/project-data';
+import type { AudioMetrics, Project } from '@/types';
 
 function formatDate(value: string): string {
   return new Intl.DateTimeFormat(undefined, {
     dateStyle: 'medium',
     timeStyle: 'short',
   }).format(new Date(value));
+}
+
+function SavedMetrics({ metrics }: { metrics: AudioMetrics }) {
+  const rows = [
+    ['Length', `${metrics.durationSeconds.toFixed(2)} s`],
+    ['Channels', metrics.channels === 1 ? 'Mono' : 'Stereo'],
+    ['Sample peak', metrics.samplePeakDbfs === null ? 'Silent' : `${metrics.samplePeakDbfs} dBFS`],
+    ['RMS', metrics.rmsDbfs === null ? 'Silent' : `${metrics.rmsDbfs} dBFS`],
+    ['Crest', metrics.crestFactorDb === null ? '—' : `${metrics.crestFactorDb} dB`],
+    [
+      'Stereo corr.',
+      metrics.stereoCorrelation === null ? 'n/a (mono)' : metrics.stereoCorrelation.toFixed(3),
+    ],
+    [
+      'Band energy',
+      `low ${metrics.bandEnergy.low}, mid ${metrics.bandEnergy.mid}, high ${metrics.bandEnergy.high}`,
+    ],
+  ] as const;
+
+  return (
+    <div className="metric-grid">
+      {rows.map(([label, value]) => (
+        <div className="metric" key={label}>
+          <span className="metric__label">{label}</span>
+          <span className="metric__value">{value}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function SavedOutputs({ project }: { project: Project }) {
+  const blueprint = isSoundscapeBlueprint(project.blueprint) ? project.blueprint : null;
+  const metrics = isAudioMetrics(project.audioAnalysis) ? project.audioAnalysis : null;
+  const report = isMixReport(project.mixReport) ? project.mixReport : null;
+
+  return (
+    <div className="section-stack">
+      <Window title="saved_blueprint.exe">
+        {blueprint ? (
+          <BlueprintView blueprint={blueprint} model={null} />
+        ) : (
+          <p className="text-muted">
+            No saved blueprint yet. Generate one from this project to keep it here.
+          </p>
+        )}
+      </Window>
+
+      <Window title="saved_metrics.exe">
+        {metrics ? (
+          <SavedMetrics metrics={metrics} />
+        ) : (
+          <p className="text-muted">
+            No saved audio metrics yet. Analyze a file from this project to attach the numbers.
+          </p>
+        )}
+      </Window>
+
+      <Window title="saved_report.exe">
+        {report && metrics ? (
+          <MixReportView
+            report={report}
+            metrics={metrics}
+            objective="Saved mix report"
+            model={null}
+          />
+        ) : (
+          <p className="text-muted">
+            No saved mix report yet. Build one from the Analyze page to keep it here.
+          </p>
+        )}
+      </Window>
+    </div>
+  );
 }
 
 function ProjectSettings({ project }: { project: Project }) {
@@ -165,6 +242,7 @@ export function ProjectPage() {
               </Link>
             </div>
           </Window>
+          <SavedOutputs project={project.data.project} />
           <ProjectSettings project={project.data.project} />
         </>
       )}

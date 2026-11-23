@@ -16,6 +16,10 @@
 - [ ] Add route-handler tests for auth, ownership and AI error mapping
 - [ ] Verify CSP in production with the Vercel deployment
 - [ ] Confirm Mongo session TTL cleanup and rate-limit TTL in Atlas
+- [ ] Next V1.1 tool: format converter/export
+- [ ] Next V1.1 tool: approximate LUFS and oversampled true peak
+- [ ] Next V1.1 tool: spectrogram/spectrum view
+- [ ] Next V1.1 tool: trim/fade/loop export
 
 ## Deferred / out of scope
 
@@ -34,3 +38,8 @@
 - [x] Cloudflare Worker and separate frontend/backend removed
 - [x] Single root package, lockfile, CI job and Vercel deployment path
 - [x] Typecheck, lint, tests and production build pass
+- [x] V1.1 scope amended for browser-local single-file utilities
+- [x] Audio analysis moved to a Web Worker with progress and cancel, main-thread fallback
+- [x] Mix-report export carries the real model name
+- [x] Removed unused duplicate blueprint types
+- [x] Project page renders saved blueprint, metrics and mix report with guards and re-export

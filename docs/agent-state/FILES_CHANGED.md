@@ -18,3 +18,16 @@
 
 Checks: `npm run typecheck`, `npm run lint`, `npm test` (8 files / 18 tests) and `npm run build`
 pass. Local `GET /` and `GET /api/v1/health` return 200.
+
+## 2026-11-23 - V1.1 first wave
+
+- Scope: `TODO.md`, `docs/SRS.md`, `docs/ROADMAP.md`
+- Audio: `src/lib/audio/analysis-core.ts`, `analysis.worker.ts`, `analysis-worker-handler.ts`,
+  `src/lib/audio-analysis.ts`, `src/views/AnalyzePage.tsx`
+- Project: `src/views/ProjectPage.tsx`, `src/lib/project-data.ts`,
+  `src/components/blueprint/BlueprintView.tsx`, `src/components/report/MixReportView.tsx`
+- Types: `src/types/index.ts` (project outputs typed), removed `src/types/blueprint.ts`
+- Tests: `src/lib/audio/analysis-worker-handler.test.ts`, `src/lib/project-data.test.ts`,
+  `src/lib/export.test.ts`
+
+Checks: typecheck, lint, 23 tests and build pass.

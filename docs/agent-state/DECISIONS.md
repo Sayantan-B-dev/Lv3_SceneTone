@@ -197,3 +197,31 @@
   rate limits are Mongo-backed for serverless; AI runs in Next route handlers; Google callback moves
   to the deployed Next origin; existing Express sessions are invalid after the switch.
 - Related files: `package.json`, `next.config.ts`, `src/app/`, `src/server/`, `src/proxy.ts`
+
+## D-018 - Analyze audio in a worker with a main-thread fallback
+
+- Date: 2026-11-23
+- Status: accepted
+- Decision: Decode on the main thread (workers have no `AudioContext`), copy channel data, then run
+  the pure DSP core in a module Web Worker with progress and abort. Fall back to the main thread if
+  `Worker` is unavailable or the worker fails to start.
+- Reason: Long files blocked the UI. The pure core stays unit-testable, and the fallback keeps old
+  or restricted browsers working.
+- Consequences: Channel data is copied before transfer so a worker failure can retry without
+  detached buffers. Raw audio still never leaves the browser.
+- Related files: `src/lib/audio/analysis-core.ts`, `src/lib/audio/analysis.worker.ts`,
+  `src/lib/audio/analysis-worker-handler.ts`, `src/lib/audio-analysis.ts`
+
+## D-019 - Render saved project outputs with honest export metadata
+
+- Date: 2026-11-23
+- Status: accepted
+- Decision: The project page renders stored blueprint, metrics and mix report through shared views,
+  guarded by runtime shape checks. Exports for saved reports use `model: null` and
+  `objective: "Saved mix report"` because the project schema does not persist those fields.
+- Reason: Stored outputs were invisible. Showing them plus honest metadata is better than inventing
+  attribution.
+- Consequences: Adding persisted model/objective needs a schema change; until then exports say what
+  is actually known.
+- Related files: `src/views/ProjectPage.tsx`, `src/lib/project-data.ts`,
+  `src/components/blueprint/BlueprintView.tsx`, `src/components/report/MixReportView.tsx`

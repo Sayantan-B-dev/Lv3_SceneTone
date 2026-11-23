@@ -4,6 +4,19 @@
 
 ### Added
 
+- Web Worker audio analysis with progress and cancel, plus a main-thread fallback.
+- Saved project outputs: the project page renders stored blueprints, metrics and mix reports with
+  runtime guards and re-export.
+- Shared `BlueprintView` and `MixReportView` components.
+- V1.1 scope in the SRS and roadmap for browser-local single-file utilities.
+
+### Fixed
+
+- Mix-report Markdown/JSON export now carries the real model name instead of `null`.
+- Removed the unused duplicate blueprint type file.
+
+### Changed
+
 - Google sign-in: backend ID-token verification, user upsert on verified `sub`, session id rotation
   and `POST /auth/google`.
 - Application sessions: Mongo-backed store, `GET /auth/me` with stale-session invalidation and

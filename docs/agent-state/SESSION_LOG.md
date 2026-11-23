@@ -112,3 +112,14 @@
 - Added proxy CSP nonce, Origin checks and Mongo-backed rate limits.
 - Removed frontend, backend and backend-worker.
 - Checks: typecheck, lint, 18 tests and build pass.
+
+## 2026-11-23 - V1.1 first wave
+
+- Amended SRS/ROADMAP to allow browser-local single-file utilities as V1.1.
+- Moved DSP to `analysis-core.ts`; added a module Web Worker with progress/cancel and a
+  main-thread fallback.
+- Analyze page shows progress and cancel, and exports now carry the real model name.
+- Removed the unused duplicate blueprint type file.
+- Extracted shared `BlueprintView`/`MixReportView`; the project page now renders saved outputs with
+  runtime guards and re-export.
+- Checks: typecheck, lint, 23 tests and build pass.

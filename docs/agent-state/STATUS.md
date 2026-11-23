@@ -1,15 +1,15 @@
 # Current Status
 
-- Phase: Next.js monolith migration
-- State: merged to `main`, pushed and verified locally
-- Updated: 2026-11-21
-- Branch: `main` (merged from `feat/nextjs-monolith`)
-- Current task: single Next.js 16.4.6 App Router app replaces Vite frontend, Express backend and
-  Cloudflare Worker
-- Checks: `npm run typecheck`, `npm run lint`, `npm test` (8 files / 18 tests) and `npm run build`
-  pass
+- Phase: V1.1 local utilities and UX hardening
+- State: first wave complete and committed on `main`
+- Updated: 2026-11-23
+- Branch: `main`
+- Current task: worker-backed audio analysis, saved project outputs, export metadata fix
+- Checks: `npm run typecheck`, `npm run lint`, `npm test` (10 files / 23 tests) and
+  `npm run build` pass. `npm run format:check` still reports pre-existing style issues in unrelated
+  files.
 - Blockers: live Google and AI provider verification needs real credentials; Vercel deployment
   needs production env values
-- Next action: merge to `main`, deploy to Vercel, set `APP_ORIGIN` and Google callback, allow Atlas
-  access, then smoke-test sign-in, projects and AI
+- Next action: deploy and smoke-test, or start the next V1.1 local tool (converter, LUFS/true-peak,
+  spectrogram, loop/trim)
 - Handoff: `docs/agent-state/HANDOFF.md`

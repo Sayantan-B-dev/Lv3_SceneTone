@@ -2,6 +2,7 @@
 
 import { useRef, useState, type ChangeEvent } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { MixReportView } from '@/components/report/MixReportView';
 import { Alert } from '@/components/ui/Alert';
 import { Button } from '@/components/ui/Button';
 import { Field } from '@/components/ui/Field';
@@ -10,7 +11,6 @@ import { Window } from '@/components/ui/Window';
 import { useGenerateMixReport } from '@/hooks/useAi';
 import { analyzeAudioFile, type AudioAnalysis } from '@/lib/audio-analysis';
 import { describeError } from '@/lib/errors';
-import { downloadJson, downloadMarkdown, exportBaseName, reportToMarkdown } from '@/lib/export';
 import type { MixReport } from '@/types';
 
 const BANDS = [
@@ -259,82 +259,18 @@ export function AnalyzePage() {
         </Window>
 
         <Window title="report_view.exe">
-          {!mixReport ? (
+          {!mixReport || !analysis ? (
             <p className="text-muted">
               Load a file and build a report. Measured facts, hypotheses, recommendations and
               limitations are listed separately.
             </p>
           ) : (
-            <>
-              <h2 className="report-heading">MEASURED FACTS</h2>
-              <ul>
-                {mixReport.measuredFacts.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-              <h2 className="report-heading">HYPOTHESES</h2>
-              <ul>
-                {mixReport.hypotheses.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-              <h2 className="report-heading">RECOMMENDATIONS</h2>
-              <ul>
-                {mixReport.recommendations.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-              <h2 className="report-heading">LIMITATIONS</h2>
-              <ul>
-                {mixReport.limitations.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-
-              <div className="cta-row">
-                <Button
-                  type="button"
-                  variant="secondary"
-                  onClick={() =>
-                    downloadJson(`${exportBaseName(objective)}-mix-report.json`, {
-                      objective,
-                      metrics: {
-                        channels: analysis?.channels,
-                        durationSeconds: analysis?.durationSeconds,
-                        samplePeakDbfs: analysis?.samplePeakDbfs,
-                        rmsDbfs: analysis?.rmsDbfs,
-                        crestFactorDb: analysis?.crestFactorDb,
-                        bandEnergy: analysis?.bandEnergy,
-                        stereoCorrelation: analysis?.stereoCorrelation,
-                      },
-                      model: reportModel,
-                      report: mixReport,
-                    })
-                  }
-                >
-                  Save JSON
-                </Button>
-                <Button
-                  type="button"
-                  variant="secondary"
-                  disabled={!analysis}
-                  onClick={() =>
-                    analysis
-                      ? downloadMarkdown(
-                          `${exportBaseName(objective)}-mix-report.md`,
-                          reportToMarkdown(mixReport, {
-                            objective,
-                            metrics: analysis,
-                            model: reportModel,
-                          }),
-                        )
-                      : undefined
-                  }
-                >
-                  Save Markdown
-                </Button>
-              </div>
-            </>
+            <MixReportView
+              report={mixReport}
+              metrics={analysis}
+              objective={objective}
+              model={reportModel}
+            />
           )}
         </Window>
       </div>

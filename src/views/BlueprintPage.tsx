@@ -2,17 +2,16 @@
 
 import { useState, type FormEvent } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { BlueprintView } from '@/components/blueprint/BlueprintView';
 import { Alert } from '@/components/ui/Alert';
 import { Button } from '@/components/ui/Button';
 import { Field } from '@/components/ui/Field';
 import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
-import { Tag } from '@/components/ui/Tag';
 import { Textarea } from '@/components/ui/Textarea';
 import { Window } from '@/components/ui/Window';
 import { useGenerateBlueprint } from '@/hooks/useAi';
 import { describeError } from '@/lib/errors';
-import { blueprintToMarkdown, downloadJson, downloadMarkdown, exportBaseName } from '@/lib/export';
 import type { SoundscapeBlueprint } from '@/types';
 
 interface FormState {
@@ -31,114 +30,6 @@ const INITIAL_FORM: FormState = {
   platform: 'Film / video',
   constraint: 'No percussion in the first 30 seconds',
 };
-
-function percent(value: number): number {
-  return Math.round(value * 100);
-}
-
-function listBox(label: string, items: string[]) {
-  return (
-    <div className="blueprint-box" key={label}>
-      <b className="blueprint-box__label">{label}</b>
-      <ul>
-        {items.map((item) => (
-          <li key={item}>{item}</li>
-        ))}
-      </ul>
-    </div>
-  );
-}
-
-function BlueprintResult({
-  blueprint,
-  model,
-}: {
-  blueprint: SoundscapeBlueprint;
-  model: string | null;
-}) {
-  const title = blueprint.title;
-
-  return (
-    <>
-      <div className="blueprint-meta">
-        {blueprint.bpm ? <Tag>{blueprint.bpm} BPM</Tag> : null}
-        {blueprint.key ? <Tag variant="cyan">{blueprint.key}</Tag> : null}
-        <Tag variant="green">{blueprint.mood.primary}</Tag>
-        {blueprint.mood.secondary.map((mood) => (
-          <Tag variant="yellow" key={mood}>
-            {mood}
-          </Tag>
-        ))}
-      </div>
-
-      <p>{blueprint.summary}</p>
-
-      <div>
-        {blueprint.arrangement.map((section) => (
-          <div className="energy-row" key={section.name}>
-            <strong>{section.name}</strong>
-            <div className="energy-bar">
-              <span
-                className="energy-row__fill"
-                style={{ width: `${percent(section.energy)}%` }}
-                aria-hidden="true"
-              />
-            </div>
-            <span>{section.bars ? `${section.bars} bars` : `${percent(section.energy)}%`}</span>
-          </div>
-        ))}
-      </div>
-
-      <div className="blueprint-boxes">
-        {listBox(
-          'LAYERS',
-          blueprint.layers.map((layer) => `${layer.name} — ${layer.role}: ${layer.description}`),
-        )}
-        {listBox('FOLEY', blueprint.foleyAndAmbience)}
-        {listBox('AUTOMATION', blueprint.automation)}
-        {listBox('TRANSITIONS', blueprint.transitions)}
-        {listBox('NOTES', blueprint.productionNotes)}
-        {listBox('ASSUMPTIONS', blueprint.assumptions)}
-        {listBox('UNCERTAINTY', blueprint.uncertainty)}
-        {listBox(
-          'FL STUDIO CHAIN',
-          blueprint.flStudioChain.map(
-            (step) => `${step.plugin} — ${step.purpose} (${step.placement}; ${step.startingPoint})`,
-          ),
-        )}
-      </div>
-
-      <div className="cta-row">
-        <Button
-          type="button"
-          variant="secondary"
-          onClick={() => downloadJson(`${exportBaseName(title)}-blueprint.json`, blueprint)}
-        >
-          Save JSON
-        </Button>
-        <Button
-          type="button"
-          variant="secondary"
-          onClick={() =>
-            downloadMarkdown(
-              `${exportBaseName(title)}-blueprint.md`,
-              blueprintToMarkdown(blueprint, {
-                model,
-                generatedAt: new Date().toISOString(),
-              }),
-            )
-          }
-        >
-          Save Markdown
-        </Button>
-      </div>
-      <p className="note">
-        Exports are written locally in your browser. Plugin settings are starting points, not a DAW
-        project — SceneTone never creates `.flp` files.
-      </p>
-    </>
-  );
-}
 
 export function BlueprintPage() {
   const searchParams = useSearchParams();
@@ -297,7 +188,7 @@ export function BlueprintPage() {
 
           {generate.isPending ? <p role="status">Waiting for the AI provider...</p> : null}
 
-          {blueprint ? <BlueprintResult blueprint={blueprint} model={model} /> : null}
+          {blueprint ? <BlueprintView blueprint={blueprint} model={model} /> : null}
         </Window>
       </div>
     </section>

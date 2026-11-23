@@ -2,10 +2,10 @@
 
 ## Resume point
 
-- Phase/state: Next.js monolith migration complete and verified locally
-- Branch: `main` (monolith merge complete and pushed)
-- Next phase: deploy
-- Current task: create the Vercel project and set production env values
+- Phase/state: V1.1 first wave complete and committed on `main`
+- Branch: `main`
+- Next phase: deploy, or continue V1.1 local audio tools
+- Current task: pick the next V1.1 tool (converter, LUFS/true peak, spectrogram, loop/trim)
 
 ## Completed and verified
 
@@ -16,7 +16,10 @@
 - Google redirect and ID-token sign-in routes.
 - Owner-scoped project CRUD and AI routes.
 - Browser-local audio analysis and exports preserved.
-- Checks: typecheck, lint, 18 tests and production build pass.
+- Worker-backed audio analysis with progress/cancel and main-thread fallback.
+- Mix-report exports carry the real model name.
+- Project page renders saved blueprint, metrics and mix report with guards and re-export.
+- Checks: typecheck, lint, 23 tests and production build pass.
 
 ## Important constraints
 
