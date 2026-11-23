@@ -31,3 +31,12 @@ pass. Local `GET /` and `GET /api/v1/health` return 200.
   `src/lib/export.test.ts`
 
 Checks: typecheck, lint, 23 tests and build pass.
+
+## 2026-11-23 - Browser-local WAV converter
+
+- Audio: `src/lib/audio/wav-encoder.ts`, `src/lib/audio/convert.ts`,
+  `src/lib/audio-analysis.ts` (shared `decodeAudioFile`)
+- UI: `src/views/AnalyzePage.tsx` converter panel, `src/lib/export.ts` `downloadBlob`
+- Tests: `src/lib/audio/wav-encoder.test.ts`
+
+Checks: typecheck, lint, 29 tests and build pass.

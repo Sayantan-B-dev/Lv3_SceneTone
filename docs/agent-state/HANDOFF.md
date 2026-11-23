@@ -19,7 +19,8 @@
 - Worker-backed audio analysis with progress/cancel and main-thread fallback.
 - Mix-report exports carry the real model name.
 - Project page renders saved blueprint, metrics and mix report with guards and re-export.
-- Checks: typecheck, lint, 23 tests and production build pass.
+- Browser-local WAV converter: 16/24-bit PCM, mono/stereo, linear resample, optional normalization.
+- Checks: typecheck, lint, 29 tests and production build pass.
 
 ## Important constraints
 

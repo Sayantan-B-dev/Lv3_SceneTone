@@ -123,3 +123,10 @@
 - Extracted shared `BlueprintView`/`MixReportView`; the project page now renders saved outputs with
   runtime guards and re-export.
 - Checks: typecheck, lint, 23 tests and build pass.
+
+## 2026-11-23 - Browser-local WAV converter
+
+- Added a dependency-free 16/24-bit PCM WAV encoder with mono/stereo, linear resampling and peak
+  normalization.
+- Shared `decodeAudioFile`; the Analyze page can now export a local WAV copy.
+- Tests: 29 pass; typecheck, lint and build pass.

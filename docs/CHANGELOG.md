@@ -9,6 +9,8 @@
   runtime guards and re-export.
 - Shared `BlueprintView` and `MixReportView` components.
 - V1.1 scope in the SRS and roadmap for browser-local single-file utilities.
+- Browser-local WAV converter: 16/24-bit PCM, mono/stereo, linear resampling and optional peak
+  normalization, with no upload.
 
 ### Fixed
 

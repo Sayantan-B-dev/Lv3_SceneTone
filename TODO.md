@@ -27,6 +27,15 @@ Execution checklist for the first wave. Keep `docs/agent-state/TODO.md` in sync.
 - [x] Run typecheck, lint, test, build (format:check still fails on pre-existing files)
 - [x] Commit phase
 
+## Phase 3 — Browser-local WAV converter (item 1)
+
+- [x] `src/lib/audio/wav-encoder.ts`: 16/24-bit PCM, mono/stereo, resample, normalize
+- [x] `src/lib/audio/convert.ts` and shared `decodeAudioFile`
+- [x] Analyze page converter panel with honest local-only wording
+- [x] Tests for header, samples, mixdown, normalization and resampling
+- [x] Run typecheck, lint, test, build
+- [x] Commit phase
+
 ## Wrap-up
 
 - [x] Update `docs/CHANGELOG.md` and `docs/agent-state/*`

@@ -225,3 +225,16 @@
   is actually known.
 - Related files: `src/views/ProjectPage.tsx`, `src/lib/project-data.ts`,
   `src/components/blueprint/BlueprintView.tsx`, `src/components/report/MixReportView.tsx`
+
+## D-020 - Convert audio to WAV locally with no encoder dependency
+
+- Date: 2026-11-23
+- Status: accepted
+- Decision: Decode any browser-supported file with the Web Audio API, then write 16/24-bit PCM WAV
+  ourselves. Offer mono/stereo, optional linear resampling and optional peak normalization. No MP3
+  encoder dependency is added yet.
+- Reason: A real converter without new packages, and all bytes stay in the browser.
+- Consequences: Resampling is linear interpolation and labeled approximate; MP3 export would need a
+  separate approved encoder dependency.
+- Related files: `src/lib/audio/wav-encoder.ts`, `src/lib/audio/convert.ts`,
+  `src/views/AnalyzePage.tsx`

@@ -16,7 +16,7 @@
 - [ ] Add route-handler tests for auth, ownership and AI error mapping
 - [ ] Verify CSP in production with the Vercel deployment
 - [ ] Confirm Mongo session TTL cleanup and rate-limit TTL in Atlas
-- [ ] Next V1.1 tool: format converter/export
+- [x] V1.1 tool: browser-local WAV converter/export
 - [ ] Next V1.1 tool: approximate LUFS and oversampled true peak
 - [ ] Next V1.1 tool: spectrogram/spectrum view
 - [ ] Next V1.1 tool: trim/fade/loop export

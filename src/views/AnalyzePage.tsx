@@ -10,7 +10,10 @@ import { Select } from '@/components/ui/Select';
 import { Window } from '@/components/ui/Window';
 import { useGenerateMixReport } from '@/hooks/useAi';
 import { analyzeAudioFile, type AudioAnalysis } from '@/lib/audio-analysis';
+import { convertFileToWav } from '@/lib/audio/convert';
+import type { ChannelMode, WavBitDepth } from '@/lib/audio/wav-encoder';
 import { describeError } from '@/lib/errors';
+import { downloadBlob, exportBaseName } from '@/lib/export';
 import type { MixReport } from '@/types';
 
 const BANDS = [
@@ -53,6 +56,13 @@ export function AnalyzePage() {
   const [objective, setObjective] = useState<string>(OBJECTIVES[0]);
   const [mixReport, setMixReport] = useState<MixReport | null>(null);
   const [reportModel, setReportModel] = useState<string | null>(null);
+  const [sourceFile, setSourceFile] = useState<File | null>(null);
+  const [bitDepth, setBitDepth] = useState<WavBitDepth>(16);
+  const [channelMode, setChannelMode] = useState<ChannelMode>('keep');
+  const [targetSampleRate, setTargetSampleRate] = useState<'keep' | '44100' | '48000'>('keep');
+  const [normalizeTarget, setNormalizeTarget] = useState<'off' | '-1'>('off');
+  const [converting, setConverting] = useState(false);
+  const [convertError, setConvertError] = useState<string | null>(null);
 
   async function handleFile(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
@@ -67,6 +77,8 @@ export function AnalyzePage() {
     setDecodeError(null);
     setMixReport(null);
     setReportModel(null);
+    setSourceFile(file);
+    setConvertError(null);
     setDecoding(true);
     setProgress(0);
 
@@ -97,6 +109,33 @@ export function AnalyzePage() {
     abortRef.current = null;
     setDecoding(false);
     setProgress(0);
+  }
+
+  async function handleConvert() {
+    if (!sourceFile) {
+      return;
+    }
+
+    setConverting(true);
+    setConvertError(null);
+
+    try {
+      const blob = await convertFileToWav(sourceFile, {
+        bitDepth,
+        channelMode,
+        ...(targetSampleRate === 'keep' ? {} : { sampleRate: Number(targetSampleRate) }),
+        normalizeToDbfs: normalizeTarget === 'off' ? null : Number(normalizeTarget),
+      });
+
+      const base = exportBaseName(sourceFile.name.replace(/\.[^.]+$/, '')) || 'scenetone';
+      downloadBlob(`${base}-converted.wav`, blob);
+    } catch (error) {
+      setConvertError(
+        error instanceof Error ? error.message : 'The file could not be converted.',
+      );
+    } finally {
+      setConverting(false);
+    }
   }
 
   function handleReport() {
@@ -219,6 +258,98 @@ export function AnalyzePage() {
               Every sample is zero. Metrics that need signal are reported as unavailable.
             </Alert>
           ) : null}
+        </Window>
+      </div>
+
+      <div className="section-stack">
+        <Window title="converter.exe">
+          <p className="text-muted">
+            Export a local WAV copy of this file. Pick bit depth, channels, sample rate and optional
+            normalization. Nothing is uploaded.
+          </p>
+
+          <div className="form-grid">
+            <Field label="Bit depth">
+              {(fieldProps) => (
+                <Select
+                  {...fieldProps}
+                  value={String(bitDepth)}
+                  onChange={(event) => setBitDepth(Number(event.target.value) as WavBitDepth)}
+                >
+                  <option value="16">16-bit PCM</option>
+                  <option value="24">24-bit PCM</option>
+                </Select>
+              )}
+            </Field>
+
+            <Field label="Channels">
+              {(fieldProps) => (
+                <Select
+                  {...fieldProps}
+                  value={channelMode}
+                  onChange={(event) => setChannelMode(event.target.value as ChannelMode)}
+                >
+                  <option value="keep">Keep source</option>
+                  <option value="mono">Mono</option>
+                  <option value="stereo">Stereo</option>
+                </Select>
+              )}
+            </Field>
+          </div>
+
+          <div className="form-grid">
+            <Field label="Sample rate">
+              {(fieldProps) => (
+                <Select
+                  {...fieldProps}
+                  value={targetSampleRate}
+                  onChange={(event) =>
+                    setTargetSampleRate(event.target.value as 'keep' | '44100' | '48000')
+                  }
+                >
+                  <option value="keep">Keep source</option>
+                  <option value="44100">44.1 kHz</option>
+                  <option value="48000">48 kHz</option>
+                </Select>
+              )}
+            </Field>
+
+            <Field label="Level">
+              {(fieldProps) => (
+                <Select
+                  {...fieldProps}
+                  value={normalizeTarget}
+                  onChange={(event) => setNormalizeTarget(event.target.value as 'off' | '-1')}
+                >
+                  <option value="off">No normalization</option>
+                  <option value="-1">Normalize to -1 dBFS</option>
+                </Select>
+              )}
+            </Field>
+          </div>
+
+          <div className="cta-row">
+            <Button
+              type="button"
+              variant="primary"
+              disabled={!sourceFile || converting}
+              onClick={handleConvert}
+            >
+              {converting ? 'Converting...' : 'Download WAV'}
+            </Button>
+            <span>{sourceFile ? sourceFile.name : 'Load a file first'}</span>
+          </div>
+
+          {convertError ? (
+            <Alert variant="danger" title="Conversion failed">
+              {convertError}
+            </Alert>
+          ) : null}
+
+          <Alert variant="info" title="Local and approximate">
+            Sample-rate conversion uses linear interpolation, not a studio resampler. The source
+            file is never uploaded.
+          </Alert>
         </Window>
       </div>
 

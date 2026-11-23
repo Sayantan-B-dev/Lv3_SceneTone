@@ -110,10 +110,8 @@ async function computeAnalysisMetrics(
   }
 }
 
-export async function analyzeAudioFile(
-  file: File,
-  options: AnalyzeOptions = {},
-): Promise<AudioAnalysis> {
+/** Decodes any browser-supported audio file locally. The file is never uploaded. */
+export async function decodeAudioFile(file: File): Promise<AudioBuffer> {
   const AudioContextClass =
     window.AudioContext ??
     (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
@@ -125,36 +123,34 @@ export async function analyzeAudioFile(
   const context = new AudioContextClass();
   try {
     const bytes = await file.arrayBuffer();
-    const buffer = await context.decodeAudioData(bytes);
-
-    if (options.signal?.aborted) {
-      throw abortError();
-    }
-
-    const channels = Array.from(
-      { length: Math.min(2, buffer.numberOfChannels) },
-      (_, channel) => buffer.getChannelData(channel).slice(),
-    );
-
-    const metrics = await computeAnalysisMetrics(
-      channels,
-      buffer.sampleRate,
-      buffer.duration,
-      options,
-    );
-
-    return {
-      ...metrics,
-      fileName: file.name,
-      sizeBytes: file.size,
-    };
-  } catch (error) {
-    if (error instanceof DOMException && error.name === 'AbortError') {
-      throw error;
-    }
-
+    return await context.decodeAudioData(bytes);
+  } catch {
     throw new Error('That file could not be decoded. Use a valid WAV or MP3 file.');
   } finally {
     void context.close();
   }
+}
+
+export async function analyzeAudioFile(
+  file: File,
+  options: AnalyzeOptions = {},
+): Promise<AudioAnalysis> {
+  const buffer = await decodeAudioFile(file);
+
+  if (options.signal?.aborted) {
+    throw abortError();
+  }
+
+  const channels = Array.from(
+    { length: Math.min(2, buffer.numberOfChannels) },
+    (_, channel) => buffer.getChannelData(channel).slice(),
+  );
+
+  const metrics = await computeAnalysisMetrics(channels, buffer.sampleRate, buffer.duration, options);
+
+  return {
+    ...metrics,
+    fileName: file.name,
+    sizeBytes: file.size,
+  };
 }

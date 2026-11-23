@@ -123,8 +123,7 @@ The model received numeric metrics only. It did not listen to the audio.
 `;
 }
 
-function download(filename: string, content: string, type: string): void {
-  const blob = new Blob([content], { type });
+export function downloadBlob(filename: string, blob: Blob): void {
   const url = URL.createObjectURL(blob);
   const anchor = document.createElement('a');
   anchor.href = url;
@@ -133,6 +132,10 @@ function download(filename: string, content: string, type: string): void {
   anchor.click();
   anchor.remove();
   URL.revokeObjectURL(url);
+}
+
+function download(filename: string, content: string, type: string): void {
+  downloadBlob(filename, new Blob([content], { type }));
 }
 
 function safeName(value: string): string {
