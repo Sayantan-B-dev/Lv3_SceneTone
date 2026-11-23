@@ -24,6 +24,8 @@ SceneTone is an AI soundscape composition and audio-production co-pilot. It turn
 ## 3. V1 non-goals
 No full DAW, multitrack recording, MIDI sequencer, VST hosting, native `.flp` generation, automatic mastering, stem separation, guaranteed music generation, MCP/DAW bridge, or raw-audio cloud storage. The model must not claim to have listened to audio when it only receives metrics.
 
+**V1.1 amendment (2026-11-23):** browser-local, single-file utilities are allowed and explicitly are not a DAW: audio format conversion/export, spectrogram and spectrum display, trim/fade/loop export, and arrangement cue-sheet/tempo-marker export. All processing and file I/O stays in the browser; raw audio is still never uploaded.
+
 ## 4. Functional requirements
 ### FR-01 Authentication
 Use Google Identity Services / OpenID Connect. Backend verifies Google ID token signature, issuer, audience and expiry using `google-auth-library`. Use verified Google `sub` as stable identity. Find/create local MongoDB user and establish an application-owned server-side session. Routes: `POST /api/v1/auth/google`, `GET /api/v1/auth/me`, `POST /api/v1/auth/logout`. Never trust client-submitted identity fields.
@@ -156,7 +158,7 @@ Handle invalid input, unauthenticated/forbidden access, missing projects, provid
 `docs/SRS.md`, `ARCHITECTURE.md`, `API_REFERENCE.md`, `DATABASE_SCHEMA.md`, `TECH_STACK.md`, `DESIGN_SYSTEM.md`, `STYLE_GUIDE.md`, `DESIGN_REFERENCE.md`, `DEPLOYMENT.md`, `SECURITY_AND_PRIVACY.md`, `TESTING.md`, `ROADMAP.md`, `CHANGELOG.md`, `diagrams/*.mmd`; root `README.md`, `AGENTS.md`, `SKILLS.md`. Persistent agent files: `docs/agent-state/STATUS.md`, `TODO.md`, `DECISIONS.md`, `FILES_CHANGED.md`, `HANDOFF.md`. Keep docs factual: proposed vs implemented vs tested vs deferred.
 
 ## 15. Roadmap
-V1: auth, projects, blueprint, local audio metrics, mix report, FL Studio handoff, exports. V1.1: UX/history/visualization improvements. V2: lightweight layer/timeline editor, cue markers, browser preview, possible MIDI export. V3: optional local DAW bridge/MCP and external audio-generation provider.
+V1: auth, projects, blueprint, local audio metrics, mix report, FL Studio handoff, exports. V1.1: UX/history/visualization improvements plus browser-local single-file utilities (format conversion, spectrogram, trim/fade/loop export, cue-sheet/tempo-marker export). V2: lightweight layer/timeline editor, cue markers, browser preview, possible MIDI export. V3: optional local DAW bridge/MCP and external audio-generation provider.
 
 ## 16. Change control
 Inspect before changing architecture or dependencies. Preserve existing working structure. Never claim completion without implementation and verification. After each phase, summarize and ask for explicit commit approval. Never commit automatically.

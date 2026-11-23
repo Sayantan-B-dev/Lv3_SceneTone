@@ -46,7 +46,9 @@
 
 ## Later
 
-- V1.1: history and visualization improvements.
+- V1.1: history and visualization improvements; browser-local single-file utilities (format
+  conversion/export, spectrogram and spectrum, trim/fade/loop export, cue-sheet/tempo-marker
+  export). These are not a DAW and never upload raw audio.
 - V2: lightweight layer/timeline editor, cue markers, browser preview, possible MIDI export.
 - V3: optional local DAW bridge/MCP and external audio generation.
 
