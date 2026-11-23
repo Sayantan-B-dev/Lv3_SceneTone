@@ -72,6 +72,7 @@ describe('exports', () => {
     expect(markdown).toContain('Duration 12.0 s, stereo.');
     expect(markdown).toContain('## Limitations');
     expect(markdown).toContain('did not listen to the audio');
+    expect(markdown).toContain('test-model');
     expect(markdown).not.toContain('undefined');
   });
 

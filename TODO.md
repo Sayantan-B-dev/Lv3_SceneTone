@@ -9,13 +9,13 @@ Execution checklist for the first wave. Keep `docs/agent-state/TODO.md` in sync.
 
 ## Phase 1 — Correctness and performance (item 10)
 
-- [ ] Extract pure DSP core to `src/lib/audio/analysis-core.ts`
-- [ ] Add `src/lib/audio/analysis.worker.ts` with main-thread fallback
-- [ ] Analyze page: progress, cancel, store `reportModel`, fix `model: null` export bug
-- [ ] Remove unused duplicate `src/types/blueprint.ts`
-- [ ] Tests: core metrics, worker handler, export model
-- [ ] Run typecheck, lint, test, build, format:check
-- [ ] Commit phase
+- [x] Extract pure DSP core to `src/lib/audio/analysis-core.ts`
+- [x] Add `src/lib/audio/analysis.worker.ts` with main-thread fallback
+- [x] Analyze page: progress, cancel, store `reportModel`, fix `model: null` export bug
+- [x] Remove unused duplicate `src/types/blueprint.ts`
+- [x] Tests: core metrics, worker handler, export model
+- [x] Run typecheck, lint, test, build (format:check still fails on pre-existing files)
+- [x] Commit phase
 
 ## Phase 2 — Saved project workspace (item 8)
 

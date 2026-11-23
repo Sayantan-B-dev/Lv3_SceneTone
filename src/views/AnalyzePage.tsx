@@ -44,12 +44,15 @@ export function AnalyzePage() {
   const searchParams = useSearchParams();
   const projectId = searchParams.get('projectId') ?? undefined;
   const fileInput = useRef<HTMLInputElement>(null);
+  const abortRef = useRef<AbortController | null>(null);
   const report = useGenerateMixReport();
   const [analysis, setAnalysis] = useState<AudioAnalysis | null>(null);
   const [decodeError, setDecodeError] = useState<string | null>(null);
   const [decoding, setDecoding] = useState(false);
+  const [progress, setProgress] = useState(0);
   const [objective, setObjective] = useState<string>(OBJECTIVES[0]);
   const [mixReport, setMixReport] = useState<MixReport | null>(null);
+  const [reportModel, setReportModel] = useState<string | null>(null);
 
   async function handleFile(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
@@ -57,18 +60,43 @@ export function AnalyzePage() {
       return;
     }
 
+    abortRef.current?.abort();
+    const controller = new AbortController();
+    abortRef.current = controller;
+
     setDecodeError(null);
     setMixReport(null);
+    setReportModel(null);
     setDecoding(true);
+    setProgress(0);
 
     try {
-      setAnalysis(await analyzeAudioFile(file));
+      setAnalysis(
+        await analyzeAudioFile(file, {
+          signal: controller.signal,
+          onProgress: setProgress,
+        }),
+      );
     } catch (error) {
+      if (error instanceof DOMException && error.name === 'AbortError') {
+        return;
+      }
+
       setAnalysis(null);
       setDecodeError(error instanceof Error ? error.message : 'The file could not be analyzed.');
     } finally {
-      setDecoding(false);
+      if (abortRef.current === controller) {
+        abortRef.current = null;
+        setDecoding(false);
+      }
     }
+  }
+
+  function handleCancel() {
+    abortRef.current?.abort();
+    abortRef.current = null;
+    setDecoding(false);
+    setProgress(0);
   }
 
   function handleReport() {
@@ -90,7 +118,12 @@ export function AnalyzePage() {
         },
         ...(projectId ? { projectId } : {}),
       },
-      { onSuccess: (data) => setMixReport(data.report) },
+      {
+        onSuccess: (data) => {
+          setMixReport(data.report);
+          setReportModel(data.model);
+        },
+      },
     );
   }
 
@@ -124,9 +157,14 @@ export function AnalyzePage() {
             <Button type="button" variant="secondary" onClick={() => fileInput.current?.click()}>
               {analysis ? 'Load another file' : 'Load file'}
             </Button>
-            <span>
+            {decoding ? (
+              <Button type="button" variant="ghost" onClick={handleCancel}>
+                Cancel
+              </Button>
+            ) : null}
+            <span aria-live="polite">
               {decoding
-                ? 'Decoding...'
+                ? `Analyzing... ${Math.round(progress * 100)}%`
                 : analysis
                   ? `${analysis.fileName} (${(analysis.sizeBytes / 1024 / 1024).toFixed(2)} MB)`
                   : 'No file loaded'}
@@ -269,6 +307,7 @@ export function AnalyzePage() {
                         bandEnergy: analysis?.bandEnergy,
                         stereoCorrelation: analysis?.stereoCorrelation,
                       },
+                      model: reportModel,
                       report: mixReport,
                     })
                   }
@@ -286,7 +325,7 @@ export function AnalyzePage() {
                           reportToMarkdown(mixReport, {
                             objective,
                             metrics: analysis,
-                            model: null,
+                            model: reportModel,
                           }),
                         )
                       : undefined
